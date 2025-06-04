@@ -1,5 +1,16 @@
 import { serve } from '@hono/node-server';
 import { app } from './app.ts';
+import { otel } from '@hono/otel'
+import { NodeSDK } from '@opentelemetry/sdk-node'
+import { ConsoleSpanExporter } from '@opentelemetry/sdk-trace-node'
+
+const otelSdk = new NodeSDK({
+  traceExporter: new ConsoleSpanExporter(),
+})
+
+otelSdk.start()
+
+app.use('*', otel())
 
 const server = serve(app);
 
