@@ -1,0 +1,26 @@
+{
+	"name": "@ripste/api",
+	"type": "module",
+	"version": "1.0.0",
+	"main": "src/main.ts",
+	"scripts": {
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"start": "node --experimental-strip-types src/main.ts",
+		"dev": "node --watch --experimental-strip-types src/main.ts"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"description": "",
+	"dependencies": {
+		"@hono/node-server": "^1.14.3",
+		"@hono/otel": "^0.2.0",
+		"@opentelemetry/sdk-node": "^0.202.0",
+		"@opentelemetry/sdk-trace-node": "^2.0.1",
+		"hono": "^4.7.11"
+	},
+	"devDependencies": {
+		"@ripste/tsconfig": "*"
+	}
+}

@@ -1,26 +1,30 @@
 {
-  "name": "ripste",
-  "version": "1.0.0",
-  "description": "",
-  "type": "module",
-  "main": "index.js",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "husky"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@biomejs/biome": "1.9.4",
-    "@commitlint/cli": "^19.8.1",
-    "@commitlint/config-conventional": "^19.8.1",
-    "husky": "^9.1.7",
-    "turbo": "^2.5.4"
-  },
-  "packageManager": "npm@10.8.2"
+	"name": "ripste",
+	"version": "1.0.0",
+	"description": "",
+	"type": "module",
+	"workspaces": ["apps/*", "packages/*"],
+	"scripts": {
+		"test": "turbo run test",
+		"test:watch": "turbo run test:watch",
+		"dev": "turbo run dev",
+		"start": "turbo run start",
+		"lint": "biome lint",
+		"lint:fix": "biome lint --write",
+		"format": "biome format",
+		"format:fix": "biome format --write",
+		"prepare": "husky"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@commitlint/cli": "^19.8.1",
+		"@commitlint/config-conventional": "^19.8.1",
+		"husky": "^9.1.7",
+		"turbo": "^2.5.4",
+		"vitest": "^3.2.1"
+	},
+	"packageManager": "npm@10.8.2"
 }

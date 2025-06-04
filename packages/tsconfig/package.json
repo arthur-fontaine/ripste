@@ -1,0 +1,14 @@
+{
+	"name": "@ripste/tsconfig",
+	"version": "1.0.0",
+	"files": ["tsconfig.json"],
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"description": "",
+	"dependencies": {
+		"@tsconfig/node-ts": "^23.6.1",
+		"@tsconfig/node22": "^22.0.2",
+		"@tsconfig/strictest": "^2.0.5"
+	}
+}
