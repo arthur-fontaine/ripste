@@ -2,10 +2,11 @@
   "name": "@ripste/api",
   "type": "module",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/main.ts",
   "scripts": {
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "start": "node --experimental-strip-types src/main.ts"
   },
   "keywords": [],
   "author": "",
@@ -14,5 +15,8 @@
   "dependencies": {
     "@hono/node-server": "^1.14.3",
     "hono": "^4.7.11"
+  },
+  "devDependencies": {
+    "@ripste/tsconfig": "*"
   }
 }
