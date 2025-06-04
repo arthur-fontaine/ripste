@@ -5,6 +5,10 @@
       "persistent": true,
       "cache": false
     },
+    "start": {
+      "persistent": true,
+      "cache": false
+    },
     "test": {},
     "test:watch": {
       "cache": false,
