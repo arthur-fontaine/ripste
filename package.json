@@ -9,7 +9,8 @@
     "packages/*"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "turbo run test",
+    "test:watch": "turbo run test:watch",
     "prepare": "husky"
   },
   "keywords": [],
@@ -20,7 +21,8 @@
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "husky": "^9.1.7",
-    "turbo": "^2.5.4"
+    "turbo": "^2.5.4",
+    "vitest": "^3.2.1"
   },
   "packageManager": "npm@10.8.2"
 }
