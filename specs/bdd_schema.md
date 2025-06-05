@@ -10,11 +10,11 @@
 
 - [Overview](#overview)
 - [Functional Domains](#functional-domains)
-  - [🔐 Authentication & Authorization](#-authentication--authorization)
+  - [🔐 Authentication & Authorization](#authentication--authorization)
   - [🏪 Store Management](#-store-management)
-  - [🔑 API Authentication](#-api-authentication)
-  - [🎨 Customization](#-customization)
-  - [💳 Transactions & Payments](#-transactions--payments)
+  - [🔑 API Authentication](#api-authentication)
+  - [🎨 Customization](#customization)
+  - [💳 Transactions & Payments](#transactions--payments)
   - [⚖️ GDPR Compliance](#gdpr-compliance)
 - [Main Relationships](#main-relationships)
 
@@ -35,7 +35,7 @@ This database schema has been designed to support the **Ripste** payment platfor
 
 ## Functional Domains
 
-## 🔐 Authentication & Authorization
+## Authentication & Authorization
 
 ### `users`
 Main platform users table.
@@ -59,18 +59,18 @@ User profiles with personal information.
 | Column | Type | Constraints | Description |
 |---------|------|-------------|-------------|
 | `id` | `uuid` | **PK**, `gen_random_uuid()` | Unique identifier |
-| `account_id` | `uuid` | **FK** → `users.id`, **UNIQUE** | User reference |
+| `user_id` | `uuid` | **FK** → `users.id`, **UNIQUE** | User reference |
 | `first_name` | `varchar(100)` | | First name |
 | `last_name` | `varchar(100)` | | Last name |
 | `phone` | `varchar(20)` | | Phone number |
 | `created_at` | `timestamp` | Default: `now()` | Creation date |
 | `updated_at` | `timestamp` | | Last modification date |
 
-**Index:** `account_id`
+**Index:** `user_id`
 
 ---
 
-## 🏪 Store Management
+## Store Management
 
 ### `companies`
 Company legal information.
@@ -82,7 +82,7 @@ Company legal information.
 | `trade_name` | `varchar(255)` | | Trade name |
 | `kbis` | `varchar(50)` | **UNIQUE**, **NOT NULL** | KBIS number |
 | `vat_number` | `varchar(50)` | | VAT number |
-| `address` | `jsonb` | | Complete address |
+| `address` | `varchar(500)` | | Complete address |
 | `created_at` | `timestamp` | Default: `now()` | Creation date |
 | `updated_at` | `timestamp` | | Last modification date |
 
@@ -111,10 +111,11 @@ Store approval workflow.
 |---------|------|-------------|-------------|
 | `id` | `uuid` | **PK**, `gen_random_uuid()` | Unique identifier |
 | `store_id` | `uuid` | **FK** → `stores.id`, **NOT NULL** | Store reference |
-| `status` | `enum` | `'pending', 'active', 'suspended', 'inactive'` | Current status |
+| `status` | `enum` | `'pending', 'active', 'suspended', 'refused'` | Current status |
 | `reason` | `text` | | Change reason |
 | `changed_by` | `uuid` | **FK** → `users.id` | User making the change |
 | `created_at` | `timestamp` | Default: `now()` | Change date |
+| `updated_at` | `timestamp` | | Last modification date |
 
 **Index:** `store_id`, `status`, `created_at`
 
@@ -124,17 +125,17 @@ User-store relationship with permissions.
 | Column | Type | Constraints | Description |
 |---------|------|-------------|-------------|
 | `id` | `uuid` | **PK**, `gen_random_uuid()` | Unique identifier |
-| `account_id` | `uuid` | **FK** → `users.id`, **NOT NULL** | User reference |
+| `user_id` | `uuid` | **FK** → `users.id`, **NOT NULL** | User reference |
 | `store_id` | `uuid` | **FK** → `stores.id`, **NOT NULL** | Store reference |
 | `permission_level` | `enum` | `'owner'` | Permission level |
 | `created_at` | `timestamp` | Default: `now()` | Creation date |
 | `updated_at` | `timestamp` | | Last modification date |
 
-**Index:** `account_id`, `store_id`, `(account_id, store_id)` **UNIQUE**
+**Index:** `user_id`, `store_id`, `(user_id, store_id)` **UNIQUE**
 
 ---
 
-## 🔑 API Authentication
+## API Authentication
 
 ### `api_credentials`
 API credentials for stores.
@@ -161,7 +162,7 @@ JWT tokens for API authentication.
 | `id` | `uuid` | **PK**, `gen_random_uuid()` | Unique identifier |
 | `credential_id` | `uuid` | **FK** → `api_credentials.id`, **UNIQUE** | Credential reference |
 | `token_hash` | `varchar(255)` | **UNIQUE**, **NOT NULL** | Token hash |
-| `permissions` | `jsonb` | | Feature flags and permissions |
+| `permissions` | `text[]` | | Feature flags and permissions |
 
 **Index:** `token_hash`
 
@@ -174,14 +175,14 @@ OAuth2 clients for authentication.
 | `credential_id` | `uuid` | **FK** → `api_credentials.id`, **UNIQUE** | Credential reference |
 | `client_id` | `varchar(255)` | **UNIQUE**, **NOT NULL** | OAuth2 client ID |
 | `client_secret_hash` | `varchar(255)` | **NOT NULL** | Client secret hash |
-| `redirect_uris` | `jsonb` | **NOT NULL** | Redirect URIs |
-| `scopes` | `jsonb` | | OAuth2 scopes |
+| `redirect_uris` | `text[]` | **NOT NULL** | Redirect URIs |
+| `scopes` | `text[]` | | OAuth2 scopes |
 
 **Index:** `client_id`
 
 ---
 
-## 🎨 Customization
+## Customization
 
 ### `checkout_themes`
 Checkout page customization themes.
@@ -206,12 +207,14 @@ CSS theme customizations.
 | `theme_id` | `uuid` | **FK** → `checkout_themes.id`, **NOT NULL** | Theme reference |
 | `customization_type` | `enum` | `'css'` | Customization type |
 | `content` | `text` | | Customization content |
+| `created_at` | `timestamp` | Default: `now()` | Creation date |
+| `updated_at` | `timestamp` | | Last modification date |
 
 **Index:** `theme_id`, `customization_type`
 
 ---
 
-## 💳 Transactions & Payments
+## Transactions & Payments
 
 ### `transactions`
 Core business: payment transactions.
@@ -223,9 +226,9 @@ Core business: payment transactions.
 | `reference` | `varchar(100)` | **UNIQUE**, **NOT NULL** | Transaction reference |
 | `amount` | `decimal(15,2)` | **NOT NULL** | Amount |
 | `currency` | `varchar(3)` | Default: `'EUR'` | Currency |
-| `status` | `enum` | `'pending', 'processing', 'completed', 'failed', 'cancelled'` | Status |
+| `status` | `enum` | `'created', 'processing', 'completed', 'failed', 'cancelled'` | Status |
 | `metadata` | `jsonb` | | Merchant business data |
-| `created_by` | `uuid` | **FK** → `api_credentials.id` | Creator |
+| `api_credential_id` | `uuid` | **FK** → `api_credentials.id` | Creator credential |
 | `created_at` | `timestamp` | Default: `now()` | Creation date |
 | `updated_at` | `timestamp` | | Last modification date |
 
@@ -251,11 +254,9 @@ Payment methods (extensible architecture).
 |---------|------|-------------|-------------|
 | `id` | `uuid` | **PK**, `gen_random_uuid()` | Unique identifier |
 | `transaction_id` | `uuid` | **FK** → `transactions.id`, **NOT NULL** | Transaction reference |
-| `method_type` | `varchar(50)` | **NOT NULL** | Method type |
+| `method_type` | `enum` | `'checkout_page', 'api_direct', 'link', 'qr_code'` | Method type |
 | `method_data` | `jsonb` | | Method-specific data |
 | `created_at` | `timestamp` | Default: `now()` | Creation date |
-
-**Method types:** `checkout_page`, `api_direct`, `link`, `qr_code`
 
 **Index:** `transaction_id`, `method_type`
 
@@ -267,7 +268,7 @@ Customized checkout pages.
 | `id` | `uuid` | **PK**, `gen_random_uuid()` | Unique identifier |
 | `transaction_id` | `uuid` | **FK** → `transactions.id`, **NOT NULL** | Transaction reference |
 | `theme_id` | `uuid` | **FK** → `checkout_themes.id` | Applied theme |
-| `url_token` | `varchar(100)` | **UNIQUE**, **NOT NULL** | Secure URL token |
+| `uri` | `varchar(100)` | **UNIQUE**, **NOT NULL** | Secure URI token |
 | `redirect_success_url` | `varchar(500)` | **NOT NULL** | Success URL |
 | `redirect_cancel_url` | `varchar(500)` | | Cancel URL |
 | `display_data` | `jsonb` | | Display data |
@@ -276,7 +277,7 @@ Customized checkout pages.
 | `accessed_at` | `timestamp` | | First access |
 | `completed_at` | `timestamp` | | Completion date |
 
-**Index:** `transaction_id`, `url_token`, `expires_at`
+**Index:** `transaction_id`, `uri`, `expires_at`
 
 ### `payment_attempts`
 Payment attempts with traceability.
@@ -311,10 +312,12 @@ Refund management.
 **Index:** `transaction_id`, `status`
 
 ---
+
 ![Database Schema Diagram](./assets/ripste-bdd-schema.svg)
 
---- 
-## ⚖️ GDPR Compliance
+---
+
+## GDPR Compliance
 
 The schema natively integrates GDPR requirements:
 
