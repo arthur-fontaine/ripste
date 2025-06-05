@@ -15,7 +15,7 @@
   - [🔑 API Authentication](#-api-authentication)
   - [🎨 Customization](#-customization)
   - [💳 Transactions & Payments](#-transactions--payments)
-  - [⚖️ GDPR Compliance](#️-gdpr-compliance)
+  - [⚖️ GDPR Compliance](#gdpr-compliance)
 - [Main Relationships](#main-relationships)
 
 ---
@@ -311,7 +311,6 @@ Refund management.
 **Index:** `transaction_id`, `status`
 
 ---
-
 ![Database Schema Diagram](./assets/ripste-bdd-schema.svg)
 
 --- 
@@ -330,18 +329,18 @@ The schema natively integrates GDPR requirements:
 
 ```mermaid
 erDiagram
-    USERS ||--o{ USER_PROFILES : has
-    USERS ||--o{ STORE_MEMBERS : belongs_to
-    COMPANIES ||--o{ STORES : owns
-    STORES ||--o{ STORE_STATUSES : has
-    STORES ||--o{ API_CREDENTIALS : uses
-    STORES ||--o{ CHECKOUT_THEMES : customizes
-    STORES ||--o{ TRANSACTIONS : processes
-    TRANSACTIONS ||--o{ TRANSACTION_EVENTS : logs
-    TRANSACTIONS ||--o{ PAYMENT_METHODS : supports
-    TRANSACTIONS ||--o{ CHECKOUT_PAGES : creates
-    TRANSACTIONS ||--o{ PAYMENT_ATTEMPTS : attempts
-    TRANSACTIONS ||--o{ REFUNDS : may_have
+    users ||--o{ user_profiles : has
+    users ||--o{ store_members : belongs_to
+    companies ||--o{ stores : owns
+    stores ||--o{ store_statuses : has
+    stores ||--o{ api_credentials : uses
+    stores ||--o{ checkout_themes : customizes
+    stores ||--o{ transactions : processes
+    transactions ||--o{ transaction_events : logs
+    transactions ||--o{ payment_methods : supports
+    transactions ||--o{ checkout_pages : creates
+    transactions ||--o{ payment_attempts : attempts
+    transactions ||--o{ refunds : may_have
 ```
 
 ---
