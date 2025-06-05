@@ -13,7 +13,9 @@
 		"lint:fix": "biome lint --write",
 		"format": "biome format",
 		"format:fix": "biome format --write",
-		"prepare": "husky"
+		"prepare": "husky",
+		"start-docker": "bash ./scripts/start-docker",
+		"start-docker:dev": "npm run start-docker dependencies dev"
 	},
 	"keywords": [],
 	"author": "",

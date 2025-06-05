@@ -1,0 +1,37 @@
+name: ripste-dependencies
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    env_file:
+      - path: ../.env
+        required: false
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ripste} -d ${POSTGRES_DB:-ripste}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:8-alpine
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    env_file:
+      - path: ../.env
+        required: false
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
