@@ -3,7 +3,9 @@ name: ripste-dependencies
 services:
   postgres:
     image: postgres:17-alpine
-    env_file: [../.env]
+    env_file:
+      - path: ../.env
+        required: false
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
@@ -20,7 +22,9 @@ services:
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes
-    env_file: [../.env]
+    env_file:
+      - path: ../.env
+        required: false
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
