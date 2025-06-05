@@ -1,0 +1,5 @@
+#!/bin/bash
+
+docker-compose $(for f in "$@"; do echo -f docker/$f.docker-compose.yml; done) up -d --remove-orphans
+
+# Usage example: `scripts/start-docker dependencies dev`
