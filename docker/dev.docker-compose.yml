@@ -2,7 +2,9 @@ name: ripste-dev
 
 services:
   postgres:
-    ports: ["5432:5432"]
+    env_file: [../.env]
+    ports: ["${POSTGRES_PORT:-5432}:5432"]
 
   redis:
-    ports: ["6379:6379"]
+    env_file: [../.env]
+    ports: ["${REDIS_PORT:-6379}:6379"]
