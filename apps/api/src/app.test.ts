@@ -14,3 +14,16 @@ describe("Ping Endpoint", () => {
 		});
 	});
 });
+
+describe("Metrics Endpoint", () => {
+	const client = testClient(app);
+
+	it("should return metrics", async () => {
+		const res = await client.metrics.$get();
+
+		expect(res.status).toBe(200);
+		expect(await res.text()).toContain(
+			"# HELP http_request_duration_seconds Duration of HTTP requests in seconds",
+		);
+	});
+});
