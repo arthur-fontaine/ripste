@@ -7,13 +7,10 @@
 	"license": "ISC",
 	"description": "Database models and interfaces for Ripste",
 	"dependencies": {
-		"pg": "^8.16.0",
-		"reflect-metadata": "^0.2.2",
-		"sequelize": "^6.37.7",
-		"sequelize-typescript": "^2.1.6"
+		"@mikro-orm/core": "^6.4.16",
+		"@mikro-orm/postgresql": "^6.4.16"
 	},
 	"devDependencies": {
-		"@ripste/tsconfig": "*",
-		"@types/pg": "^8.6.6"
+		"@ripste/tsconfig": "*"
 	}
 }
