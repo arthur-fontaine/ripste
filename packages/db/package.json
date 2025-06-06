@@ -3,11 +3,6 @@
 	"version": "1.0.0",
 	"type": "module",
 	"main": "src/index.ts",
-	"scripts": {
-		"build": "tsc",
-		"test": "vitest run",
-		"test:watch": "vitest"
-	},
 	"author": "",
 	"license": "ISC",
 	"description": "Database models and interfaces for Ripste",
