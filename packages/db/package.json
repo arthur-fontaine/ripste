@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"type": "module",
 	"main": "src/index.ts",
-    "scripts": {
+	"scripts": {
 		"build": "tsc",
 		"test": "vitest run",
 		"test:watch": "vitest"
@@ -17,8 +17,8 @@
 		"sequelize": "^6.37.7",
 		"sequelize-typescript": "^2.1.6"
 	},
-    "devDependencies": {
+	"devDependencies": {
 		"@ripste/tsconfig": "*",
-        "@types/pg": "^8.6.6"
-    } 
+		"@types/pg": "^8.6.6"
+	}
 }
