@@ -190,7 +190,7 @@ export interface ITransaction {
 	apiCredential: IApiCredential | null;
 	transactionEvents: ITransactionEvent[] | null;
 	paymentMethods: IPaymentMethod[] | null;
-	checkoutPages: ICheckoutPage[] | null; 
+	checkoutPages: ICheckoutPage[] | null;
 	paymentAttempts: IPaymentAttempt[] | null;
 	refunds: IRefund[] | null;
 
@@ -198,7 +198,10 @@ export interface ITransaction {
 		eventType: string,
 		eventData: TransactionEventData,
 	): Promise<ITransactionEvent>;
-	updateStatus(status: ITransaction["status"], reason: string | null): Promise<void>;
+	updateStatus(
+		status: ITransaction["status"],
+		reason: string | null,
+	): Promise<void>;
 	getTotalRefunded(): Promise<number>;
 	canBeRefunded(): Promise<boolean>;
 	getLastAttempt(): Promise<IPaymentAttempt | null>;
@@ -424,7 +427,7 @@ export interface ITransactionRepository {
 	findByReference(reference: string): Promise<ITransaction | null>;
 	findByStoreId(
 		storeId: string,
-		options?: { limit: number | null;},
+		options?: { limit: number | null },
 	): Promise<ITransaction[]>;
 	create(transactionData: Partial<ITransaction>): Promise<ITransaction>;
 	update(
@@ -437,6 +440,9 @@ export interface ITransactionRepository {
 export interface IDatabase {
 	connect(): Promise<void>;
 	disconnect(): Promise<void>;
-	sync(options?: { force: boolean | null; alter: boolean | null }): Promise<void>;
+	sync(options?: {
+		force: boolean | null;
+		alter: boolean | null;
+	}): Promise<void>;
 	transaction<T>(callback: () => Promise<T>): Promise<T>;
 }
