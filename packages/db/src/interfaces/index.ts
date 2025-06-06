@@ -8,10 +8,10 @@ export interface IUser {
 	updatedAt: Date | null;
 	deletedAt: Date | null;
 
-	profile?: IUserProfile;
-	storeMembers?: IStoreMember[];
-	createdCredentials?: IApiCredential[];
-	initiatedRefunds?: IRefund[];
+	profile: IUserProfile | null;
+	storeMembers: IStoreMember[] | null;
+	createdCredentials: IApiCredential[] | null;
+	initiatedRefunds: IRefund[] | null;
 
 	getProfile(): Promise<IUserProfile | null>;
 	getStores(): Promise<IStore[]>;
@@ -27,7 +27,7 @@ export interface IUserProfile {
 	createdAt: Date;
 	updatedAt: Date | null;
 
-	user?: IUser;
+	user: IUser | null;
 
 	getFullName(): string | null;
 }
@@ -42,7 +42,7 @@ export interface ICompany {
 	createdAt: Date;
 	updatedAt: Date | null;
 
-	stores?: IStore[];
+	stores: IStore[] | null;
 
 	getStores(): Promise<IStore[]>;
 	getActiveStores(): Promise<IStore[]>;
@@ -58,12 +58,12 @@ export interface IStore {
 	createdAt: Date;
 	updatedAt: Date | null;
 
-	company?: ICompany;
-	storeMembers?: IStoreMember[];
-	storeStatuses?: IStoreStatus[];
-	apiCredentials?: IApiCredential[];
-	checkoutThemes?: ICheckoutTheme[];
-	transactions?: ITransaction[];
+	company: ICompany | null;
+	storeMembers: IStoreMember[] | null;
+	storeStatuses: IStoreStatus[] | null;
+	apiCredentials: IApiCredential[] | null;
+	checkoutThemes: ICheckoutTheme[] | null;
+	transactions: ITransaction[] | null;
 
 	getCurrentStatus(): Promise<IStoreStatus | null>;
 	isActive(): Promise<boolean>;
@@ -80,8 +80,8 @@ export interface IStoreStatus {
 	createdAt: Date;
 	updatedAt: Date | null;
 
-	store?: IStore;
-	changedByUser?: IUser;
+	store: IStore | null;
+	changedByUser: IUser | null;
 }
 
 export interface IStoreMember {
@@ -92,8 +92,8 @@ export interface IStoreMember {
 	createdAt: Date;
 	updatedAt: Date | null;
 
-	user?: IUser;
-	store?: IStore;
+	user: IUser | null;
+	store: IStore | null;
 
 	isOwner(): boolean;
 }
@@ -109,11 +109,11 @@ export interface IApiCredential {
 	expiresAt: Date | null;
 	lastUsedAt: Date | null;
 
-	store?: IStore;
-	createdByUser?: IUser;
-	jwtToken?: IJwtToken;
-	oauth2Client?: IOAuth2Client;
-	transactions?: ITransaction[];
+	store: IStore | null;
+	createdByUser: IUser | null;
+	jwtToken: IJwtToken | null;
+	oauth2Client: IOAuth2Client | null;
+	transactions: ITransaction[] | null;
 
 	isExpired(): boolean;
 	updateLastUsed(): Promise<void>;
@@ -126,7 +126,7 @@ export interface IJwtToken {
 	tokenHash: string;
 	permissions: string[];
 
-	credential?: IApiCredential;
+	credential: IApiCredential | null;
 
 	hasPermission(permission: string): boolean;
 	verifyToken(token: string): boolean;
@@ -140,7 +140,7 @@ export interface IOAuth2Client {
 	redirectUris: string[];
 	scopes: string[];
 
-	credential?: IApiCredential;
+	credential: IApiCredential | null;
 
 	isValidRedirectUri(uri: string): boolean;
 	hasScope(scope: string): boolean;
@@ -155,9 +155,9 @@ export interface ICheckoutTheme {
 	createdAt: Date;
 	updatedAt: Date | null;
 
-	store?: IStore;
-	customizations?: IThemeCustomization[];
-	checkoutPages?: ICheckoutPage[];
+	store: IStore | null;
+	customizations: IThemeCustomization[] | null;
+	checkoutPages: ICheckoutPage[] | null;
 
 	getCustomizations(): Promise<IThemeCustomization[]>;
 	getCssCustomization(): Promise<IThemeCustomization | null>;
@@ -171,7 +171,7 @@ export interface IThemeCustomization {
 	createdAt: Date;
 	updatedAt: Date | null;
 
-	theme?: ICheckoutTheme;
+	theme: ICheckoutTheme | null;
 }
 
 export interface ITransaction {
@@ -186,19 +186,19 @@ export interface ITransaction {
 	createdAt: Date;
 	updatedAt: Date | null;
 
-	store?: IStore;
-	apiCredential?: IApiCredential;
-	transactionEvents?: ITransactionEvent[];
-	paymentMethods?: IPaymentMethod[];
-	checkoutPages?: ICheckoutPage[];
-	paymentAttempts?: IPaymentAttempt[];
-	refunds?: IRefund[];
+	store: IStore | null;
+	apiCredential: IApiCredential | null;
+	transactionEvents: ITransactionEvent[] | null;
+	paymentMethods: IPaymentMethod[] | null;
+	checkoutPages: ICheckoutPage[] | null; 
+	paymentAttempts: IPaymentAttempt[] | null;
+	refunds: IRefund[] | null;
 
 	addEvent(
 		eventType: string,
 		eventData: TransactionEventData,
 	): Promise<ITransactionEvent>;
-	updateStatus(status: ITransaction["status"], reason?: string): Promise<void>;
+	updateStatus(status: ITransaction["status"], reason: string | null): Promise<void>;
 	getTotalRefunded(): Promise<number>;
 	canBeRefunded(): Promise<boolean>;
 	getLastAttempt(): Promise<IPaymentAttempt | null>;
@@ -211,7 +211,7 @@ export interface ITransactionEvent {
 	eventData: TransactionEventData | null;
 	occurredAt: Date;
 
-	transaction?: ITransaction;
+	transaction: ITransaction | null;
 }
 
 export interface IPaymentMethod {
@@ -221,8 +221,8 @@ export interface IPaymentMethod {
 	methodData: Record<string, string> | null;
 	createdAt: Date;
 
-	transaction?: ITransaction;
-	paymentAttempts?: IPaymentAttempt[];
+	transaction: ITransaction | null;
+	paymentAttempts: IPaymentAttempt[] | null;
 
 	getAttempts(): Promise<IPaymentAttempt[]>;
 	getSuccessfulAttempt(): Promise<IPaymentAttempt | null>;
@@ -241,8 +241,8 @@ export interface ICheckoutPage {
 	accessedAt: Date | null;
 	completedAt: Date | null;
 
-	transaction?: ITransaction;
-	theme?: ICheckoutTheme;
+	transaction: ITransaction | null;
+	theme: ICheckoutTheme | null;
 
 	isExpired(): boolean;
 	isAccessed(): boolean;
@@ -261,8 +261,8 @@ export interface IPaymentAttempt {
 	customerData: Record<string, string> | null;
 	attemptedAt: Date;
 
-	transaction?: ITransaction;
-	paymentMethod?: IPaymentMethod;
+	transaction: ITransaction | null;
+	paymentMethod: IPaymentMethod | null;
 
 	isSuccessful(): boolean;
 	isFailed(): boolean;
@@ -279,8 +279,8 @@ export interface IRefund {
 	createdAt: Date;
 	processedAt: Date | null;
 
-	transaction?: ITransaction;
-	initiatedByUser?: IUser;
+	transaction: ITransaction | null;
+	initiatedByUser: IUser | null;
 
 	isCompleted(): boolean;
 	canBeProcessed(): boolean;
@@ -289,7 +289,7 @@ export interface IRefund {
 
 export interface CheckoutDisplayData {
 	title: string;
-	description?: string;
+	description: string | null;
 
 	logo: {
 		url: string;
@@ -365,19 +365,18 @@ export interface TransactionCompletedEvent {
 	type: "transaction_completed";
 	paymentMethodId: string;
 	completedAt: string;
-	paymentProcessorResponse?: {
+	paymentProcessorResponse: {
 		transactionId: string;
 		status: string;
-		authCode?: string;
-	};
+		authCode: string | null;
+	} | null;
 }
 
 export interface TransactionFailedEvent {
 	type: "transaction_failed";
 	reason: string;
-	paymentMethodId?: string;
-	errorCode?: string;
-	failedAt: string;
+	paymentMethodId: string | null;
+	errorCode: string | null;
 }
 
 export interface TransactionCancelledEvent {
@@ -392,14 +391,14 @@ export interface PaymentAttemptEvent {
 	paymentMethodId: string;
 	status: "started" | "completed" | "failed";
 	attemptNumber: number;
-	customerIp?: string;
+	customerIp: string | null;
 }
 
 export interface RefundEvent {
 	type: "refund_initiated" | "refund_completed" | "refund_failed";
 	refundId: string;
 	amount: number;
-	reason?: string;
+	reason: string | null;
 }
 
 export interface IUserRepository {
@@ -425,7 +424,7 @@ export interface ITransactionRepository {
 	findByReference(reference: string): Promise<ITransaction | null>;
 	findByStoreId(
 		storeId: string,
-		options?: { limit?: number; offset?: number },
+		options?: { limit: number | null;},
 	): Promise<ITransaction[]>;
 	create(transactionData: Partial<ITransaction>): Promise<ITransaction>;
 	update(
@@ -438,6 +437,6 @@ export interface ITransactionRepository {
 export interface IDatabase {
 	connect(): Promise<void>;
 	disconnect(): Promise<void>;
-	sync(options?: { force?: boolean; alter?: boolean }): Promise<void>;
+	sync(options?: { force: boolean | null; alter: boolean | null }): Promise<void>;
 	transaction<T>(callback: () => Promise<T>): Promise<T>;
 }
