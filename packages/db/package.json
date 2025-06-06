@@ -1,0 +1,24 @@
+{
+	"name": "@ripste/db",
+	"version": "1.0.0",
+	"type": "module",
+	"main": "src/index.ts",
+    "scripts": {
+		"build": "tsc",
+		"test": "vitest run",
+		"test:watch": "vitest"
+	},
+	"author": "",
+	"license": "ISC",
+	"description": "Database models and interfaces for Ripste",
+	"dependencies": {
+		"pg": "^8.16.0",
+		"reflect-metadata": "^0.2.2",
+		"sequelize": "^6.37.7",
+		"sequelize-typescript": "^2.1.6"
+	},
+    "devDependencies": {
+		"@ripste/tsconfig": "*",
+        "@types/pg": "^8.6.6"
+    } 
+}
