@@ -1,0 +1,7 @@
+{
+	"extends": "@ripste/tsconfig/tsconfig.json",
+	"compilerOptions": {
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true
+	}
+}
