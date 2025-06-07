@@ -7,7 +7,6 @@ export interface IRefund {
 	amount: number;
 	reason: string | null;
 	status: "pending" | "processing" | "completed" | "failed";
-	initiatedBy: string | null;
 	createdAt: Date;
 	processedAt: Date | null;
 
