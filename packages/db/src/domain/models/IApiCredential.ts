@@ -26,7 +26,7 @@ export type IInsertApiCredential = Insertable<
 	IApiCredential,
 	"store" | "createdByUser" | "jwtToken" | "oauth2Client" | "transactions"
 > & {
-	storeId: IStore["id"] | null;
+	storeId: IStore["id"];
 	createdByUserId: IUser["id"] | null;
 	jwtTokenId?: IJwtToken["id"] | null;
 	oauth2ClientId?: IOAuth2Client["id"] | null;
