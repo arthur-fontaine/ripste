@@ -15,4 +15,6 @@ export interface IPaymentMethod {
 export type IInsertPaymentMethod = Insertable<
 	IPaymentMethod,
 	"transaction" | "paymentAttempts"
->;
+> & {
+	transactionId?: ITransaction["id"] | null;
+};

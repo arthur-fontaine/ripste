@@ -9,4 +9,6 @@ export interface IJwtToken {
 	credential: IApiCredential | null;
 }
 
-export type IInsertJwtToken = Insertable<IJwtToken, "credential">;
+export type IInsertJwtToken = Insertable<IJwtToken, "credential"> & {
+	credentialId?: IApiCredential["id"] | null;
+};

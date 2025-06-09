@@ -14,4 +14,6 @@ export interface IUserProfile {
 	fullName: string | null;
 }
 
-export type IInsertUserProfile = Insertable<IUserProfile, "user">;
+export type IInsertUserProfile = Insertable<IUserProfile, "user"> & {
+	userId: IUser["id"];
+};

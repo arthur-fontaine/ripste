@@ -14,4 +14,6 @@ export interface IThemeCustomization {
 export type IInsertThemeCustomization = Insertable<
 	IThemeCustomization,
 	"theme"
->;
+> & {
+	themeId?: ICheckoutTheme["id"] | null;
+};

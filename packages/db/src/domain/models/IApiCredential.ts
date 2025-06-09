@@ -28,6 +28,6 @@ export type IInsertApiCredential = Insertable<
 > & {
 	storeId: IStore["id"] | null;
 	createdByUserId: IUser["id"] | null;
-	jwtToken: IJwtToken | null;
-	oauth2Client: IOAuth2Client | null;
+	jwtTokenId?: IJwtToken["id"] | null;
+	oauth2ClientId?: IOAuth2Client["id"] | null;
 };

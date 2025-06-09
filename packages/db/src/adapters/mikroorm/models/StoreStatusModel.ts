@@ -25,9 +25,6 @@ export class StoreStatusModel extends BaseModel implements IStoreStatus {
 	@ManyToOne(() => UserModel)
 	changedByUser: UserModel;
 
-	@Property({ type: t.datetime })
-	statusDate: Date;
-
 	@Property({ type: t.boolean, default: true })
 	isActive: boolean;
 
@@ -35,16 +32,14 @@ export class StoreStatusModel extends BaseModel implements IStoreStatus {
 		store,
 		status,
 		changedByUser,
-		statusDate = new Date(),
 		reason,
 		isActive = true,
 	}: Pick<StoreStatusModel, "store" | "status" | "changedByUser"> &
-		Partial<Pick<StoreStatusModel, "statusDate" | "reason" | "isActive">>) {
+		Partial<Pick<StoreStatusModel, "reason" | "isActive">>) {
 		super();
 		this.store = store;
 		this.status = status;
 		this.changedByUser = changedByUser;
-		this.statusDate = statusDate;
 		this.reason = reason ?? null;
 		this.isActive = isActive;
 	}
