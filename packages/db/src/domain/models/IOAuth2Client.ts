@@ -11,4 +11,6 @@ export interface IOAuth2Client {
 	credential: IApiCredential | null;
 }
 
-export type IInsertOAuth2Client = Insertable<IOAuth2Client, "credential">;
+export type IInsertOAuth2Client = Insertable<IOAuth2Client, "credential"> & {
+	credentialId?: IApiCredential["id"] | null;
+};

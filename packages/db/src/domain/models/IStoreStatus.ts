@@ -6,17 +6,18 @@ export interface IStoreStatus {
 	id: string;
 	status: "pending" | "active" | "suspended" | "refused";
 	reason: string | null;
+	isActive: boolean;
 	createdAt: Date;
 	updatedAt: Date | null;
 
-	store: IStore | null;
-	changedByUser: IUser | null;
+	store: IStore;
+	changedByUser: IUser;
 }
 
 export type IInsertStoreStatus = Insertable<
 	IStoreStatus,
 	"store" | "changedByUser"
 > & {
-	storeId: IStore["id"] | null;
-	changedByUserId: IUser["id"] | null;
+	storeId: IStore["id"];
+	changedByUserId: IUser["id"];
 };
