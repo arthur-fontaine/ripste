@@ -9,7 +9,7 @@ export interface IUserProfile {
 	createdAt: Date;
 	updatedAt: Date | null;
 
-	user: IUser | null;
+	user: IUser;
 
 	fullName: string | null;
 }
