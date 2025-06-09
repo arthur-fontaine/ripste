@@ -2,7 +2,7 @@ import type { Insertable } from "../../types/insertable.ts";
 import type { IApiCredential } from "./IApiCredential.ts";
 import type { IRefund } from "./IRefund.ts";
 import type { IStoreMember } from "./IStoreMember.ts";
-import type { IInsertUserProfile, IUserProfile } from "./IUserProfile.ts";
+import type { IUserProfile } from "./IUserProfile.ts";
 
 export interface IUser {
 	id: string;
@@ -21,5 +21,5 @@ export interface IUser {
 }
 
 export type IInsertUser = Insertable<IUser> & {
-	profile: IInsertUserProfile | null;
+	profile: IUserProfile | null;
 };
