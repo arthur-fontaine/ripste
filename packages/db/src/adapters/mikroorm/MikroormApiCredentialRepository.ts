@@ -245,31 +245,31 @@ export class MikroormApiCredentialRepository
 			throw new Error(`ApiCredential with id ${id} not found`);
 		}
 
-		if (credentialData.storeId !== undefined) {
-			if (credentialData.storeId === null) {
-				credential.store = null as unknown as StoreModel;
-			} else {
-				const store = await this.options.em.findOne(StoreModel, {
-					id: credentialData.storeId,
-				});
-				if (store) {
-					credential.store = store;
-				}
-			}
+		if (credentialData.storeId === undefined) {
+			throw new Error("storeId is required for updating ApiCredential");
 		}
 
-		if (credentialData.createdByUserId !== undefined) {
-			if (credentialData.createdByUserId === null) {
-				credential.createdByUser = null as unknown as UserModel;
-			} else {
-				const user = await this.options.em.findOne(UserModel, {
-					id: credentialData.createdByUserId,
-				});
-				if (user) {
-					credential.createdByUser = user;
-				}
-			}
+		if (credentialData.createdByUserId === undefined) {
+			throw new Error("createdByUserId is required for updating ApiCredential");
 		}
+
+		const store = await this.options.em.findOne(StoreModel, {
+			id: credentialData.storeId,
+		});
+		if (!store) {
+			throw new Error(`Store with id ${credentialData.storeId} not found`);
+		}
+		credential.store = store;
+
+		const user = await this.options.em.findOne(UserModel, {
+			id: credentialData.createdByUserId,
+		});
+		if (!user) {
+			throw new Error(
+				`User with id ${credentialData.createdByUserId} not found`,
+			);
+		}
+		credential.createdByUser = user;
 
 		const { storeId, createdByUserId, ...updateData } = credentialData;
 		const filteredUpdateData = Object.fromEntries(
