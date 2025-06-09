@@ -68,7 +68,10 @@ export class MikroormCompanyRepository implements ICompanyRepository {
 			throw new Error(`Company with id ${id} not found`);
 		}
 
-		this.options.em.assign(company, companyData);
+		const filteredCompanyData = Object.fromEntries(
+			Object.entries(companyData).filter(([_, value]) => value !== undefined),
+		);
+		this.options.em.assign(company, filteredCompanyData);
 		await this.options.em.flush();
 		return company as ICompany;
 	};
