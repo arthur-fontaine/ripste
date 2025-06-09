@@ -20,6 +20,7 @@ export interface IUser {
 	initiatedRefunds: IRefund[] | null;
 }
 
-export type IInsertUser = Insertable<IUser> & {
-	profile: IUserProfile | null;
-};
+export type IInsertUser = Insertable<
+	IUser,
+	"profile" | "storeMembers" | "createdCredentials" | "initiatedRefunds"
+>;

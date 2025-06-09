@@ -8,11 +8,11 @@ export interface IStoreMember {
 	createdAt: Date;
 	updatedAt: Date | null;
 
-	user: IUser | null;
-	store: IStore | null;
+	user: IUser;
+	store: IStore;
 }
 
 export type IInsertStoreMember = Insertable<IStoreMember, "user" | "store"> & {
-	userId: IUser["id"] | null;
-	storeId: IStore["id"] | null;
+	userId: IUser["id"];
+	storeId: IStore["id"];
 };
