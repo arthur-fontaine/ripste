@@ -18,10 +18,9 @@ services:
     restart: unless-stopped
 
   redis:
-    image: redis:8-alpine
+    image: bitnami/redis:8.0
     volumes:
-      - redis_data:/data
-    command: redis-server --appendonly yes
+      - redis_data:/bitnami/redis
     env_file:
       - path: ../.env
         required: false
