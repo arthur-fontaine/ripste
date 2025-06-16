@@ -3,11 +3,11 @@ name: ripste-prod
 services:
   api:
     build:
-      context: ..
+      context: .
       dockerfile: apps/api/dockerfile
     environment:
       - POSTGRES_HOST=postgres
       - REDIS_HOST=redis
     env_file:
-      - path: ../.env
+      - path: .env
         required: false
