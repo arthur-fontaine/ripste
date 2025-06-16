@@ -3,7 +3,6 @@
 	"version": "1.0.0",
 	"description": "",
 	"type": "module",
-	"workspaces": ["apps/*", "packages/*"],
 	"scripts": {
 		"test": "turbo run test",
 		"test:watch": "turbo run test:watch",
@@ -15,7 +14,7 @@
 		"format:fix": "biome format --write",
 		"prepare": "husky",
 		"start-docker": "bash ./scripts/start-docker",
-		"start-docker:dev": "npm run start-docker dependencies dev"
+		"start-docker:dev": "pnpm run start-docker dependencies dev"
 	},
 	"keywords": [],
 	"author": "",
@@ -28,5 +27,5 @@
 		"turbo": "^2.5.4",
 		"vitest": "^3.2.1"
 	},
-	"packageManager": "npm@10.8.2"
+	"packageManager": "pnpm@10.12.1"
 }
