@@ -253,4 +253,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+#.idea
+.idea
+
 # End of https://www.toptal.com/developers/gitignore/api/turbo,node,visualstudiocode,macos,windows,linux,git
