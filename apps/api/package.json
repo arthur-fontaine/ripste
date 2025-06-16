@@ -21,6 +21,6 @@
 		"hono": "^4.7.11"
 	},
 	"devDependencies": {
-		"@ripste/tsconfig": "*"
+		"@ripste/tsconfig": "workspace:*"
 	}
 }
