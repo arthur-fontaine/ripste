@@ -11,6 +11,10 @@ for f in "$@"; do
   fi
 done
 
-docker-compose $(for f in "$@"; do echo "-f docker/$f.docker-compose.yml"; done) up -d --remove-orphans
+package_json_dirpath=$(npm prefix)
+docker-compose \
+  --project-directory "$package_json_dirpath" \
+  $(for f in "$@"; do echo "-f docker/$f.docker-compose.yml"; done) \
+  up -d --remove-orphans
 
 # Usage example: `scripts/start-docker dependencies dev`
