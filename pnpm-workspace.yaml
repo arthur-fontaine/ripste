@@ -6,3 +6,5 @@ onlyBuiltDependencies:
   - '@biomejs/biome'
   - esbuild
   - protobufjs
+
+injectWorkspacePackages: true

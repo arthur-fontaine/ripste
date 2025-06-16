@@ -4,7 +4,8 @@ services:
   api:
     build:
       context: .
-      dockerfile: apps/api/dockerfile
+      dockerfile: dockerfile
+      target: api
     environment:
       - POSTGRES_HOST=postgres
       - REDIS_HOST=redis
