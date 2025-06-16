@@ -22,7 +22,7 @@ RUN for dir in apps/* packages/*; do \
   fi \
 done
 
-FROM base
+FROM base AS api
 
 WORKDIR /app
 
