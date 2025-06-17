@@ -27,22 +27,12 @@ export class MikroormCheckoutPageRepository implements ICheckoutPageRepository {
 		return page;
 	};
 
-	findByUri: ICheckoutPageRepository["findByUri"] = async (uri) => {
-		const page = await this.options.em.findOne(
-			CheckoutPageModel,
-			{ uri },
-			{
-				populate: ["transaction", "theme"],
-			},
-		);
-		return page;
-	};
-
 	findMany: ICheckoutPageRepository["findMany"] = async (params) => {
 		interface WhereClause {
 			transaction?: { id: string };
 			theme?: { id: string };
 			expiresAt?: { $lt: Date } | { $gt: Date };
+			uri?: string;
 			accessedAt?: { $ne: null } | { $gte?: Date; $lte?: Date };
 			completedAt?: { $ne: null } | { $gte?: Date; $lte?: Date } | null;
 			$or?: Array<{ expiresAt: null } | { expiresAt: { $gt: Date } }>;
@@ -68,6 +58,10 @@ export class MikroormCheckoutPageRepository implements ICheckoutPageRepository {
 					{ expiresAt: { $gt: new Date() } },
 				];
 			}
+		}
+
+		if (params.uri) {
+			whereClause.uri = params.uri;
 		}
 
 		if (params.accessed !== undefined) {

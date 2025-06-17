@@ -5,11 +5,11 @@ import type {
 
 export interface ICheckoutPageRepository {
 	findById(id: string): Promise<ICheckoutPage | null>;
-	findByUri(uri: string): Promise<ICheckoutPage | null>;
 	findMany(params: {
 		transactionId?: string;
 		themeId?: string;
 		expired?: boolean;
+		uri?: string;
 		accessed?: boolean;
 		completed?: boolean;
 		pending?: boolean;
