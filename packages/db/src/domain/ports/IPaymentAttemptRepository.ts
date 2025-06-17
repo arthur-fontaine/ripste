@@ -5,14 +5,12 @@ import type {
 
 export interface IPaymentAttemptRepository {
 	findById(id: string): Promise<IPaymentAttempt | null>;
-	findByTransactionId(transactionId: string): Promise<IPaymentAttempt[]>;
-	findByPaymentMethodId(paymentMethodId: string): Promise<IPaymentAttempt[]>;
-	findByTransactionAndMethod(
-		transactionId: string,
-		paymentMethodId: string,
-	): Promise<IPaymentAttempt[]>;
-	findByStatus(status: IPaymentAttempt["status"]): Promise<IPaymentAttempt[]>;
-	findByCustomerIp(customerIp: string): Promise<IPaymentAttempt[]>;
+	findMany(params: {
+		transactionId?: string;
+		paymentMethodId?: string;
+		status?: IPaymentAttempt["status"];
+		customerIp?: string;
+	}): Promise<IPaymentAttempt[]>;
 	create(attemptData: IInsertPaymentAttempt): Promise<IPaymentAttempt>;
 	update(
 		id: string,

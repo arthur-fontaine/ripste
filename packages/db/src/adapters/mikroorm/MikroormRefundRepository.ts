@@ -27,76 +27,32 @@ export class MikroormRefundRepository implements IRefundRepository {
 		return refund;
 	};
 
-	findByTransactionId: IRefundRepository["findByTransactionId"] = async (
-		transactionId,
-	) => {
-		const refunds = await this.options.em.find(
-			RefundModel,
-			{
-				transaction: { id: transactionId },
-			},
-			{
-				populate: ["transaction", "initiatedByUser"],
-				orderBy: { createdAt: "DESC" },
-			},
-		);
+	findMany: IRefundRepository["findMany"] = async (params) => {
+		interface WhereClause {
+			transaction?: { id: string };
+			initiatedByUser?: { id: string };
+			status?: "pending" | "processing" | "completed" | "failed";
+		}
+
+		const whereClause: WhereClause = {};
+
+		if (params.transactionId) {
+			whereClause.transaction = { id: params.transactionId };
+		}
+
+		if (params.initiatedByUserId) {
+			whereClause.initiatedByUser = { id: params.initiatedByUserId };
+		}
+
+		if (params.status) {
+			whereClause.status = params.status;
+		}
+
+		const refunds = await this.options.em.find(RefundModel, whereClause, {
+			populate: ["transaction", "initiatedByUser"],
+		});
 		return refunds;
 	};
-
-	findByInitiatedByUserId: IRefundRepository["findByInitiatedByUserId"] =
-		async (userId) => {
-			const refunds = await this.options.em.find(
-				RefundModel,
-				{
-					initiatedByUser: { id: userId },
-				},
-				{
-					populate: ["transaction", "initiatedByUser"],
-					orderBy: { createdAt: "DESC" },
-				},
-			);
-			return refunds;
-		};
-
-	findByStatus: IRefundRepository["findByStatus"] = async (status) => {
-		const refunds = await this.options.em.find(
-			RefundModel,
-			{ status },
-			{
-				populate: ["transaction", "initiatedByUser"],
-				orderBy: { createdAt: "DESC" },
-			},
-		);
-		return refunds;
-	};
-
-	findPendingRefunds: IRefundRepository["findPendingRefunds"] = async () => {
-		const refunds = await this.options.em.find(
-			RefundModel,
-			{ status: "pending" },
-			{
-				populate: ["transaction", "initiatedByUser"],
-				orderBy: { createdAt: "ASC" },
-			},
-		);
-		return refunds;
-	};
-
-	findByTransactionAndStatus: IRefundRepository["findByTransactionAndStatus"] =
-		async (transactionId, status) => {
-			const refunds = await this.options.em.find(
-				RefundModel,
-				{
-					transaction: { id: transactionId },
-					status,
-				},
-				{
-					populate: ["transaction", "initiatedByUser"],
-					orderBy: { createdAt: "DESC" },
-				},
-			);
-			return refunds;
-		};
 
 	getTotalRefundedAmount: IRefundRepository["getTotalRefundedAmount"] = async (
 		transactionId,

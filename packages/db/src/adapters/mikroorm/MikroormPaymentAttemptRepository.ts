@@ -29,70 +29,35 @@ export class MikroormPaymentAttemptRepository
 		return attempt;
 	};
 
-	findByTransactionId: IPaymentAttemptRepository["findByTransactionId"] =
-		async (transactionId) => {
-			const attempts = await this.options.em.find(
-				PaymentAttemptModel,
-				{
-					transaction: { id: transactionId },
-				},
-				{
-					populate: ["transaction", "paymentMethod"],
-					orderBy: { attemptedAt: "DESC" },
-				},
-			);
-			return attempts;
-		};
+	findMany: IPaymentAttemptRepository["findMany"] = async (params) => {
+		interface WhereClause {
+			transaction?: { id: string };
+			paymentMethod?: { id: string };
+			status?: "pending" | "success" | "failed";
+			customerIp?: string;
+		}
 
-	findByPaymentMethodId: IPaymentAttemptRepository["findByPaymentMethodId"] =
-		async (paymentMethodId) => {
-			const attempts = await this.options.em.find(
-				PaymentAttemptModel,
-				{
-					paymentMethod: { id: paymentMethodId },
-				},
-				{
-					populate: ["transaction", "paymentMethod"],
-					orderBy: { attemptedAt: "DESC" },
-				},
-			);
-			return attempts;
-		};
+		const whereClause: WhereClause = {};
 
-	findByTransactionAndMethod: IPaymentAttemptRepository["findByTransactionAndMethod"] =
-		async (transactionId, paymentMethodId) => {
-			const attempts = await this.options.em.find(
-				PaymentAttemptModel,
-				{
-					transaction: { id: transactionId },
-					paymentMethod: { id: paymentMethodId },
-				},
-				{
-					populate: ["transaction", "paymentMethod"],
-					orderBy: { attemptedAt: "ASC" },
-				},
-			);
-			return attempts;
-		};
+		if (params.transactionId) {
+			whereClause.transaction = { id: params.transactionId };
+		}
 
-	findByStatus: IPaymentAttemptRepository["findByStatus"] = async (status) => {
+		if (params.paymentMethodId) {
+			whereClause.paymentMethod = { id: params.paymentMethodId };
+		}
+
+		if (params.status) {
+			whereClause.status = params.status;
+		}
+
+		if (params.customerIp) {
+			whereClause.customerIp = params.customerIp;
+		}
+
 		const attempts = await this.options.em.find(
 			PaymentAttemptModel,
-			{ status },
-			{
-				populate: ["transaction", "paymentMethod"],
-				orderBy: { attemptedAt: "DESC" },
-			},
-		);
-		return attempts;
-	};
-
-	findByCustomerIp: IPaymentAttemptRepository["findByCustomerIp"] = async (
-		customerIp,
-	) => {
-		const attempts = await this.options.em.find(
-			PaymentAttemptModel,
-			{ customerIp },
+			whereClause,
 			{
 				populate: ["transaction", "paymentMethod"],
 				orderBy: { attemptedAt: "DESC" },

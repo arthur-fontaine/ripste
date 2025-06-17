@@ -1,3 +1,4 @@
+// This file will be removed in RIP-27
 import type {
 	IInsertPaymentMethod,
 	IPaymentMethod,
@@ -5,14 +6,10 @@ import type {
 
 export interface IPaymentMethodRepository {
 	findById(id: string): Promise<IPaymentMethod | null>;
-	findByTransactionId(transactionId: string): Promise<IPaymentMethod[]>;
-	findByMethodType(
-		methodType: IPaymentMethod["methodType"],
-	): Promise<IPaymentMethod[]>;
-	findByTransactionAndType(
-		transactionId: string,
-		methodType: IPaymentMethod["methodType"],
-	): Promise<IPaymentMethod | null>;
+	findMany(params: {
+		transactionId?: string;
+		methodType?: IPaymentMethod["methodType"];
+	}): Promise<IPaymentMethod[]>;
 	create(methodData: IInsertPaymentMethod): Promise<IPaymentMethod>;
 	update(id: string, methodData: IInsertPaymentMethod): Promise<IPaymentMethod>;
 	delete(id: string): Promise<void>;

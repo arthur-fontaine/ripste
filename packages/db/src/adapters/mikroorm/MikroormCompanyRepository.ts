@@ -25,28 +25,26 @@ export class MikroormCompanyRepository implements ICompanyRepository {
 		return company;
 	};
 
-	findByKbis: ICompanyRepository["findByKbis"] = async (kbis) => {
-		const company = await this.options.em.findOne(
-			CompanyModel,
-			{ kbis },
-			{
-				populate: ["stores"],
-			},
-		);
-		return company;
-	};
+	findMany: ICompanyRepository["findMany"] = async (params) => {
+		interface WhereClause {
+			kbis?: string;
+			vatNumber?: string;
+		}
 
-	findByVatNumber: ICompanyRepository["findByVatNumber"] = async (
-		vatNumber,
-	) => {
-		const company = await this.options.em.findOne(
-			CompanyModel,
-			{ vatNumber },
-			{
-				populate: ["stores"],
-			},
-		);
-		return company;
+		const whereClause: WhereClause = {};
+
+		if (params.kbis) {
+			whereClause.kbis = params.kbis;
+		}
+
+		if (params.vatNumber) {
+			whereClause.vatNumber = params.vatNumber;
+		}
+
+		const companies = await this.options.em.find(CompanyModel, whereClause, {
+			populate: ["stores"],
+		});
+		return companies;
 	};
 
 	create: ICompanyRepository["create"] = async (companyData) => {

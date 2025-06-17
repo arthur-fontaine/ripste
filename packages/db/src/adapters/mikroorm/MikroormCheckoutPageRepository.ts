@@ -38,104 +38,88 @@ export class MikroormCheckoutPageRepository implements ICheckoutPageRepository {
 		return page;
 	};
 
-	findByTransactionId: ICheckoutPageRepository["findByTransactionId"] = async (
-		transactionId,
-	) => {
-		const pages = await this.options.em.find(
-			CheckoutPageModel,
-			{
-				transaction: { id: transactionId },
-			},
-			{
-				populate: ["transaction", "theme"],
-			},
-		);
-		return pages;
-	};
+	findMany: ICheckoutPageRepository["findMany"] = async (params) => {
+		interface WhereClause {
+			transaction?: { id: string };
+			theme?: { id: string };
+			expiresAt?: { $lt: Date } | { $gt: Date };
+			accessedAt?: { $ne: null } | { $gte?: Date; $lte?: Date };
+			completedAt?: { $ne: null } | { $gte?: Date; $lte?: Date } | null;
+			$or?: Array<{ expiresAt: null } | { expiresAt: { $gt: Date } }>;
+			createdAt?: { $gte?: Date; $lte?: Date };
+		}
 
-	findByThemeId: ICheckoutPageRepository["findByThemeId"] = async (themeId) => {
-		const pages = await this.options.em.find(
-			CheckoutPageModel,
-			{
-				theme: { id: themeId },
-			},
-			{
-				populate: ["transaction", "theme"],
-			},
-		);
-		return pages;
-	};
+		const whereClause: WhereClause = {};
 
-	findExpiredPages: ICheckoutPageRepository["findExpiredPages"] = async () => {
-		const pages = await this.options.em.find(
-			CheckoutPageModel,
-			{
-				expiresAt: { $lt: new Date() },
-			},
-			{
-				populate: ["transaction", "theme"],
-			},
-		);
-		return pages;
-	};
+		if (params.transactionId) {
+			whereClause.transaction = { id: params.transactionId };
+		}
 
-	findAccessedPages: ICheckoutPageRepository["findAccessedPages"] = async (
-		fromDate,
-		toDate,
-	) => {
-		const whereClause: {
-			accessedAt: { $ne: null } | { $gte?: Date; $lte?: Date };
-		} = {
-			accessedAt: { $ne: null },
-		};
+		if (params.themeId) {
+			whereClause.theme = { id: params.themeId };
+		}
 
-		if (fromDate || toDate) {
+		if (params.expired !== undefined) {
+			if (params.expired) {
+				whereClause.expiresAt = { $lt: new Date() };
+			} else {
+				whereClause.$or = [
+					{ expiresAt: null },
+					{ expiresAt: { $gt: new Date() } },
+				];
+			}
+		}
+
+		if (params.accessed !== undefined) {
+			if (params.accessed) {
+				const dateFilter: { $gte?: Date; $lte?: Date } = {};
+				if (params.fromDate) dateFilter.$gte = params.fromDate;
+				if (params.toDate) dateFilter.$lte = params.toDate;
+
+				if (params.fromDate || params.toDate) {
+					whereClause.accessedAt = dateFilter;
+				} else {
+					whereClause.accessedAt = { $ne: null };
+				}
+			}
+		}
+
+		if (params.completed !== undefined) {
+			if (params.completed) {
+				const dateFilter: { $gte?: Date; $lte?: Date } = {};
+				if (params.fromDate) dateFilter.$gte = params.fromDate;
+				if (params.toDate) dateFilter.$lte = params.toDate;
+
+				if (params.fromDate || params.toDate) {
+					whereClause.completedAt = dateFilter;
+				} else {
+					whereClause.completedAt = { $ne: null };
+				}
+			}
+		}
+
+		if (params.pending !== undefined && params.pending) {
+			whereClause.completedAt = null;
+			whereClause.$or = [
+				{ expiresAt: null },
+				{ expiresAt: { $gt: new Date() } },
+			];
+		}
+
+		if (
+			!params.accessed &&
+			!params.completed &&
+			(params.fromDate || params.toDate)
+		) {
 			const dateFilter: { $gte?: Date; $lte?: Date } = {};
-			if (fromDate) dateFilter.$gte = fromDate;
-			if (toDate) dateFilter.$lte = toDate;
-			whereClause.accessedAt = dateFilter;
+			if (params.fromDate) dateFilter.$gte = params.fromDate;
+			if (params.toDate) dateFilter.$lte = params.toDate;
+			whereClause.createdAt = dateFilter;
 		}
 
 		const pages = await this.options.em.find(CheckoutPageModel, whereClause, {
 			populate: ["transaction", "theme"],
 		});
-		return pages;
-	};
-
-	findCompletedPages: ICheckoutPageRepository["findCompletedPages"] = async (
-		fromDate,
-		toDate,
-	) => {
-		const whereClause: {
-			completedAt: { $ne: null } | { $gte?: Date; $lte?: Date };
-		} = {
-			completedAt: { $ne: null },
-		};
-
-		if (fromDate || toDate) {
-			const dateFilter: { $gte?: Date; $lte?: Date } = {};
-			if (fromDate) dateFilter.$gte = fromDate;
-			if (toDate) dateFilter.$lte = toDate;
-			whereClause.completedAt = dateFilter;
-		}
-
-		const pages = await this.options.em.find(CheckoutPageModel, whereClause, {
-			populate: ["transaction", "theme"],
-		});
-		return pages;
-	};
-
-	findPendingPages: ICheckoutPageRepository["findPendingPages"] = async () => {
-		const pages = await this.options.em.find(
-			CheckoutPageModel,
-			{
-				completedAt: null,
-				$or: [{ expiresAt: null }, { expiresAt: { $gt: new Date() } }],
-			},
-			{
-				populate: ["transaction", "theme"],
-			},
-		);
 		return pages;
 	};
 

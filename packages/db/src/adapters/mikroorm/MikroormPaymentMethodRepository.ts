@@ -28,28 +28,25 @@ export class MikroormPaymentMethodRepository
 		return paymentMethod;
 	};
 
-	findByTransactionId: IPaymentMethodRepository["findByTransactionId"] = async (
-		transactionId,
-	) => {
-		const paymentMethods = await this.options.em.find(
-			PaymentMethodModel,
-			{
-				transaction: { id: transactionId },
-			},
-			{
-				populate: ["transaction", "paymentAttempts"],
-				orderBy: { createdAt: "ASC" },
-			},
-		);
-		return paymentMethods;
-	};
+	findMany: IPaymentMethodRepository["findMany"] = async (params) => {
+		interface WhereClause {
+			transaction?: { id: string };
+			methodType?: "checkout_page" | "api_direct" | "link" | "qr_code";
+		}
 
-	findByMethodType: IPaymentMethodRepository["findByMethodType"] = async (
-		methodType,
-	) => {
+		const whereClause: WhereClause = {};
+
+		if (params.transactionId) {
+			whereClause.transaction = { id: params.transactionId };
+		}
+
+		if (params.methodType) {
+			whereClause.methodType = params.methodType;
+		}
+
 		const paymentMethods = await this.options.em.find(
 			PaymentMethodModel,
-			{ methodType },
+			whereClause,
 			{
 				populate: ["transaction", "paymentAttempts"],
 				orderBy: { createdAt: "DESC" },
@@ -57,21 +54,6 @@ export class MikroormPaymentMethodRepository
 		);
 		return paymentMethods;
 	};
-
-	findByTransactionAndType: IPaymentMethodRepository["findByTransactionAndType"] =
-		async (transactionId, methodType) => {
-			const paymentMethod = await this.options.em.findOne(
-				PaymentMethodModel,
-				{
-					transaction: { id: transactionId },
-					methodType,
-				},
-				{
-					populate: ["transaction", "paymentAttempts"],
-				},
-			);
-			return paymentMethod;
-		};
 
 	create: IPaymentMethodRepository["create"] = async (methodData) => {
 		let transaction: TransactionModel | null = null;

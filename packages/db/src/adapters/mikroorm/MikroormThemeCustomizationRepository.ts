@@ -28,47 +28,31 @@ export class MikroormThemeCustomizationRepository
 		return customization;
 	};
 
-	findByThemeId: IThemeCustomizationRepository["findByThemeId"] = async (
-		themeId,
-	) => {
+	findMany: IThemeCustomizationRepository["findMany"] = async (params) => {
+		interface WhereClause {
+			theme?: { id: string };
+			customizationType?: "css";
+		}
+
+		const whereClause: WhereClause = {};
+
+		if (params.themeId) {
+			whereClause.theme = { id: params.themeId };
+		}
+
+		if (params.customizationType) {
+			whereClause.customizationType = params.customizationType;
+		}
+
 		const customizations = await this.options.em.find(
 			ThemeCustomizationModel,
-			{
-				theme: { id: themeId },
-			},
+			whereClause,
 			{
 				populate: ["theme"],
 			},
 		);
 		return customizations;
 	};
-
-	findByCustomizationType: IThemeCustomizationRepository["findByCustomizationType"] =
-		async (customizationType) => {
-			const customizations = await this.options.em.find(
-				ThemeCustomizationModel,
-				{ customizationType },
-				{
-					populate: ["theme"],
-				},
-			);
-			return customizations;
-		};
-
-	findByThemeAndType: IThemeCustomizationRepository["findByThemeAndType"] =
-		async (themeId, customizationType) => {
-			const customization = await this.options.em.findOne(
-				ThemeCustomizationModel,
-				{
-					theme: { id: themeId },
-					customizationType,
-				},
-				{
-					populate: ["theme"],
-				},
-			);
-			return customization;
-		};
 
 	create: IThemeCustomizationRepository["create"] = async (
 		customizationData,

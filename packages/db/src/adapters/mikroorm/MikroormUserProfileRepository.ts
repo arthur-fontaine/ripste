@@ -26,59 +26,45 @@ export class MikroormUserProfileRepository implements IUserProfileRepository {
 		return profile;
 	};
 
-	findByUserId: IUserProfileRepository["findByUserId"] = async (userId) => {
-		const profile = await this.options.em.findOne(
-			UserProfileModel,
-			{
-				user: { id: userId },
-			},
-			{
-				populate: ["user"],
-			},
-		);
-		return profile;
-	};
+	findMany: IUserProfileRepository["findMany"] = async (params) => {
+		interface WhereClause {
+			user?: { id: string };
+			phone?: string;
+			firstName?: string;
+			lastName?: string;
+			$or?: Array<
+				{ firstName: { $ilike: string } } | { lastName: { $ilike: string } }
+			>;
+		}
 
-	findByPhone: IUserProfileRepository["findByPhone"] = async (phone) => {
-		const profiles = await this.options.em.find(
-			UserProfileModel,
-			{ phone },
-			{
-				populate: ["user"],
-			},
-		);
-		return profiles;
-	};
+		const whereClause: WhereClause = {};
 
-	findByFullName: IUserProfileRepository["findByFullName"] = async (
-		firstName,
-		lastName,
-	) => {
-		const whereClause: Partial<
-			Pick<UserProfileModel, "firstName" | "lastName">
-		> = {};
-		if (firstName) whereClause.firstName = firstName;
-		if (lastName) whereClause.lastName = lastName;
+		if (params.userId) {
+			whereClause.user = { id: params.userId };
+		}
+
+		if (params.phone) {
+			whereClause.phone = params.phone;
+		}
+
+		if (params.firstName) {
+			whereClause.firstName = params.firstName;
+		}
+
+		if (params.lastName) {
+			whereClause.lastName = params.lastName;
+		}
+
+		if (params.searchTerm) {
+			whereClause.$or = [
+				{ firstName: { $ilike: `%${params.searchTerm}%` } },
+				{ lastName: { $ilike: `%${params.searchTerm}%` } },
+			];
+		}
 
 		const profiles = await this.options.em.find(UserProfileModel, whereClause, {
 			populate: ["user"],
 		});
-		return profiles;
-	};
-
-	searchByName: IUserProfileRepository["searchByName"] = async (searchTerm) => {
-		const profiles = await this.options.em.find(
-			UserProfileModel,
-			{
-				$or: [
-					{ firstName: { $ilike: `%${searchTerm}%` } },
-					{ lastName: { $ilike: `%${searchTerm}%` } },
-				],
-			},
-			{
-				populate: ["user"],
-			},
-		);
 		return profiles;
 	};
 

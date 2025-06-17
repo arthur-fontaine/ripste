@@ -27,77 +27,39 @@ export class MikroormStoreMemberRepository implements IStoreMemberRepository {
 		return storeMember;
 	};
 
-	findByUserId: IStoreMemberRepository["findByUserId"] = async (userId) => {
+	findMany: IStoreMemberRepository["findMany"] = async (params) => {
+		interface WhereClause {
+			user?: { id: string };
+			store?: { id: string };
+			permissionLevel?: "owner";
+		}
+
+		const whereClause: WhereClause = {};
+
+		if (params.userId) {
+			whereClause.user = { id: params.userId };
+		}
+
+		if (params.storeId) {
+			whereClause.store = { id: params.storeId };
+		}
+
+		if (params.permissionLevel) {
+			whereClause.permissionLevel = params.permissionLevel;
+		}
+
+		if (params.storeOwners !== undefined && params.storeOwners) {
+			whereClause.permissionLevel = "owner";
+		}
+
 		const storeMembers = await this.options.em.find(
 			StoreMemberModel,
-			{
-				user: { id: userId },
-			},
+			whereClause,
 			{
 				populate: ["user", "store"],
 			},
 		);
 		return storeMembers;
-	};
-
-	findByStoreId: IStoreMemberRepository["findByStoreId"] = async (storeId) => {
-		const storeMembers = await this.options.em.find(
-			StoreMemberModel,
-			{
-				store: { id: storeId },
-			},
-			{
-				populate: ["user", "store"],
-			},
-		);
-		return storeMembers;
-	};
-
-	findByUserAndStore: IStoreMemberRepository["findByUserAndStore"] = async (
-		userId,
-		storeId,
-	) => {
-		const storeMember = await this.options.em.findOne(
-			StoreMemberModel,
-			{
-				user: { id: userId },
-				store: { id: storeId },
-			},
-			{
-				populate: ["user", "store"],
-			},
-		);
-		return storeMember;
-	};
-
-	findByPermissionLevel: IStoreMemberRepository["findByPermissionLevel"] =
-		async (permissionLevel) => {
-			const storeMembers = await this.options.em.find(
-				StoreMemberModel,
-				{
-					permissionLevel,
-				},
-				{
-					populate: ["user", "store"],
-				},
-			);
-			return storeMembers;
-		};
-
-	findStoreOwners: IStoreMemberRepository["findStoreOwners"] = async (
-		storeId,
-	) => {
-		const storeOwners = await this.options.em.find(
-			StoreMemberModel,
-			{
-				store: { id: storeId },
-				permissionLevel: "owner",
-			},
-			{
-				populate: ["user", "store"],
-			},
-		);
-		return storeOwners;
 	};
 
 	isUserMemberOfStore: IStoreMemberRepository["isUserMemberOfStore"] = async (

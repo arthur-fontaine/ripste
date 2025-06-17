@@ -26,32 +26,26 @@ export class MikroormOauth2ClientRepository implements IOAuth2ClientRepository {
 		return client;
 	};
 
-	findByClientId: IOAuth2ClientRepository["findByClientId"] = async (
-		clientId,
-	) => {
-		const client = await this.options.em.findOne(
-			Oauth2ClientModel,
-			{ clientId },
-			{
-				populate: ["credential"],
-			},
-		);
-		return client;
-	};
+	findMany: IOAuth2ClientRepository["findMany"] = async (params) => {
+		interface WhereClause {
+			credential?: { id: string };
+			clientId?: string;
+		}
 
-	findByCredentialId: IOAuth2ClientRepository["findByCredentialId"] = async (
-		credentialId,
-	) => {
-		const client = await this.options.em.findOne(
-			Oauth2ClientModel,
-			{
-				credential: { id: credentialId },
-			},
-			{
-				populate: ["credential"],
-			},
-		);
-		return client;
+		const whereClause: WhereClause = {};
+
+		if (params.credentialId) {
+			whereClause.credential = { id: params.credentialId };
+		}
+
+		if (params.clientId) {
+			whereClause.clientId = params.clientId;
+		}
+
+		const clients = await this.options.em.find(Oauth2ClientModel, whereClause, {
+			populate: ["credential"],
+		});
+		return clients;
 	};
 
 	create: IOAuth2ClientRepository["create"] = async (clientData) => {
