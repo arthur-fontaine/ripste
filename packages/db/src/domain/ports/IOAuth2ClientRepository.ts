@@ -5,8 +5,10 @@ import type {
 
 export interface IOAuth2ClientRepository {
 	findById(id: string): Promise<IOAuth2Client | null>;
-	findByClientId(clientId: string): Promise<IOAuth2Client | null>;
-	findByCredentialId(credentialId: string): Promise<IOAuth2Client | null>;
+	findMany(params: {
+		credentialId?: string;
+		clientId?: string;
+	}): Promise<IOAuth2Client[]>;
 	create(clientData: IInsertOAuth2Client): Promise<IOAuth2Client>;
 	update(id: string, clientData: IInsertOAuth2Client): Promise<IOAuth2Client>;
 	delete(id: string): Promise<void>;

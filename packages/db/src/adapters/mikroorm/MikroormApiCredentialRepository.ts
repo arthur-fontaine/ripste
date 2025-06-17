@@ -34,127 +34,57 @@ export class MikroormApiCredentialRepository
 		return credential;
 	};
 
-	findByStoreId: IApiCredentialRepository["findByStoreId"] = async (
-		storeId,
-	) => {
-		const credentials = await this.options.em.find(
-			ApiCredentialModel,
-			{
-				store: { id: storeId },
-			},
-			{
-				populate: [
-					"store",
-					"createdByUser",
-					"jwtToken",
-					"oauth2Client",
-					"transactions",
-				],
-			},
-		);
-		return credentials;
-	};
+	findMany: IApiCredentialRepository["findMany"] = async (params) => {
+		interface WhereClause {
+			store?: { id: string };
+			createdByUser?: { id: string };
+			credentialType?: "jwt" | "oauth2";
+			isActive?: boolean;
+			expiresAt?: { $lt: Date } | { $gt: Date };
+			$or?: Array<{ expiresAt: null } | { expiresAt: { $gt: Date } }>;
+		}
 
-	findByCreatedByUserId: IApiCredentialRepository["findByCreatedByUserId"] =
-		async (userId) => {
-			const credentials = await this.options.em.find(
-				ApiCredentialModel,
-				{
-					createdByUser: { id: userId },
-				},
-				{
-					populate: [
-						"store",
-						"createdByUser",
-						"jwtToken",
-						"oauth2Client",
-						"transactions",
-					],
-				},
-			);
-			return credentials;
-		};
+		const whereClause: WhereClause = {};
 
-	findByCredentialType: IApiCredentialRepository["findByCredentialType"] =
-		async (credentialType) => {
-			const credentials = await this.options.em.find(
-				ApiCredentialModel,
-				{ credentialType },
-				{
-					populate: [
-						"store",
-						"createdByUser",
-						"jwtToken",
-						"oauth2Client",
-						"transactions",
-					],
-				},
-			);
-			return credentials;
-		};
+		if (params.storeId) {
+			whereClause.store = { id: params.storeId };
+		}
 
-	findActiveCredentials: IApiCredentialRepository["findActiveCredentials"] =
-		async (storeId) => {
-			const whereClause: {
-				isActive: boolean;
-				$or: Array<{ expiresAt: null } | { expiresAt: { $gt: Date } }>;
-				store?: { id: string };
-			} = {
-				isActive: true,
-				$or: [{ expiresAt: null }, { expiresAt: { $gt: new Date() } }],
-			};
+		if (params.userId) {
+			whereClause.createdByUser = { id: params.userId };
+		}
 
-			if (storeId) {
-				whereClause.store = { id: storeId };
+		if (params.credentialType) {
+			whereClause.credentialType = params.credentialType;
+		}
+
+		if (params.active !== undefined) {
+			if (params.active) {
+				whereClause.isActive = true;
+				whereClause.$or = [
+					{ expiresAt: null },
+					{ expiresAt: { $gt: new Date() } },
+				];
+			} else {
+				whereClause.isActive = false;
 			}
+		}
 
-			const credentials = await this.options.em.find(
-				ApiCredentialModel,
-				whereClause,
-				{
-					populate: [
-						"store",
-						"createdByUser",
-						"jwtToken",
-						"oauth2Client",
-						"transactions",
-					],
-				},
-			);
-			return credentials;
-		};
+		if (params.expired !== undefined) {
+			if (params.expired) {
+				whereClause.expiresAt = { $lt: new Date() };
+				whereClause.isActive = true;
+			} else {
+				whereClause.$or = [
+					{ expiresAt: null },
+					{ expiresAt: { $gt: new Date() } },
+				];
+			}
+		}
 
-	findExpiredCredentials: IApiCredentialRepository["findExpiredCredentials"] =
-		async () => {
-			const credentials = await this.options.em.find(
-				ApiCredentialModel,
-				{
-					expiresAt: { $lt: new Date() },
-					isActive: true,
-				},
-				{
-					populate: [
-						"store",
-						"createdByUser",
-						"jwtToken",
-						"oauth2Client",
-						"transactions",
-					],
-				},
-			);
-			return credentials;
-		};
-
-	findByStoreAndType: IApiCredentialRepository["findByStoreAndType"] = async (
-		storeId,
-		credentialType,
-	) => {
 		const credentials = await this.options.em.find(
 			ApiCredentialModel,
-			{
-				store: { id: storeId },
-				credentialType,
-			},
+			whereClause,
 			{
 				populate: [
 					"store",
@@ -290,17 +220,5 @@ export class MikroormApiCredentialRepository
 		}
 
 		await this.options.em.removeAndFlush(credential);
-	};
-
-	deleteByStoreId: IApiCredentialRepository["deleteByStoreId"] = async (
-		storeId,
-	) => {
-		const credentials = await this.options.em.find(ApiCredentialModel, {
-			store: { id: storeId },
-		});
-
-		if (credentials.length > 0) {
-			await this.options.em.removeAndFlush(credentials);
-		}
 	};
 }

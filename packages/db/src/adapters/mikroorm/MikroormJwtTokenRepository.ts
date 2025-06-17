@@ -26,32 +26,26 @@ export class MikroormJwtTokenRepository implements IJwtTokenRepository {
 		return token;
 	};
 
-	findByTokenHash: IJwtTokenRepository["findByTokenHash"] = async (
-		tokenHash,
-	) => {
-		const token = await this.options.em.findOne(
-			JwtTokenModel,
-			{ tokenHash },
-			{
-				populate: ["credential"],
-			},
-		);
-		return token;
-	};
+	findMany: IJwtTokenRepository["findMany"] = async (params) => {
+		interface WhereClause {
+			credential?: { id: string };
+			tokenHash?: string;
+		}
 
-	findByCredentialId: IJwtTokenRepository["findByCredentialId"] = async (
-		credentialId,
-	) => {
-		const token = await this.options.em.findOne(
-			JwtTokenModel,
-			{
-				credential: { id: credentialId },
-			},
-			{
-				populate: ["credential"],
-			},
-		);
-		return token;
+		const whereClause: WhereClause = {};
+
+		if (params.credentialId) {
+			whereClause.credential = { id: params.credentialId };
+		}
+
+		if (params.tokenHash) {
+			whereClause.tokenHash = params.tokenHash;
+		}
+
+		const tokens = await this.options.em.find(JwtTokenModel, whereClause, {
+			populate: ["credential"],
+		});
+		return tokens;
 	};
 
 	create: IJwtTokenRepository["create"] = async (tokenData) => {

@@ -26,15 +26,31 @@ export class MikroormUserRepository implements IUserRepository {
 		return user;
 	};
 
-	findByEmail: IUserRepository["findByEmail"] = async (email) => {
-		const user = await this.options.em.findOne(
-			UserModel,
-			{ email },
-			{
-				populate: ["profile"],
-			},
-		);
-		return user;
+	findMany: IUserRepository["findMany"] = async (params) => {
+		interface WhereClause {
+			email?: string;
+			permissionLevel?: "admin" | "user";
+			emailVerified?: boolean;
+		}
+
+		const whereClause: WhereClause = {};
+
+		if (params.email) {
+			whereClause.email = params.email;
+		}
+
+		if (params.permissionLevel) {
+			whereClause.permissionLevel = params.permissionLevel;
+		}
+
+		if (params.emailVerified !== undefined) {
+			whereClause.emailVerified = params.emailVerified;
+		}
+
+		const users = await this.options.em.find(UserModel, whereClause, {
+			populate: ["profile"],
+		});
+		return users;
 	};
 
 	create: IUserRepository["create"] = async (user) => {
@@ -96,16 +112,16 @@ export class MikroormUserRepository implements IUserRepository {
 			return;
 		}
 
-		await this.options.em.removeAndFlush(user);
+		user.deletedAt = new Date();
+		await this.options.em.flush();
 	};
 
-	softDelete: IUserRepository["softDelete"] = async (id) => {
+	hardDelete: IUserRepository["hardDelete"] = async (id) => {
 		const user = await this.options.em.findOne(UserModel, { id });
 		if (!user) {
 			return;
 		}
 
-		user.deletedAt = new Date();
-		await this.options.em.flush();
+		await this.options.em.removeAndFlush(user);
 	};
 }

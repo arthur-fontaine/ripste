@@ -5,14 +5,10 @@ import type {
 
 export interface IThemeCustomizationRepository {
 	findById(id: string): Promise<IThemeCustomization | null>;
-	findByThemeId(themeId: string): Promise<IThemeCustomization[]>;
-	findByCustomizationType(
-		customizationType: IThemeCustomization["customizationType"],
-	): Promise<IThemeCustomization[]>;
-	findByThemeAndType(
-		themeId: string,
-		customizationType: IThemeCustomization["customizationType"],
-	): Promise<IThemeCustomization | null>;
+	findMany(params: {
+		themeId?: string;
+		customizationType?: IThemeCustomization["customizationType"];
+	}): Promise<IThemeCustomization[]>;
 	create(
 		customizationData: IInsertThemeCustomization,
 	): Promise<IThemeCustomization>;

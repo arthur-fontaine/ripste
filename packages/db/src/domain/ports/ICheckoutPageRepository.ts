@@ -6,12 +6,16 @@ import type {
 export interface ICheckoutPageRepository {
 	findById(id: string): Promise<ICheckoutPage | null>;
 	findByUri(uri: string): Promise<ICheckoutPage | null>;
-	findByTransactionId(transactionId: string): Promise<ICheckoutPage[]>;
-	findByThemeId(themeId: string): Promise<ICheckoutPage[]>;
-	findExpiredPages(): Promise<ICheckoutPage[]>;
-	findAccessedPages(fromDate?: Date, toDate?: Date): Promise<ICheckoutPage[]>;
-	findCompletedPages(fromDate?: Date, toDate?: Date): Promise<ICheckoutPage[]>;
-	findPendingPages(): Promise<ICheckoutPage[]>;
+	findMany(params: {
+		transactionId?: string;
+		themeId?: string;
+		expired?: boolean;
+		accessed?: boolean;
+		completed?: boolean;
+		pending?: boolean;
+		fromDate?: Date;
+		toDate?: Date;
+	}): Promise<ICheckoutPage[]>;
 	markAsAccessed(id: string): Promise<ICheckoutPage>;
 	markAsCompleted(id: string): Promise<ICheckoutPage>;
 	create(pageData: IInsertCheckoutPage): Promise<ICheckoutPage>;
