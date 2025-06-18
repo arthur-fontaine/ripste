@@ -15,9 +15,9 @@ export interface IUser {
 	deletedAt: Date | null;
 
 	profile: IUserProfile | null;
-	storeMembers: IStoreMember[] | null;
-	createdCredentials: IApiCredential[] | null;
-	initiatedRefunds: IRefund[] | null;
+	storeMembers: IStoreMember[];
+	createdCredentials: IApiCredential[];
+	initiatedRefunds: IRefund[];
 }
 
 export type IInsertUser = Insertable<

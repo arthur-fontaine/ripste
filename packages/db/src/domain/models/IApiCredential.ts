@@ -14,12 +14,13 @@ export interface IApiCredential {
 	createdAt: Date;
 	expiresAt: Date | null;
 	lastUsedAt: Date | null;
+	deletedAt: Date | null;
 
 	store: IStore | null;
 	createdByUser: IUser | null;
 	jwtToken: IJwtToken | null;
 	oauth2Client: IOAuth2Client | null;
-	transactions: ITransaction[] | null;
+	transactions: ITransaction[];
 }
 
 export type IInsertApiCredential = Insertable<

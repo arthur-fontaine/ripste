@@ -7,6 +7,7 @@ export interface IStoreMember {
 	permissionLevel: "owner";
 	createdAt: Date;
 	updatedAt: Date | null;
+	deletedAt: Date | null;
 
 	user: IUser;
 	store: IStore;

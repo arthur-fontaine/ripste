@@ -7,13 +7,14 @@ export interface IThemeCustomization {
 	content: string | null;
 	createdAt: Date;
 	updatedAt: Date | null;
+	deletedAt: Date | null;
 
-	theme: ICheckoutTheme | null;
+	theme: ICheckoutTheme;
 }
 
 export type IInsertThemeCustomization = Insertable<
 	IThemeCustomization,
 	"theme"
 > & {
-	themeId?: ICheckoutTheme["id"] | null;
+	themeId: ICheckoutTheme["id"];
 };

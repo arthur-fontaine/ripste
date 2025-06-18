@@ -14,13 +14,14 @@ export interface IStore {
 	contactPhone: string | null;
 	createdAt: Date;
 	updatedAt: Date | null;
+	deletedAt: Date | null;
 
 	company: ICompany | null;
-	storeMembers: IStoreMember[] | null;
-	storeStatuses: IStoreStatus[] | null;
-	apiCredentials: IApiCredential[] | null;
-	checkoutThemes: ICheckoutTheme[] | null;
-	transactions: ITransaction[] | null;
+	storeMembers: IStoreMember[];
+	storeStatuses: IStoreStatus[];
+	apiCredentials: IApiCredential[];
+	checkoutThemes: ICheckoutTheme[];
+	transactions: ITransaction[];
 }
 
 export type IInsertStore = Insertable<

@@ -9,9 +9,10 @@ export interface IPaymentAttempt {
 	customerIp: string | null;
 	customerData: Record<string, string> | null;
 	attemptedAt: Date;
+	deletedAt: Date | null;
 
-	transaction: ITransaction | null;
-	paymentMethod: IPaymentMethod | null;
+	transaction: ITransaction;
+	paymentMethod: IPaymentMethod;
 }
 
 export type IInsertPaymentAttempt = Insertable<

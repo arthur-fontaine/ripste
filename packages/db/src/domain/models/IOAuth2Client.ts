@@ -7,10 +7,11 @@ export interface IOAuth2Client {
 	clientSecretHash: string;
 	redirectUris: string[];
 	scopes: string[];
+	deletedAt: Date | null;
 
-	credential: IApiCredential | null;
+	credential: IApiCredential;
 }
 
 export type IInsertOAuth2Client = Insertable<IOAuth2Client, "credential"> & {
-	credentialId?: IApiCredential["id"] | null;
+	credentialId: IApiCredential["id"];
 };

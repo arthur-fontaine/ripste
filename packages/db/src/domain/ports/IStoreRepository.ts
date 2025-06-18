@@ -10,12 +10,13 @@ export interface IStoreRepository {
 	create(storeData: IInsertStore): Promise<IStore>;
 	update(id: string, storeData: IInsertStore): Promise<IStore>;
 	delete(id: string): Promise<void>;
-	getStatus(params: {
+	getStatuses(params: {
 		storeId?: string;
 		changedByUserId?: string;
 		status?: IStoreStatus["status"];
 		limit?: number;
 	}): Promise<IStoreStatus[]>;
+	getLastStatus(storeId: string): Promise<IStoreStatus | null>;
 	addStatus(statusData: IInsertStoreStatus): Promise<IStoreStatus>;
 	updateStatus(
 		id: string,

@@ -5,10 +5,11 @@ export interface IJwtToken {
 	id: string;
 	tokenHash: string;
 	permissions: string[];
+	deletedAt: Date | null;
 
-	credential: IApiCredential | null;
+	credential: IApiCredential;
 }
 
 export type IInsertJwtToken = Insertable<IJwtToken, "credential"> & {
-	credentialId?: IApiCredential["id"] | null;
+	credentialId: IApiCredential["id"];
 };

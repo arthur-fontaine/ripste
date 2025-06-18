@@ -5,25 +5,26 @@ import type { ITransaction } from "./ITransaction.ts";
 export interface ICheckoutPage {
 	id: string;
 	uri: string;
-	redirectSuccessUrl: string;
+	redirectSuccessUrl: string | null;
 	redirectCancelUrl: string | null;
-	displayData: CheckoutDisplayData | null;
+	displayData: CheckoutDisplayData;
 	expiresAt: Date | null;
 	createdAt: Date;
 	accessedAt: Date | null;
 	completedAt: Date | null;
+	deletedAt: Date | null;
 
-	transaction: ITransaction | null;
-	theme: ICheckoutTheme | null;
+	transaction: ITransaction;
+	theme: ICheckoutTheme;
 }
 
 export type IInsertCheckoutPage = Insertable<
 	ICheckoutPage,
 	"transaction" | "theme" | "displayData"
 > & {
-	transactionId: ITransaction["id"] | null;
-	themeId: ICheckoutTheme["id"] | null;
-	displayData: CheckoutDisplayData | null;
+	transactionId: ITransaction["id"];
+	themeId: ICheckoutTheme["id"];
+	displayData: CheckoutDisplayData;
 };
 
 export interface CheckoutDisplayData {
