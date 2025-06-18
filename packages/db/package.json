@@ -1,0 +1,16 @@
+{
+	"name": "@ripste/db",
+	"version": "1.0.0",
+	"type": "module",
+	"main": "src/index.ts",
+	"author": "",
+	"license": "ISC",
+	"description": "Database models and interfaces for Ripste",
+	"dependencies": {
+		"@mikro-orm/core": "^6.4.16",
+		"@mikro-orm/postgresql": "^6.4.16"
+	},
+	"devDependencies": {
+		"@ripste/tsconfig": "workspace:*"
+	}
+}
