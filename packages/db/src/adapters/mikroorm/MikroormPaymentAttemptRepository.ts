@@ -1,41 +1,33 @@
-import type { EntityManager, FilterQuery } from "@mikro-orm/core";
+import type { FilterQuery } from "@mikro-orm/core";
 import type { IPaymentAttemptRepository } from "../../domain/ports/IPaymentAttemptRepository.ts";
 import type { IPaymentAttempt } from "../../domain/models/IPaymentAttempt.ts";
 import { PaymentAttemptModel } from "./models/PaymentAttemptModel.ts";
 import { TransactionModel } from "./models/TransactionModel.ts";
 import { PaymentMethodModel } from "./models/PaymentMethodModel.ts";
+import * as RepoUtils from "./BaseMikroormRepository.ts";
 
-interface IMikroormPaymentAttemptRepositoryOptions {
-	em: EntityManager;
-}
+const POPULATE_FIELDS = ["transaction", "paymentMethod"] as const;
 
 export class MikroormPaymentAttemptRepository
 	implements IPaymentAttemptRepository
 {
-	private options: IMikroormPaymentAttemptRepositoryOptions;
+	private options: RepoUtils.IMikroormRepositoryOptions;
 
-	constructor(options: IMikroormPaymentAttemptRepositoryOptions) {
+	constructor(options: RepoUtils.IMikroormRepositoryOptions) {
 		this.options = options;
 	}
 
 	findById: IPaymentAttemptRepository["findById"] = async (id) => {
-		const attempt = await this.options.em.findOne(
+		return RepoUtils.findById(
+			this.options.em,
 			PaymentAttemptModel,
-			{
-				id,
-				deletedAt: null,
-			},
-			{
-				populate: ["transaction", "paymentMethod"],
-			},
+			id,
+			POPULATE_FIELDS,
 		);
-		return attempt;
 	};
 
 	findMany: IPaymentAttemptRepository["findMany"] = async (params) => {
-		const whereClause: FilterQuery<PaymentAttemptModel> = {
-			deletedAt: null,
-		};
+		const whereClause: FilterQuery<PaymentAttemptModel> = {};
 
 		if (params.transactionId)
 			whereClause.transaction = { id: params.transactionId };
@@ -49,9 +41,9 @@ export class MikroormPaymentAttemptRepository
 
 		const attempts = await this.options.em.find(
 			PaymentAttemptModel,
-			whereClause,
+			{ ...whereClause, deletedAt: null },
 			{
-				populate: ["transaction", "paymentMethod"],
+				populate: POPULATE_FIELDS,
 				orderBy: { attemptedAt: "DESC" },
 			},
 		);

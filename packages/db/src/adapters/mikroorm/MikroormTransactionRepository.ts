@@ -1,43 +1,36 @@
-import type { EntityManager, FilterQuery } from "@mikro-orm/core";
+import type { FilterQuery } from "@mikro-orm/core";
 import type { ITransactionRepository } from "../../domain/ports/ITransactionRepository.ts";
-import type { ITransaction } from "../../domain/models/ITransaction.ts";
 import type { ITransactionEvent } from "../../domain/models/ITransactionEvent.ts";
 import { TransactionModel } from "./models/TransactionModel.ts";
 import { StoreModel } from "./models/StoreModel.ts";
 import { ApiCredentialModel } from "./models/ApiCredentialModel.ts";
 import { TransactionEventModel } from "./models/TransactionEventModel.ts";
+import * as RepoUtils from "./BaseMikroormRepository.ts";
 
-interface IMikroormTransactionRepositoryOptions {
-	em: EntityManager;
-}
+const POPULATE_FIELDS = [
+	"store",
+	"apiCredential",
+	"transactionEvents",
+	"paymentMethods",
+	"checkoutPages",
+	"paymentAttempts",
+	"refunds",
+] as const;
 
 export class MikroormTransactionRepository implements ITransactionRepository {
-	private options: IMikroormTransactionRepositoryOptions;
+	private options: RepoUtils.IMikroormRepositoryOptions;
 
-	constructor(options: IMikroormTransactionRepositoryOptions) {
+	constructor(options: RepoUtils.IMikroormRepositoryOptions) {
 		this.options = options;
 	}
 
 	findById: ITransactionRepository["findById"] = async (id) => {
-		const transaction = await this.options.em.findOne(
+		return await RepoUtils.findById(
+			this.options.em,
 			TransactionModel,
-			{
-				id,
-				deletedAt: null,
-			},
-			{
-				populate: [
-					"store",
-					"apiCredential",
-					"transactionEvents",
-					"paymentMethods",
-					"checkoutPages",
-					"paymentAttempts",
-					"refunds",
-				],
-			},
+			id,
+			POPULATE_FIELDS,
 		);
-		return transaction;
 	};
 
 	findMany: ITransactionRepository["findMany"] = async (params) => {
@@ -72,25 +65,21 @@ export class MikroormTransactionRepository implements ITransactionRepository {
 	};
 
 	create: ITransactionRepository["create"] = async (transactionData) => {
-		const store = await this.options.em.findOne(StoreModel, {
-			id: transactionData.storeId,
-			deletedAt: null,
-		});
-		if (!store) {
-			throw new Error(`Store with id ${transactionData.storeId} not found`);
-		}
+		const store = await RepoUtils.findRelatedEntity(
+			this.options.em,
+			StoreModel,
+			transactionData.storeId,
+			"Store",
+		);
 
 		let apiCredential: ApiCredentialModel | null = null;
 		if (transactionData.apiCredentialId) {
-			apiCredential = await this.options.em.findOne(ApiCredentialModel, {
-				id: transactionData.apiCredentialId,
-				deletedAt: null,
-			});
-			if (!apiCredential) {
-				throw new Error(
-					`ApiCredential with id ${transactionData.apiCredentialId} not found`,
-				);
-			}
+			apiCredential = await RepoUtils.findRelatedEntity(
+				this.options.em,
+				ApiCredentialModel,
+				transactionData.apiCredentialId,
+				"ApiCredential",
+			);
 		}
 
 		const transactionModel = new TransactionModel({
@@ -109,69 +98,49 @@ export class MikroormTransactionRepository implements ITransactionRepository {
 	};
 
 	update: ITransactionRepository["update"] = async (id, transactionData) => {
-		const transaction = await this.options.em.findOne(TransactionModel, {
-			id,
-			deletedAt: null,
-		});
-		if (!transaction) {
-			throw new Error(`Transaction with id ${id} not found`);
-		}
+		const updateData: Record<string, unknown> = {};
 
 		if (transactionData.storeId !== undefined) {
-			const store = await this.options.em.findOne(StoreModel, {
-				id: transactionData.storeId,
-				deletedAt: null,
-			});
-			if (!store) {
-				throw new Error(`Store with id ${transactionData.storeId} not found`);
-			}
-			transaction.store = store;
+			const store = await RepoUtils.findRelatedEntity(
+				this.options.em,
+				StoreModel,
+				transactionData.storeId,
+				"Store",
+			);
+			updateData["store"] = store;
 		}
 
 		if (transactionData.apiCredentialId !== undefined) {
 			if (transactionData.apiCredentialId === null) {
-				transaction.apiCredential = null;
-				transaction.apiCredentialId = null;
+				updateData["apiCredential"] = null;
+				updateData["apiCredentialId"] = null;
 			} else {
-				const apiCredential = await this.options.em.findOne(
+				const apiCredential = await RepoUtils.findRelatedEntity(
+					this.options.em,
 					ApiCredentialModel,
-					{
-						id: transactionData.apiCredentialId,
-						deletedAt: null,
-					},
+					transactionData.apiCredentialId,
+					"ApiCredential",
 				);
-				if (!apiCredential) {
-					throw new Error(
-						`ApiCredential with id ${transactionData.apiCredentialId} not found`,
-					);
-				}
-				transaction.apiCredential = apiCredential;
-				transaction.apiCredentialId = transactionData.apiCredentialId;
+				updateData["apiCredential"] = apiCredential;
+				updateData["apiCredentialId"] = transactionData.apiCredentialId;
 			}
 		}
 
-		const { storeId, apiCredentialId, paymentMethodId, ...updateData } =
+		const { storeId, apiCredentialId, paymentMethodId, ...otherData } =
 			transactionData;
-		const filteredUpdateData = Object.fromEntries(
-			Object.entries(updateData).filter(([_, value]) => value !== undefined),
-		);
+		Object.assign(updateData, RepoUtils.filterUpdateData(otherData));
 
-		this.options.em.assign(transaction, filteredUpdateData);
-		await this.options.em.flush();
-		return transaction as ITransaction;
+		return await RepoUtils.updateEntity(
+			this.options.em,
+			TransactionModel,
+			id,
+			updateData,
+			POPULATE_FIELDS,
+		);
 	};
 
 	delete: ITransactionRepository["delete"] = async (id) => {
-		const transaction = await this.options.em.findOne(TransactionModel, {
-			id,
-			deletedAt: null,
-		});
-		if (!transaction) {
-			return;
-		}
-
-		transaction.deletedAt = new Date();
-		await this.options.em.flush();
+		await RepoUtils.deleteEntity(this.options.em, TransactionModel, id);
 	};
 
 	recordEvent: ITransactionRepository["recordEvent"] = async (eventData) => {

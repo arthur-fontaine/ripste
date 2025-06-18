@@ -3,10 +3,20 @@ import type { IApiCredentialRepository } from "../../domain/ports/IApiCredential
 import { ApiCredentialModel } from "./models/ApiCredentialModel.ts";
 import { StoreModel } from "./models/StoreModel.ts";
 import { UserModel } from "./models/UserModel.ts";
+import type { IApiCredential } from "../../domain/models/IApiCredential.ts";
+import * as RepoUtils from "./BaseMikroormRepository.ts";
 
 interface IMikroormApiCredentialRepositoryOptions {
 	em: EntityManager;
 }
+
+const POPULATE_FIELDS = [
+	"store",
+	"createdByUser",
+	"jwtToken",
+	"oauth2Client",
+	"transactions",
+] as const;
 
 export class MikroormApiCredentialRepository
 	implements IApiCredentialRepository
@@ -18,31 +28,19 @@ export class MikroormApiCredentialRepository
 	}
 
 	findById: IApiCredentialRepository["findById"] = async (id) => {
-		const credential = await this.options.em.findOne(
+		return RepoUtils.findById<IApiCredential, ApiCredentialModel>(
+			this.options.em,
 			ApiCredentialModel,
-			{ id, deletedAt: null },
-			{
-				populate: [
-					"store",
-					"createdByUser",
-					"jwtToken",
-					"oauth2Client",
-					"transactions",
-				],
-			},
+			id,
+			POPULATE_FIELDS,
 		);
-		return credential;
 	};
 
 	findMany: IApiCredentialRepository["findMany"] = async (params) => {
-		const whereClause: FilterQuery<ApiCredentialModel> = {
-			deletedAt: null,
-		};
+		const whereClause: FilterQuery<ApiCredentialModel> = {};
 
 		if (params.storeId) whereClause.store = { id: params.storeId };
-
 		if (params.userId) whereClause.createdByUser = { id: params.userId };
-
 		if (params.credentialType)
 			whereClause.credentialType = params.credentialType;
 
@@ -70,20 +68,12 @@ export class MikroormApiCredentialRepository
 			}
 		}
 
-		const credentials = await this.options.em.find(
+		return RepoUtils.findMany<IApiCredential, ApiCredentialModel>(
+			this.options.em,
 			ApiCredentialModel,
 			whereClause,
-			{
-				populate: [
-					"store",
-					"createdByUser",
-					"jwtToken",
-					"oauth2Client",
-					"transactions",
-				],
-			},
+			POPULATE_FIELDS,
 		);
-		return credentials;
 	};
 
 	updateLastUsedAt: IApiCredentialRepository["updateLastUsedAt"] = async (
@@ -103,19 +93,10 @@ export class MikroormApiCredentialRepository
 
 	deactivateCredential: IApiCredentialRepository["deactivateCredential"] =
 		async (id) => {
-			const credential = await this.options.em.findOne(
-				ApiCredentialModel,
-				{ id, deletedAt: null },
-				{
-					populate: [
-						"store",
-						"createdByUser",
-						"jwtToken",
-						"oauth2Client",
-						"transactions",
-					],
-				},
-			);
+			const credential = await RepoUtils.findById<
+				IApiCredential,
+				ApiCredentialModel
+			>(this.options.em, ApiCredentialModel, id, POPULATE_FIELDS);
 			if (!credential) {
 				throw new Error(`ApiCredential with id ${id} not found`);
 			}
@@ -126,23 +107,23 @@ export class MikroormApiCredentialRepository
 		};
 
 	create: IApiCredentialRepository["create"] = async (credentialData) => {
-		const store = await this.options.em.findOne(StoreModel, {
-			id: credentialData.storeId,
-			deletedAt: null,
-		});
-		if (!store) {
-			throw new Error(`Store with id ${credentialData.storeId} not found`);
+		const store = await RepoUtils.findRelatedEntity(
+			this.options.em,
+			StoreModel,
+			credentialData.storeId,
+			"Store",
+		);
+
+		if (!credentialData.createdByUserId) {
+			throw new Error("createdByUserId is required for creating ApiCredential");
 		}
 
-		const createdByUser = await this.options.em.findOne(UserModel, {
-			id: credentialData.createdByUserId,
-			deletedAt: null,
-		});
-		if (!createdByUser) {
-			throw new Error(
-				`User with id ${credentialData.createdByUserId} not found`,
-			);
-		}
+		const createdByUser = await RepoUtils.findRelatedEntity(
+			this.options.em,
+			UserModel,
+			credentialData.createdByUserId,
+			"User",
+		);
 
 		const credentialModel = new ApiCredentialModel({
 			store,
@@ -175,30 +156,28 @@ export class MikroormApiCredentialRepository
 			throw new Error("createdByUserId is required for updating ApiCredential");
 		}
 
-		const store = await this.options.em.findOne(StoreModel, {
-			id: credentialData.storeId,
-			deletedAt: null,
-		});
-		if (!store) {
-			throw new Error(`Store with id ${credentialData.storeId} not found`);
+		if (!credentialData.createdByUserId) {
+			throw new Error("createdByUserId cannot be null");
 		}
+
+		const store = await RepoUtils.findRelatedEntity(
+			this.options.em,
+			StoreModel,
+			credentialData.storeId,
+			"Store",
+		);
 		credential.store = store;
 
-		const user = await this.options.em.findOne(UserModel, {
-			id: credentialData.createdByUserId,
-			deletedAt: null,
-		});
-		if (!user) {
-			throw new Error(
-				`User with id ${credentialData.createdByUserId} not found`,
-			);
-		}
+		const user = await RepoUtils.findRelatedEntity(
+			this.options.em,
+			UserModel,
+			credentialData.createdByUserId,
+			"User",
+		);
 		credential.createdByUser = user;
 
 		const { storeId, createdByUserId, ...updateData } = credentialData;
-		const filteredUpdateData = Object.fromEntries(
-			Object.entries(updateData).filter(([_, value]) => value !== undefined),
-		);
+		const filteredUpdateData = RepoUtils.filterUpdateData(updateData);
 
 		this.options.em.assign(credential, filteredUpdateData);
 		await this.options.em.flush();
@@ -206,16 +185,10 @@ export class MikroormApiCredentialRepository
 	};
 
 	delete: IApiCredentialRepository["delete"] = async (id) => {
-		const credential = await this.options.em.findOne(ApiCredentialModel, {
+		return RepoUtils.deleteEntity<IApiCredential, ApiCredentialModel>(
+			this.options.em,
+			ApiCredentialModel,
 			id,
-			deletedAt: null,
-		});
-		if (!credential) {
-			return;
-		}
-
-		// Soft delete by setting deletedAt timestamp
-		credential.deletedAt = new Date();
-		await this.options.em.flush();
+		);
 	};
 }

@@ -3,6 +3,9 @@ import type { IPaymentMethodRepository } from "../../domain/ports/IPaymentMethod
 import type { IPaymentMethod } from "../../domain/models/IPaymentMethod.ts";
 import { PaymentMethodModel } from "./models/PaymentMethodModel.ts";
 import { TransactionModel } from "./models/TransactionModel.ts";
+import * as RepoUtils from "./BaseMikroormRepository.ts";
+
+const POPULATE_FIELDS = ["transaction", "paymentAttempts"] as const;
 
 interface IMikroormPaymentMethodRepositoryOptions {
 	em: EntityManager;
@@ -18,50 +21,36 @@ export class MikroormPaymentMethodRepository
 	}
 
 	findById: IPaymentMethodRepository["findById"] = async (id) => {
-		const paymentMethod = await this.options.em.findOne(
+		return RepoUtils.findById<IPaymentMethod, PaymentMethodModel>(
+			this.options.em,
 			PaymentMethodModel,
-			{
-				id,
-				deletedAt: null,
-			},
-			{
-				populate: ["transaction", "paymentAttempts"],
-			},
+			id,
+			POPULATE_FIELDS,
 		);
-		return paymentMethod;
 	};
 
 	findMany: IPaymentMethodRepository["findMany"] = async (params) => {
-		const whereClause: FilterQuery<PaymentMethodModel> = {
-			deletedAt: null,
-		};
+		const whereClause: FilterQuery<PaymentMethodModel> = {};
 
 		if (params.transactionId)
 			whereClause["transaction"] = { id: params.transactionId };
-
 		if (params.methodType) whereClause["methodType"] = params.methodType;
 
-		const paymentMethods = await this.options.em.find(
+		return RepoUtils.findMany<IPaymentMethod, PaymentMethodModel>(
+			this.options.em,
 			PaymentMethodModel,
 			whereClause,
-			{
-				populate: ["transaction", "paymentAttempts"],
-				orderBy: { createdAt: "DESC" },
-			},
+			POPULATE_FIELDS,
 		);
-		return paymentMethods;
 	};
 
 	create: IPaymentMethodRepository["create"] = async (methodData) => {
-		const transaction = await this.options.em.findOne(TransactionModel, {
-			deletedAt: null,
-			id: methodData.transactionId,
-		});
-		if (!transaction) {
-			throw new Error(
-				`Transaction with id ${methodData.transactionId} not found`,
-			);
-		}
+		const transaction = await RepoUtils.findRelatedEntity(
+			this.options.em,
+			TransactionModel,
+			methodData.transactionId,
+			"Transaction",
+		);
 
 		const paymentMethodModel = new PaymentMethodModel({
 			methodType: methodData.methodType,
@@ -83,22 +72,17 @@ export class MikroormPaymentMethodRepository
 		}
 
 		if (methodData.transactionId !== undefined) {
-			const transaction = await this.options.em.findOne(TransactionModel, {
-				deletedAt: null,
-				id: methodData.transactionId,
-			});
-			if (!transaction) {
-				throw new Error(
-					`Transaction with id ${methodData.transactionId} not found`,
-				);
-			}
+			const transaction = await RepoUtils.findRelatedEntity(
+				this.options.em,
+				TransactionModel,
+				methodData.transactionId,
+				"Transaction",
+			);
 			paymentMethod.transaction = transaction;
 		}
 
 		const { transactionId, ...updateData } = methodData;
-		const filteredUpdateData = Object.fromEntries(
-			Object.entries(updateData).filter(([_, value]) => value !== undefined),
-		);
+		const filteredUpdateData = RepoUtils.filterUpdateData(updateData);
 
 		this.options.em.assign(paymentMethod, filteredUpdateData);
 		await this.options.em.flush();
@@ -106,16 +90,11 @@ export class MikroormPaymentMethodRepository
 	};
 
 	delete: IPaymentMethodRepository["delete"] = async (id) => {
-		const paymentMethod = await this.options.em.findOne(PaymentMethodModel, {
+		return RepoUtils.deleteEntity<IPaymentMethod, PaymentMethodModel>(
+			this.options.em,
+			PaymentMethodModel,
 			id,
-			deletedAt: null,
-		});
-		if (!paymentMethod) {
-			return;
-		}
-
-		paymentMethod.deletedAt = new Date();
-		await this.options.em.flush();
+		);
 	};
 
 	deleteByTransactionId: IPaymentMethodRepository["deleteByTransactionId"] =

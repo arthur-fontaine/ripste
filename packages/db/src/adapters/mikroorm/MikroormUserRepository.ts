@@ -3,6 +3,9 @@ import type { IUserRepository } from "../../domain/ports/IUserRepository.ts";
 import { UserModel } from "./models/UserModel.ts";
 import type { IUser } from "../../domain/models/IUser.ts";
 import { UserProfileModel } from "./models/UserProfileModel.ts";
+import * as RepoUtils from "./BaseMikroormRepository.ts";
+
+const POPULATE_FIELDS = ["profile"] as const;
 
 interface IMikroormUserRepositoryOptions {
 	em: EntityManager;
@@ -16,36 +19,29 @@ export class MikroormUserRepository implements IUserRepository {
 	}
 
 	findById: IUserRepository["findById"] = async (id) => {
-		const user = await this.options.em.findOne(
+		return RepoUtils.findById<IUser, UserModel>(
+			this.options.em,
 			UserModel,
-			{
-				id,
-				deletedAt: null,
-			},
-			{
-				populate: ["profile"],
-			},
+			id,
+			POPULATE_FIELDS,
 		);
-		return user;
 	};
 
 	findMany: IUserRepository["findMany"] = async (params) => {
-		const whereClause: FilterQuery<UserModel> = {
-			deletedAt: null,
-		};
+		const whereClause: FilterQuery<UserModel> = {};
 
 		if (params.email) whereClause.email = params.email;
-
 		if (params.permissionLevel)
 			whereClause.permissionLevel = params.permissionLevel;
-
 		if (params.emailVerified !== undefined)
 			whereClause.emailVerified = params.emailVerified;
 
-		const users = await this.options.em.find(UserModel, whereClause, {
-			populate: ["profile"],
-		});
-		return users;
+		return RepoUtils.findMany<IUser, UserModel>(
+			this.options.em,
+			UserModel,
+			whereClause,
+			POPULATE_FIELDS,
+		);
 	};
 
 	create: IUserRepository["create"] = async (user) => {
@@ -85,44 +81,24 @@ export class MikroormUserRepository implements IUserRepository {
 	};
 
 	update: IUserRepository["update"] = async (id, userData) => {
-		const user = await this.options.em.findOne(
+		return RepoUtils.updateEntity<IUser, UserModel>(
+			this.options.em,
 			UserModel,
-			{
-				id,
-				deletedAt: null,
-			},
-			{
-				populate: ["profile"],
-			},
+			id,
+			RepoUtils.filterUpdateData(userData),
+			POPULATE_FIELDS,
 		);
-		if (!user) {
-			throw new Error(`User with id ${id} not found`);
-		}
-
-		this.options.em.assign(user, userData);
-		await this.options.em.flush();
-		return user as IUser;
 	};
 
 	delete: IUserRepository["delete"] = async (id) => {
-		const user = await this.options.em.findOne(UserModel, {
+		return RepoUtils.deleteEntity<IUser, UserModel>(
+			this.options.em,
+			UserModel,
 			id,
-			deletedAt: null,
-		});
-		if (!user) {
-			return;
-		}
-
-		user.deletedAt = new Date();
-		await this.options.em.flush();
+		);
 	};
 
 	hardDelete: IUserRepository["hardDelete"] = async (id) => {
-		const user = await this.options.em.findOne(UserModel, { id });
-		if (!user) {
-			return;
-		}
-
-		await this.options.em.removeAndFlush(user);
+		return RepoUtils.hardDeleteEntity(this.options.em, UserModel, id);
 	};
 }

@@ -1,36 +1,30 @@
-import type { EntityManager, FilterQuery } from "@mikro-orm/core";
 import type { IRefundRepository } from "../../domain/ports/IRefundRepository.ts";
-import type { IRefund } from "../../domain/models/IRefund.ts";
 import { RefundModel } from "./models/RefundModel.ts";
 import { TransactionModel } from "./models/TransactionModel.ts";
 import { UserModel } from "./models/UserModel.ts";
+import * as RepoUtils from "./BaseMikroormRepository.ts";
+import type { FilterQuery } from "@mikro-orm/core";
 
-interface IMikroormRefundRepositoryOptions {
-	em: EntityManager;
-}
+const POPULATE_FIELDS = ["transaction", "initiatedByUser"] as const;
 
 export class MikroormRefundRepository implements IRefundRepository {
-	private options: IMikroormRefundRepositoryOptions;
+	private options: RepoUtils.IMikroormRepositoryOptions;
 
-	constructor(options: IMikroormRefundRepositoryOptions) {
+	constructor(options: RepoUtils.IMikroormRepositoryOptions) {
 		this.options = options;
 	}
 
 	findById: IRefundRepository["findById"] = async (id) => {
-		const refund = await this.options.em.findOne(
+		return await RepoUtils.findById(
+			this.options.em,
 			RefundModel,
-			{ id, deletedAt: null },
-			{
-				populate: ["transaction", "initiatedByUser"],
-			},
+			id,
+			POPULATE_FIELDS,
 		);
-		return refund;
 	};
 
 	findMany: IRefundRepository["findMany"] = async (params) => {
-		const whereClause: FilterQuery<RefundModel> = {
-			deletedAt: null,
-		};
+		const whereClause: FilterQuery<RefundModel> = {};
 
 		if (params.transactionId)
 			whereClause.transaction = { id: params.transactionId };
@@ -40,10 +34,12 @@ export class MikroormRefundRepository implements IRefundRepository {
 
 		if (params.status) whereClause.status = params.status;
 
-		const refunds = await this.options.em.find(RefundModel, whereClause, {
-			populate: ["transaction", "initiatedByUser"],
-		});
-		return refunds;
+		return await RepoUtils.findMany(
+			this.options.em,
+			RefundModel,
+			whereClause,
+			POPULATE_FIELDS,
+		);
 	};
 
 	getTotalRefundedAmount: IRefundRepository["getTotalRefundedAmount"] = async (
@@ -54,30 +50,28 @@ export class MikroormRefundRepository implements IRefundRepository {
 			status: "completed",
 		});
 
-		return refunds.reduce((total, refund) => total + refund.amount, 0);
+		return refunds.reduce(
+			(total: number, refund: RefundModel) => total + refund.amount,
+			0,
+		);
 	};
 
 	create: IRefundRepository["create"] = async (refundData) => {
-		const transaction = await this.options.em.findOne(TransactionModel, {
-			deletedAt: null,
-			id: refundData.transactionId,
-		});
-		if (!transaction) {
-			throw new Error(
-				`Transaction with id ${refundData.transactionId} not found`,
-			);
-		}
+		const transaction = await RepoUtils.findRelatedEntity(
+			this.options.em,
+			TransactionModel,
+			refundData.transactionId,
+			"Transaction",
+		);
 
 		let initiatedByUser: UserModel | null = null;
 		if (refundData.initiatedByUserId) {
-			initiatedByUser = await this.options.em.findOne(UserModel, {
-				id: refundData.initiatedByUserId,
-			});
-			if (!initiatedByUser) {
-				throw new Error(
-					`User with id ${refundData.initiatedByUserId} not found`,
-				);
-			}
+			initiatedByUser = await RepoUtils.findRelatedEntity(
+				this.options.em,
+				UserModel,
+				refundData.initiatedByUserId,
+				"User",
+			);
 		}
 
 		const refundModel = new RefundModel({
@@ -94,69 +88,45 @@ export class MikroormRefundRepository implements IRefundRepository {
 	};
 
 	update: IRefundRepository["update"] = async (id, refundData) => {
-		const refund = await this.options.em.findOne(RefundModel, {
-			id,
-			deletedAt: null,
-		});
-		if (!refund) {
-			throw new Error(`Refund with id ${id} not found`);
-		}
-
-		const relationUpdates: Partial<RefundModel> = {};
+		const updateData: Record<string, unknown> = {};
 
 		if (refundData.transactionId !== undefined) {
-			const transaction = await this.options.em.findOne(TransactionModel, {
-				deletedAt: null,
-				id: refundData.transactionId,
-			});
-			if (!transaction) {
-				throw new Error(
-					`Transaction with id ${refundData.transactionId} not found`,
-				);
-			}
-			relationUpdates.transaction = transaction;
+			const transaction = await RepoUtils.findRelatedEntity(
+				this.options.em,
+				TransactionModel,
+				refundData.transactionId,
+				"Transaction",
+			);
+			updateData["transaction"] = transaction;
 		}
 
 		if (refundData.initiatedByUserId !== undefined) {
 			if (refundData.initiatedByUserId === null) {
-				relationUpdates.initiatedByUser = null;
+				updateData["initiatedByUser"] = null;
 			} else {
-				const user = await this.options.em.findOne(UserModel, {
-					id: refundData.initiatedByUserId,
-				});
-				if (!user) {
-					throw new Error(
-						`User with id ${refundData.initiatedByUserId} not found`,
-					);
-				}
-				relationUpdates.initiatedByUser = user;
+				const user = await RepoUtils.findRelatedEntity(
+					this.options.em,
+					UserModel,
+					refundData.initiatedByUserId,
+					"User",
+				);
+				updateData["initiatedByUser"] = user;
 			}
 		}
 
-		const { transactionId, initiatedByUserId, ...updateData } = refundData;
-		const filteredUpdateData = Object.fromEntries(
-			Object.entries(updateData).filter(([_, value]) => value !== undefined),
-		);
+		const { transactionId, initiatedByUserId, ...otherData } = refundData;
+		Object.assign(updateData, RepoUtils.filterUpdateData(otherData));
 
-		this.options.em.assign(refund, {
-			...filteredUpdateData,
-			...relationUpdates,
-		});
-		await this.options.em.flush();
-		return refund as IRefund;
+		return await RepoUtils.updateEntity(
+			this.options.em,
+			RefundModel,
+			id,
+			updateData,
+			POPULATE_FIELDS,
+		);
 	};
 
 	delete: IRefundRepository["delete"] = async (id) => {
-		const refund = await this.options.em.findOne(RefundModel, {
-			id,
-			deletedAt: null,
-		});
-		if (!refund) {
-			return;
-		}
-
-		// Soft delete by setting deletedAt timestamp
-		refund.deletedAt = new Date();
-		await this.options.em.flush();
+		await RepoUtils.deleteEntity(this.options.em, RefundModel, id);
 	};
 }
