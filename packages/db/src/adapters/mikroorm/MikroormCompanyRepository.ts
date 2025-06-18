@@ -17,7 +17,7 @@ export class MikroormCompanyRepository implements ICompanyRepository {
 	findById: ICompanyRepository["findById"] = async (id) => {
 		const company = await this.options.em.findOne(
 			CompanyModel,
-			{ 
+			{
 				id,
 				deletedAt: null,
 			},
@@ -39,13 +39,9 @@ export class MikroormCompanyRepository implements ICompanyRepository {
 			deletedAt: null,
 		};
 
-		if (params.kbis) {
-			whereClause.kbis = params.kbis;
-		}
+		if (params.kbis) whereClause.kbis = params.kbis;
 
-		if (params.vatNumber) {
-			whereClause.vatNumber = params.vatNumber;
-		}
+		if (params.vatNumber) whereClause.vatNumber = params.vatNumber;
 
 		const companies = await this.options.em.find(CompanyModel, whereClause, {
 			populate: ["stores"],
@@ -67,7 +63,7 @@ export class MikroormCompanyRepository implements ICompanyRepository {
 	};
 
 	update: ICompanyRepository["update"] = async (id, companyData) => {
-		const company = await this.options.em.findOne(CompanyModel, { 
+		const company = await this.options.em.findOne(CompanyModel, {
 			id,
 			deletedAt: null,
 		});
@@ -84,7 +80,7 @@ export class MikroormCompanyRepository implements ICompanyRepository {
 	};
 
 	delete: ICompanyRepository["delete"] = async (id) => {
-		const company = await this.options.em.findOne(CompanyModel, { 
+		const company = await this.options.em.findOne(CompanyModel, {
 			id,
 			deletedAt: null,
 		});

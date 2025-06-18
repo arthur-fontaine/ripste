@@ -39,9 +39,7 @@ export class MikroormStoreRepository implements IStoreRepository {
 			deletedAt: null,
 		};
 
-		if (params.companyId) {
-			whereClause.company = { id: params.companyId };
-		}
+		if (params.companyId) whereClause.company = { id: params.companyId };
 
 		const stores = await this.options.em.find(StoreModel, whereClause, {
 			populate: ["company"],
@@ -107,7 +105,7 @@ export class MikroormStoreRepository implements IStoreRepository {
 	};
 
 	delete: IStoreRepository["delete"] = async (id) => {
-		const store = await this.options.em.findOne(StoreModel, { 
+		const store = await this.options.em.findOne(StoreModel, {
 			id,
 			deletedAt: null,
 		});
@@ -132,17 +130,12 @@ export class MikroormStoreRepository implements IStoreRepository {
 			deletedAt: null,
 		};
 
-		if (params.storeId) {
-			whereClause.store = { id: params.storeId };
-		}
+		if (params.storeId) whereClause.store = { id: params.storeId };
 
-		if (params.changedByUserId) {
+		if (params.changedByUserId)
 			whereClause.changedByUser = { id: params.changedByUserId };
-		}
 
-		if (params.status) {
-			whereClause.status = params.status;
-		}
+		if (params.status) whereClause.status = params.status;
 
 		const options = {
 			populate: ["store", "changedByUser"] as const,
@@ -195,7 +188,7 @@ export class MikroormStoreRepository implements IStoreRepository {
 	};
 
 	updateStatus: IStoreRepository["updateStatus"] = async (id, statusData) => {
-		const storeStatus = await this.options.em.findOne(StoreStatusModel, { 
+		const storeStatus = await this.options.em.findOne(StoreStatusModel, {
 			id,
 			deletedAt: null,
 		});
@@ -244,20 +237,20 @@ export class MikroormStoreRepository implements IStoreRepository {
 	getLastStatus: IStoreRepository["getLastStatus"] = async (storeId) => {
 		const storeStatus = await this.options.em.findOne(
 			StoreStatusModel,
-			{ 
+			{
 				store: { id: storeId },
 				deletedAt: null,
 			},
-			{ 
+			{
 				orderBy: { createdAt: "DESC" },
 				populate: ["store", "changedByUser"],
-			}
+			},
 		);
 		return storeStatus;
 	};
 
 	deleteStatus: IStoreRepository["deleteStatus"] = async (id) => {
-		const storeStatus = await this.options.em.findOne(StoreStatusModel, { 
+		const storeStatus = await this.options.em.findOne(StoreStatusModel, {
 			id,
 			deletedAt: null,
 		});

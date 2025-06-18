@@ -39,17 +39,13 @@ export class MikroormRefundRepository implements IRefundRepository {
 			deletedAt: null,
 		};
 
-		if (params.transactionId) {
+		if (params.transactionId)
 			whereClause.transaction = { id: params.transactionId };
-		}
 
-		if (params.initiatedByUserId) {
+		if (params.initiatedByUserId)
 			whereClause.initiatedByUser = { id: params.initiatedByUserId };
-		}
 
-		if (params.status) {
-			whereClause.status = params.status;
-		}
+		if (params.status) whereClause.status = params.status;
 
 		const refunds = await this.options.em.find(RefundModel, whereClause, {
 			populate: ["transaction", "initiatedByUser"],
@@ -105,7 +101,7 @@ export class MikroormRefundRepository implements IRefundRepository {
 	};
 
 	update: IRefundRepository["update"] = async (id, refundData) => {
-		const refund = await this.options.em.findOne(RefundModel, { 
+		const refund = await this.options.em.findOne(RefundModel, {
 			id,
 			deletedAt: null,
 		});
@@ -117,7 +113,7 @@ export class MikroormRefundRepository implements IRefundRepository {
 
 		if (refundData.transactionId !== undefined) {
 			const transaction = await this.options.em.findOne(TransactionModel, {
-			deletedAt: null,
+				deletedAt: null,
 				id: refundData.transactionId,
 			});
 			if (!transaction) {
@@ -158,7 +154,7 @@ export class MikroormRefundRepository implements IRefundRepository {
 	};
 
 	delete: IRefundRepository["delete"] = async (id) => {
-		const refund = await this.options.em.findOne(RefundModel, { 
+		const refund = await this.options.em.findOne(RefundModel, {
 			id,
 			deletedAt: null,
 		});

@@ -49,17 +49,12 @@ export class MikroormApiCredentialRepository
 			deletedAt: null,
 		};
 
-		if (params.storeId) {
-			whereClause.store = { id: params.storeId };
-		}
+		if (params.storeId) whereClause.store = { id: params.storeId };
 
-		if (params.userId) {
-			whereClause.createdByUser = { id: params.userId };
-		}
+		if (params.userId) whereClause.createdByUser = { id: params.userId };
 
-		if (params.credentialType) {
+		if (params.credentialType)
 			whereClause.credentialType = params.credentialType;
-		}
 
 		if (params.active !== undefined) {
 			if (params.active) {

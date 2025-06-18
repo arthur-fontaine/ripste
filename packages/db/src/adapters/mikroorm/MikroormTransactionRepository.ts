@@ -21,7 +21,7 @@ export class MikroormTransactionRepository implements ITransactionRepository {
 	findById: ITransactionRepository["findById"] = async (id) => {
 		const transaction = await this.options.em.findOne(
 			TransactionModel,
-			{ 
+			{
 				id,
 				deletedAt: null,
 			},
@@ -51,13 +51,9 @@ export class MikroormTransactionRepository implements ITransactionRepository {
 			deletedAt: null,
 		};
 
-		if (params.storeId) {
-			whereClause.store = { id: params.storeId };
-		}
+		if (params.storeId) whereClause.store = { id: params.storeId };
 
-		if (params.reference) {
-			whereClause.reference = params.reference;
-		}
+		if (params.reference) whereClause.reference = params.reference;
 
 		const options = {
 			populate: [
@@ -172,7 +168,7 @@ export class MikroormTransactionRepository implements ITransactionRepository {
 	};
 
 	delete: ITransactionRepository["delete"] = async (id) => {
-		const transaction = await this.options.em.findOne(TransactionModel, { 
+		const transaction = await this.options.em.findOne(TransactionModel, {
 			id,
 			deletedAt: null,
 		});
@@ -220,7 +216,7 @@ export class MikroormTransactionRepository implements ITransactionRepository {
 
 		if (eventData.transactionId !== undefined) {
 			const transaction = await this.options.em.findOne(TransactionModel, {
-			deletedAt: null,
+				deletedAt: null,
 				id: eventData.transactionId,
 			});
 			if (!transaction) {
@@ -254,13 +250,10 @@ export class MikroormTransactionRepository implements ITransactionRepository {
 			deletedAt: null,
 		};
 
-		if (params.transactionId) {
+		if (params.transactionId)
 			whereClause.transaction = { id: params.transactionId };
-		}
 
-		if (params.eventType) {
-			whereClause.eventType = params.eventType;
-		}
+		if (params.eventType) whereClause.eventType = params.eventType;
 
 		if (params.eventTypes && params.eventTypes.length > 0) {
 			whereClause.$or = params.eventTypes.map((eventType) => ({ eventType }));
@@ -293,7 +286,7 @@ export class MikroormTransactionRepository implements ITransactionRepository {
 	findEventById: ITransactionRepository["findEventById"] = async (id) => {
 		const transactionEvent = await this.options.em.findOne(
 			TransactionEventModel,
-			{ 
+			{
 				id,
 				deletedAt: null,
 			},
@@ -307,7 +300,7 @@ export class MikroormTransactionRepository implements ITransactionRepository {
 	deleteEvent: ITransactionRepository["deleteEvent"] = async (id) => {
 		const transactionEvent = await this.options.em.findOne(
 			TransactionEventModel,
-			{ 
+			{
 				id,
 				deletedAt: null,
 			},

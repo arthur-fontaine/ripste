@@ -29,7 +29,7 @@ export class UserProfileModel extends BaseModel implements IUserProfile {
 		firstName,
 		lastName,
 		phone = null,
-	}: Pick<UserProfileModel, "firstName" | "lastName"> & 
+	}: Pick<UserProfileModel, "firstName" | "lastName"> &
 		Partial<Pick<UserProfileModel, "phone">>) {
 		super();
 		this.firstName = firstName;

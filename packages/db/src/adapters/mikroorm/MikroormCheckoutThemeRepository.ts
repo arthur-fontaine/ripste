@@ -20,7 +20,7 @@ export class MikroormCheckoutThemeRepository
 	findById: ICheckoutThemeRepository["findById"] = async (id) => {
 		const theme = await this.options.em.findOne(
 			CheckoutThemeModel,
-			{ 
+			{
 				id,
 				deletedAt: null,
 			},
@@ -43,17 +43,11 @@ export class MikroormCheckoutThemeRepository
 			deletedAt: null,
 		};
 
-		if (params.storeId) {
-			whereClause.store = { id: params.storeId };
-		}
+		if (params.storeId) whereClause.store = { id: params.storeId };
 
-		if (params.name) {
-			whereClause.name = params.name;
-		}
+		if (params.name) whereClause.name = params.name;
 
-		if (params.version) {
-			whereClause.version = params.version;
-		}
+		if (params.version) whereClause.version = params.version;
 
 		if (params.latestVersion) {
 			if (params.storeId && params.name) {
@@ -122,7 +116,7 @@ export class MikroormCheckoutThemeRepository
 	};
 
 	update: ICheckoutThemeRepository["update"] = async (id, themeData) => {
-		const theme = await this.options.em.findOne(CheckoutThemeModel, { 
+		const theme = await this.options.em.findOne(CheckoutThemeModel, {
 			id,
 			deletedAt: null,
 		});
@@ -152,7 +146,7 @@ export class MikroormCheckoutThemeRepository
 	};
 
 	delete: ICheckoutThemeRepository["delete"] = async (id) => {
-		const theme = await this.options.em.findOne(CheckoutThemeModel, { 
+		const theme = await this.options.em.findOne(CheckoutThemeModel, {
 			id,
 			deletedAt: null,
 		});

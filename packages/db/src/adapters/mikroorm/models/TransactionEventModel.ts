@@ -29,9 +29,7 @@ export class TransactionEventModel
 		eventData,
 		occurredAt = new Date(),
 	}: Pick<TransactionEventModel, "eventType" | "transaction"> &
-		Partial<
-			Pick<TransactionEventModel, "eventData" | "occurredAt">
-		>) {
+		Partial<Pick<TransactionEventModel, "eventData" | "occurredAt">>) {
 		super();
 		this.eventType = eventType;
 		this.eventData = eventData ?? null;
