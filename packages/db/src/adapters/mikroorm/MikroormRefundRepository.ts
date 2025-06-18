@@ -1,4 +1,4 @@
-import type { EntityManager } from "@mikro-orm/core";
+import type { EntityManager, FilterQuery } from "@mikro-orm/core";
 import type { IRefundRepository } from "../../domain/ports/IRefundRepository.ts";
 import type { IRefund } from "../../domain/models/IRefund.ts";
 import { RefundModel } from "./models/RefundModel.ts";
@@ -28,14 +28,7 @@ export class MikroormRefundRepository implements IRefundRepository {
 	};
 
 	findMany: IRefundRepository["findMany"] = async (params) => {
-		interface WhereClause {
-			transaction?: { id: string };
-			initiatedByUser?: { id: string };
-			status?: "pending" | "processing" | "completed" | "failed";
-			deletedAt: null;
-		}
-
-		const whereClause: WhereClause = {
+		const whereClause: FilterQuery<RefundModel> = {
 			deletedAt: null,
 		};
 

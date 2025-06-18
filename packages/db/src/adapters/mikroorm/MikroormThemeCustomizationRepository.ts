@@ -1,4 +1,4 @@
-import type { EntityManager } from "@mikro-orm/core";
+import type { EntityManager, FilterQuery } from "@mikro-orm/core";
 import type { IThemeCustomizationRepository } from "../../domain/ports/IThemeCustomizationRepository.ts";
 import type { IThemeCustomization } from "../../domain/models/IThemeCustomization.ts";
 import { ThemeCustomizationModel } from "./models/ThemeCustomizationModel.ts";
@@ -32,13 +32,7 @@ export class MikroormThemeCustomizationRepository
 	};
 
 	findMany: IThemeCustomizationRepository["findMany"] = async (params) => {
-		interface WhereClause {
-			theme?: { id: string };
-			customizationType?: "css";
-			deletedAt: null;
-		}
-
-		const whereClause: WhereClause = {
+		const whereClause: FilterQuery<ThemeCustomizationModel> = {
 			deletedAt: null,
 		};
 

@@ -1,4 +1,4 @@
-import type { EntityManager } from "@mikro-orm/core";
+import type { EntityManager, FilterQuery } from "@mikro-orm/core";
 import type { IApiCredentialRepository } from "../../domain/ports/IApiCredentialRepository.ts";
 import { ApiCredentialModel } from "./models/ApiCredentialModel.ts";
 import { StoreModel } from "./models/StoreModel.ts";
@@ -35,17 +35,7 @@ export class MikroormApiCredentialRepository
 	};
 
 	findMany: IApiCredentialRepository["findMany"] = async (params) => {
-		interface WhereClause {
-			store?: { id: string };
-			createdByUser?: { id: string };
-			credentialType?: "jwt" | "oauth2";
-			isActive?: boolean;
-			expiresAt?: { $lt: Date } | { $gt: Date };
-			deletedAt: null;
-			$or?: Array<{ expiresAt: null } | { expiresAt: { $gt: Date } }>;
-		}
-
-		const whereClause: WhereClause = {
+		const whereClause: FilterQuery<ApiCredentialModel> = {
 			deletedAt: null,
 		};
 

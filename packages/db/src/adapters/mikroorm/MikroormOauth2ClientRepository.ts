@@ -1,4 +1,4 @@
-import type { EntityManager } from "@mikro-orm/core";
+import type { EntityManager, FilterQuery } from "@mikro-orm/core";
 import type { IOAuth2ClientRepository } from "../../domain/ports/IOAuth2ClientRepository.ts";
 import type { IOAuth2Client } from "../../domain/models/IOAuth2Client.ts";
 import { Oauth2ClientModel } from "./models/Oauth2ClientModel.ts";
@@ -30,13 +30,7 @@ export class MikroormOauth2ClientRepository implements IOAuth2ClientRepository {
 	};
 
 	findMany: IOAuth2ClientRepository["findMany"] = async (params) => {
-		interface WhereClause {
-			credential?: { id: string };
-			clientId?: string;
-			deletedAt: null;
-		}
-
-		const whereClause: WhereClause = {
+		const whereClause: FilterQuery<Oauth2ClientModel> = {
 			deletedAt: null,
 		};
 

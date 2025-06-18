@@ -1,4 +1,4 @@
-import type { EntityManager } from "@mikro-orm/core";
+import type { EntityManager, FilterQuery } from "@mikro-orm/core";
 import type { IJwtTokenRepository } from "../../domain/ports/IJwtTokenRepository.ts";
 import type { IJwtToken } from "../../domain/models/IJwtToken.ts";
 import { JwtTokenModel } from "./models/JwtTokenModel.ts";
@@ -30,13 +30,7 @@ export class MikroormJwtTokenRepository implements IJwtTokenRepository {
 	};
 
 	findMany: IJwtTokenRepository["findMany"] = async (params) => {
-		interface WhereClause {
-			credential?: { id: string };
-			tokenHash?: string;
-			deletedAt: null;
-		}
-
-		const whereClause: WhereClause = {
+		const whereClause: FilterQuery<JwtTokenModel> = {
 			deletedAt: null,
 		};
 

@@ -1,4 +1,4 @@
-import type { EntityManager } from "@mikro-orm/core";
+import type { EntityManager, FilterQuery } from "@mikro-orm/core";
 import type { IPaymentAttemptRepository } from "../../domain/ports/IPaymentAttemptRepository.ts";
 import type { IPaymentAttempt } from "../../domain/models/IPaymentAttempt.ts";
 import { PaymentAttemptModel } from "./models/PaymentAttemptModel.ts";
@@ -33,15 +33,7 @@ export class MikroormPaymentAttemptRepository
 	};
 
 	findMany: IPaymentAttemptRepository["findMany"] = async (params) => {
-		interface WhereClause {
-			transaction?: { id: string };
-			paymentMethod?: { id: string };
-			status?: "pending" | "success" | "failed";
-			customerIp?: string;
-			deletedAt?: null;
-		}
-
-		const whereClause: WhereClause = {
+		const whereClause: FilterQuery<PaymentAttemptModel> = {
 			deletedAt: null,
 		};
 

@@ -1,4 +1,4 @@
-import type { EntityManager } from "@mikro-orm/core";
+import type { EntityManager, FilterQuery } from "@mikro-orm/core";
 import type { IUserProfileRepository } from "../../domain/ports/IUserProfileRepository.ts";
 import type { IUserProfile } from "../../domain/models/IUserProfile.ts";
 import { UserProfileModel } from "./models/UserProfileModel.ts";
@@ -30,18 +30,7 @@ export class MikroormUserProfileRepository implements IUserProfileRepository {
 	};
 
 	findMany: IUserProfileRepository["findMany"] = async (params) => {
-		interface WhereClause {
-			user?: { id: string };
-			phone?: string;
-			firstName?: string;
-			lastName?: string;
-			deletedAt?: null;
-			$or?: Array<
-				{ firstName: { $ilike: string } } | { lastName: { $ilike: string } }
-			>;
-		}
-
-		const whereClause: WhereClause = {
+		const whereClause: FilterQuery<UserProfileModel> = {
 			deletedAt: null,
 		};
 

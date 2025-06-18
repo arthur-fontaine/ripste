@@ -1,4 +1,4 @@
-import type { EntityManager } from "@mikro-orm/core";
+import type { EntityManager, FilterQuery } from "@mikro-orm/core";
 import type { IStoreMemberRepository } from "../../domain/ports/IStoreMemberRepository.ts";
 import type { IStoreMember } from "../../domain/models/IStoreMember.ts";
 import { StoreMemberModel } from "./models/StoreMemberModel.ts";
@@ -31,14 +31,7 @@ export class MikroormStoreMemberRepository implements IStoreMemberRepository {
 	};
 
 	findMany: IStoreMemberRepository["findMany"] = async (params) => {
-		interface WhereClause {
-			user?: { id: string };
-			store?: { id: string };
-			permissionLevel?: "owner";
-			deletedAt?: null;
-		}
-
-		const whereClause: WhereClause = {
+		const whereClause: FilterQuery<StoreMemberModel> = {
 			deletedAt: null,
 		};
 
