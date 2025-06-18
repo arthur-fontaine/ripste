@@ -20,7 +20,7 @@ export class MikroormPaymentMethodRepository
 	findById: IPaymentMethodRepository["findById"] = async (id) => {
 		const paymentMethod = await this.options.em.findOne(
 			PaymentMethodModel,
-			{ 
+			{
 				id,
 				deletedAt: null,
 			},
@@ -36,13 +36,10 @@ export class MikroormPaymentMethodRepository
 			deletedAt: null,
 		};
 
-		if (params.transactionId) {
+		if (params.transactionId)
 			whereClause["transaction"] = { id: params.transactionId };
-		}
 
-		if (params.methodType) {
-			whereClause["methodType"] = params.methodType;
-		}
+		if (params.methodType) whereClause["methodType"] = params.methodType;
 
 		const paymentMethods = await this.options.em.find(
 			PaymentMethodModel,
@@ -87,7 +84,7 @@ export class MikroormPaymentMethodRepository
 
 		if (methodData.transactionId !== undefined) {
 			const transaction = await this.options.em.findOne(TransactionModel, {
-			deletedAt: null,
+				deletedAt: null,
 				id: methodData.transactionId,
 			});
 			if (!transaction) {

@@ -19,7 +19,7 @@ export class MikroormStoreMemberRepository implements IStoreMemberRepository {
 	findById: IStoreMemberRepository["findById"] = async (id) => {
 		const storeMember = await this.options.em.findOne(
 			StoreMemberModel,
-			{ 
+			{
 				id,
 				deletedAt: null,
 			},
@@ -42,21 +42,15 @@ export class MikroormStoreMemberRepository implements IStoreMemberRepository {
 			deletedAt: null,
 		};
 
-		if (params.userId) {
-			whereClause.user = { id: params.userId };
-		}
+		if (params.userId) whereClause.user = { id: params.userId };
 
-		if (params.storeId) {
-			whereClause.store = { id: params.storeId };
-		}
+		if (params.storeId) whereClause.store = { id: params.storeId };
 
-		if (params.permissionLevel) {
+		if (params.permissionLevel)
 			whereClause.permissionLevel = params.permissionLevel;
-		}
 
-		if (params.storeOwners !== undefined && params.storeOwners) {
+		if (params.storeOwners !== undefined && params.storeOwners)
 			whereClause.permissionLevel = "owner";
-		}
 
 		const storeMembers = await this.options.em.find(
 			StoreMemberModel,
@@ -119,7 +113,7 @@ export class MikroormStoreMemberRepository implements IStoreMemberRepository {
 	};
 
 	update: IStoreMemberRepository["update"] = async (id, memberData) => {
-		const storeMember = await this.options.em.findOne(StoreMemberModel, { 
+		const storeMember = await this.options.em.findOne(StoreMemberModel, {
 			id,
 			deletedAt: null,
 		});
@@ -166,7 +160,7 @@ export class MikroormStoreMemberRepository implements IStoreMemberRepository {
 	};
 
 	delete: IStoreMemberRepository["delete"] = async (id) => {
-		const storeMember = await this.options.em.findOne(StoreMemberModel, { 
+		const storeMember = await this.options.em.findOne(StoreMemberModel, {
 			id,
 			deletedAt: null,
 		});

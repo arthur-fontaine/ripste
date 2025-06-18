@@ -18,7 +18,7 @@ export class MikroormOauth2ClientRepository implements IOAuth2ClientRepository {
 	findById: IOAuth2ClientRepository["findById"] = async (id) => {
 		const client = await this.options.em.findOne(
 			Oauth2ClientModel,
-			{ 
+			{
 				id,
 				deletedAt: null,
 			},
@@ -40,13 +40,10 @@ export class MikroormOauth2ClientRepository implements IOAuth2ClientRepository {
 			deletedAt: null,
 		};
 
-		if (params.credentialId) {
+		if (params.credentialId)
 			whereClause.credential = { id: params.credentialId };
-		}
 
-		if (params.clientId) {
-			whereClause.clientId = params.clientId;
-		}
+		if (params.clientId) whereClause.clientId = params.clientId;
 
 		const clients = await this.options.em.find(Oauth2ClientModel, whereClause, {
 			populate: ["credential"],
@@ -108,7 +105,7 @@ export class MikroormOauth2ClientRepository implements IOAuth2ClientRepository {
 	};
 
 	delete: IOAuth2ClientRepository["delete"] = async (id) => {
-		const client = await this.options.em.findOne(Oauth2ClientModel, { 
+		const client = await this.options.em.findOne(Oauth2ClientModel, {
 			id,
 			deletedAt: null,
 		});

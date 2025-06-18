@@ -1,20 +1,20 @@
 // In TS, interfaces are "open" and can be extended
 declare global {
-  interface Date {
-    /**
-     * Give a more precise return type to the method `toISOString()`:
-     * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
-     */
-    toISOString(): IsoString;
-  }
+	interface Date {
+		/**
+		 * Give a more precise return type to the method `toISOString()`:
+		 * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
+		 */
+		toISOString(): IsoString;
+	}
 }
 
-type TYear         = `${number}${number}${number}${number}`;
-type TMonth        = `${number}${number}`;
-type TDay          = `${number}${number}`;
-type THours        = `${number}${number}`;
-type TMinutes      = `${number}${number}`;
-type TSeconds      = `${number}${number}`;
+type TYear = `${number}${number}${number}${number}`;
+type TMonth = `${number}${number}`;
+type TDay = `${number}${number}`;
+type THours = `${number}${number}`;
+type TMinutes = `${number}${number}`;
+type TSeconds = `${number}${number}`;
 type TMilliseconds = `${number}${number}${number}`;
 
 /**

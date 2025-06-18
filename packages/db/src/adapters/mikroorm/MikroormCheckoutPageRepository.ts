@@ -44,13 +44,10 @@ export class MikroormCheckoutPageRepository implements ICheckoutPageRepository {
 			deletedAt: null,
 		};
 
-		if (params.transactionId) {
+		if (params.transactionId)
 			whereClause.transaction = { id: params.transactionId };
-		}
 
-		if (params.themeId) {
-			whereClause.theme = { id: params.themeId };
-		}
+		if (params.themeId) whereClause.theme = { id: params.themeId };
 
 		if (params.expired !== undefined) {
 			if (params.expired) {
@@ -63,9 +60,7 @@ export class MikroormCheckoutPageRepository implements ICheckoutPageRepository {
 			}
 		}
 
-		if (params.uri) {
-			whereClause.uri = params.uri;
-		}
+		if (params.uri) whereClause.uri = params.uri;
 
 		if (params.accessed !== undefined) {
 			if (params.accessed) {
@@ -160,7 +155,9 @@ export class MikroormCheckoutPageRepository implements ICheckoutPageRepository {
 			deletedAt: null,
 		});
 		if (!transaction) {
-			throw new Error(`Transaction with id ${pageData.transactionId} not found`);
+			throw new Error(
+				`Transaction with id ${pageData.transactionId} not found`,
+			);
 		}
 
 		const theme = await this.options.em.findOne(CheckoutThemeModel, {
@@ -188,7 +185,7 @@ export class MikroormCheckoutPageRepository implements ICheckoutPageRepository {
 	};
 
 	update: ICheckoutPageRepository["update"] = async (id, pageData) => {
-		const page = await this.options.em.findOne(CheckoutPageModel, { 
+		const page = await this.options.em.findOne(CheckoutPageModel, {
 			id,
 			deletedAt: null,
 		});
@@ -202,7 +199,9 @@ export class MikroormCheckoutPageRepository implements ICheckoutPageRepository {
 				deletedAt: null,
 			});
 			if (!transaction) {
-				throw new Error(`Transaction with id ${pageData.transactionId} not found`);
+				throw new Error(
+					`Transaction with id ${pageData.transactionId} not found`,
+				);
 			}
 			page.transaction = transaction;
 		}
@@ -229,7 +228,7 @@ export class MikroormCheckoutPageRepository implements ICheckoutPageRepository {
 	};
 
 	delete: ICheckoutPageRepository["delete"] = async (id) => {
-		const page = await this.options.em.findOne(CheckoutPageModel, { 
+		const page = await this.options.em.findOne(CheckoutPageModel, {
 			id,
 			deletedAt: null,
 		});

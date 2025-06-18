@@ -21,7 +21,7 @@ export class MikroormPaymentAttemptRepository
 	findById: IPaymentAttemptRepository["findById"] = async (id) => {
 		const attempt = await this.options.em.findOne(
 			PaymentAttemptModel,
-			{ 
+			{
 				id,
 				deletedAt: null,
 			},
@@ -45,21 +45,15 @@ export class MikroormPaymentAttemptRepository
 			deletedAt: null,
 		};
 
-		if (params.transactionId) {
+		if (params.transactionId)
 			whereClause.transaction = { id: params.transactionId };
-		}
 
-		if (params.paymentMethodId) {
+		if (params.paymentMethodId)
 			whereClause.paymentMethod = { id: params.paymentMethodId };
-		}
 
-		if (params.status) {
-			whereClause.status = params.status;
-		}
+		if (params.status) whereClause.status = params.status;
 
-		if (params.customerIp) {
-			whereClause.customerIp = params.customerIp;
-		}
+		if (params.customerIp) whereClause.customerIp = params.customerIp;
 
 		const attempts = await this.options.em.find(
 			PaymentAttemptModel,
@@ -107,7 +101,7 @@ export class MikroormPaymentAttemptRepository
 	};
 
 	update: IPaymentAttemptRepository["update"] = async (id, attemptData) => {
-		const attempt = await this.options.em.findOne(PaymentAttemptModel, { 
+		const attempt = await this.options.em.findOne(PaymentAttemptModel, {
 			id,
 			deletedAt: null,
 		});
@@ -117,7 +111,7 @@ export class MikroormPaymentAttemptRepository
 
 		if (attemptData.transactionId !== undefined) {
 			const transaction = await this.options.em.findOne(TransactionModel, {
-			deletedAt: null,
+				deletedAt: null,
 				id: attemptData.transactionId,
 			});
 			if (!transaction) {
@@ -151,7 +145,7 @@ export class MikroormPaymentAttemptRepository
 	};
 
 	delete: IPaymentAttemptRepository["delete"] = async (id) => {
-		const attempt = await this.options.em.findOne(PaymentAttemptModel, { 
+		const attempt = await this.options.em.findOne(PaymentAttemptModel, {
 			id,
 			deletedAt: null,
 		});

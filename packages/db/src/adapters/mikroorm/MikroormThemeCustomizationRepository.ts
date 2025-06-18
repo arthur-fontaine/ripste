@@ -20,7 +20,7 @@ export class MikroormThemeCustomizationRepository
 	findById: IThemeCustomizationRepository["findById"] = async (id) => {
 		const customization = await this.options.em.findOne(
 			ThemeCustomizationModel,
-			{ 
+			{
 				id,
 				deletedAt: null,
 			},
@@ -42,13 +42,10 @@ export class MikroormThemeCustomizationRepository
 			deletedAt: null,
 		};
 
-		if (params.themeId) {
-			whereClause.theme = { id: params.themeId };
-		}
+		if (params.themeId) whereClause.theme = { id: params.themeId };
 
-		if (params.customizationType) {
+		if (params.customizationType)
 			whereClause.customizationType = params.customizationType;
-		}
 
 		const customizations = await this.options.em.find(
 			ThemeCustomizationModel,
@@ -122,7 +119,7 @@ export class MikroormThemeCustomizationRepository
 	delete: IThemeCustomizationRepository["delete"] = async (id) => {
 		const customization = await this.options.em.findOne(
 			ThemeCustomizationModel,
-			{ 
+			{
 				id,
 				deletedAt: null,
 			},

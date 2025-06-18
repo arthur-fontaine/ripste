@@ -18,7 +18,7 @@ export class MikroormUserProfileRepository implements IUserProfileRepository {
 	findById: IUserProfileRepository["findById"] = async (id) => {
 		const profile = await this.options.em.findOne(
 			UserProfileModel,
-			{ 
+			{
 				id,
 				deletedAt: null,
 			},
@@ -45,21 +45,13 @@ export class MikroormUserProfileRepository implements IUserProfileRepository {
 			deletedAt: null,
 		};
 
-		if (params.userId) {
-			whereClause.user = { id: params.userId };
-		}
+		if (params.userId) whereClause.user = { id: params.userId };
 
-		if (params.phone) {
-			whereClause.phone = params.phone;
-		}
+		if (params.phone) whereClause.phone = params.phone;
 
-		if (params.firstName) {
-			whereClause.firstName = params.firstName;
-		}
+		if (params.firstName) whereClause.firstName = params.firstName;
 
-		if (params.lastName) {
-			whereClause.lastName = params.lastName;
-		}
+		if (params.lastName) whereClause.lastName = params.lastName;
 
 		if (params.searchTerm) {
 			whereClause.$or = [
@@ -95,7 +87,7 @@ export class MikroormUserProfileRepository implements IUserProfileRepository {
 	};
 
 	update: IUserProfileRepository["update"] = async (id, profileData) => {
-		const profile = await this.options.em.findOne(UserProfileModel, { 
+		const profile = await this.options.em.findOne(UserProfileModel, {
 			id,
 			deletedAt: null,
 		});
@@ -146,7 +138,7 @@ export class MikroormUserProfileRepository implements IUserProfileRepository {
 	};
 
 	delete: IUserProfileRepository["delete"] = async (id) => {
-		const profile = await this.options.em.findOne(UserProfileModel, { 
+		const profile = await this.options.em.findOne(UserProfileModel, {
 			id,
 			deletedAt: null,
 		});

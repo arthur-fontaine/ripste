@@ -40,10 +40,7 @@ export class RefundModel extends BaseModel implements IRefund {
 		initiatedByUser,
 	}: Pick<RefundModel, "amount" | "transaction"> &
 		Partial<
-			Pick<
-				RefundModel,
-				"reason" | "status" | "processedAt" | "initiatedByUser"
-			>
+			Pick<RefundModel, "reason" | "status" | "processedAt" | "initiatedByUser">
 		>) {
 		super();
 		this.amount = amount;

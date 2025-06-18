@@ -18,7 +18,7 @@ export class MikroormJwtTokenRepository implements IJwtTokenRepository {
 	findById: IJwtTokenRepository["findById"] = async (id) => {
 		const token = await this.options.em.findOne(
 			JwtTokenModel,
-			{ 
+			{
 				id,
 				deletedAt: null,
 			},
@@ -40,13 +40,10 @@ export class MikroormJwtTokenRepository implements IJwtTokenRepository {
 			deletedAt: null,
 		};
 
-		if (params.credentialId) {
+		if (params.credentialId)
 			whereClause.credential = { id: params.credentialId };
-		}
 
-		if (params.tokenHash) {
-			whereClause.tokenHash = params.tokenHash;
-		}
+		if (params.tokenHash) whereClause.tokenHash = params.tokenHash;
 
 		const tokens = await this.options.em.find(JwtTokenModel, whereClause, {
 			populate: ["credential"],
@@ -106,7 +103,7 @@ export class MikroormJwtTokenRepository implements IJwtTokenRepository {
 	};
 
 	delete: IJwtTokenRepository["delete"] = async (id) => {
-		const token = await this.options.em.findOne(JwtTokenModel, { 
+		const token = await this.options.em.findOne(JwtTokenModel, {
 			id,
 			deletedAt: null,
 		});

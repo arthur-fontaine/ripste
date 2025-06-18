@@ -45,10 +45,7 @@ export class PaymentAttemptModel extends BaseModel implements IPaymentAttempt {
 		Partial<
 			Pick<
 				PaymentAttemptModel,
-				| "failureReason"
-				| "customerIp"
-				| "customerData"
-				| "attemptedAt"
+				"failureReason" | "customerIp" | "customerData" | "attemptedAt"
 			>
 		>) {
 		super();
