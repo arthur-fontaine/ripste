@@ -19,7 +19,7 @@ export class MikroormCheckoutPageRepository implements ICheckoutPageRepository {
 	findById: ICheckoutPageRepository["findById"] = async (id) => {
 		const page = await this.options.em.findOne(
 			CheckoutPageModel,
-			{ id },
+			{ id, deletedAt: null },
 			{
 				populate: ["transaction", "theme"],
 			},
@@ -35,11 +35,14 @@ export class MikroormCheckoutPageRepository implements ICheckoutPageRepository {
 			uri?: string;
 			accessedAt?: { $ne: null } | { $gte?: Date; $lte?: Date };
 			completedAt?: { $ne: null } | { $gte?: Date; $lte?: Date } | null;
+			deletedAt?: null;
 			$or?: Array<{ expiresAt: null } | { expiresAt: { $gt: Date } }>;
 			createdAt?: { $gte?: Date; $lte?: Date };
 		}
 
-		const whereClause: WhereClause = {};
+		const whereClause: WhereClause = {
+			deletedAt: null,
+		};
 
 		if (params.transactionId) {
 			whereClause.transaction = { id: params.transactionId };
@@ -152,30 +155,32 @@ export class MikroormCheckoutPageRepository implements ICheckoutPageRepository {
 	};
 
 	create: ICheckoutPageRepository["create"] = async (pageData) => {
-		let transaction: TransactionModel | null = null;
-		if (pageData.transactionId) {
-			transaction = await this.options.em.findOne(TransactionModel, {
-				id: pageData.transactionId,
-			});
+		const transaction = await this.options.em.findOne(TransactionModel, {
+			id: pageData.transactionId,
+			deletedAt: null,
+		});
+		if (!transaction) {
+			throw new Error(`Transaction with id ${pageData.transactionId} not found`);
 		}
 
-		let theme: CheckoutThemeModel | null = null;
-		if (pageData.themeId) {
-			theme = await this.options.em.findOne(CheckoutThemeModel, {
-				id: pageData.themeId,
-			});
+		const theme = await this.options.em.findOne(CheckoutThemeModel, {
+			id: pageData.themeId,
+			deletedAt: null,
+		});
+		if (!theme) {
+			throw new Error(`CheckoutTheme with id ${pageData.themeId} not found`);
 		}
 
 		const pageModel = new CheckoutPageModel({
 			uri: pageData.uri,
+			displayData: pageData.displayData,
+			transaction: transaction,
+			theme: theme,
 			redirectSuccessUrl: pageData.redirectSuccessUrl,
 			redirectCancelUrl: pageData.redirectCancelUrl,
-			displayData: pageData.displayData,
 			expiresAt: pageData.expiresAt,
 			accessedAt: pageData.accessedAt,
 			completedAt: pageData.completedAt,
-			transaction: transaction,
-			theme: theme,
 		});
 
 		await this.options.em.persistAndFlush(pageModel);
@@ -183,35 +188,34 @@ export class MikroormCheckoutPageRepository implements ICheckoutPageRepository {
 	};
 
 	update: ICheckoutPageRepository["update"] = async (id, pageData) => {
-		const page = await this.options.em.findOne(CheckoutPageModel, { id });
+		const page = await this.options.em.findOne(CheckoutPageModel, { 
+			id,
+			deletedAt: null,
+		});
 		if (!page) {
 			throw new Error(`CheckoutPage with id ${id} not found`);
 		}
 
 		if (pageData.transactionId !== undefined) {
-			if (pageData.transactionId === null) {
-				page.transaction = null;
-			} else {
-				const transaction = await this.options.em.findOne(TransactionModel, {
-					id: pageData.transactionId,
-				});
-				if (transaction) {
-					page.transaction = transaction;
-				}
+			const transaction = await this.options.em.findOne(TransactionModel, {
+				id: pageData.transactionId,
+				deletedAt: null,
+			});
+			if (!transaction) {
+				throw new Error(`Transaction with id ${pageData.transactionId} not found`);
 			}
+			page.transaction = transaction;
 		}
 
 		if (pageData.themeId !== undefined) {
-			if (pageData.themeId === null) {
-				page.theme = null;
-			} else {
-				const theme = await this.options.em.findOne(CheckoutThemeModel, {
-					id: pageData.themeId,
-				});
-				if (theme) {
-					page.theme = theme;
-				}
+			const theme = await this.options.em.findOne(CheckoutThemeModel, {
+				id: pageData.themeId,
+				deletedAt: null,
+			});
+			if (!theme) {
+				throw new Error(`CheckoutTheme with id ${pageData.themeId} not found`);
 			}
+			page.theme = theme;
 		}
 
 		const { transactionId, themeId, ...updateData } = pageData;
@@ -225,22 +229,31 @@ export class MikroormCheckoutPageRepository implements ICheckoutPageRepository {
 	};
 
 	delete: ICheckoutPageRepository["delete"] = async (id) => {
-		const page = await this.options.em.findOne(CheckoutPageModel, { id });
+		const page = await this.options.em.findOne(CheckoutPageModel, { 
+			id,
+			deletedAt: null,
+		});
 		if (!page) {
 			return;
 		}
 
-		await this.options.em.removeAndFlush(page);
+		// Soft delete by setting deletedAt timestamp
+		page.deletedAt = new Date();
+		await this.options.em.flush();
 	};
 
 	deleteExpiredPages: ICheckoutPageRepository["deleteExpiredPages"] =
 		async () => {
 			const expiredPages = await this.options.em.find(CheckoutPageModel, {
 				expiresAt: { $lt: new Date() },
+				deletedAt: null,
 			});
 
 			if (expiredPages.length > 0) {
-				await this.options.em.removeAndFlush(expiredPages);
+				for (const page of expiredPages) {
+					page.deletedAt = new Date();
+				}
+				await this.options.em.flush();
 			}
 		};
 }

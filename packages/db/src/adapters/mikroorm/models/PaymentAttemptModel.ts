@@ -27,21 +27,21 @@ export class PaymentAttemptModel extends BaseModel implements IPaymentAttempt {
 	@Property()
 	attemptedAt: Date;
 
-	@ManyToOne(() => TransactionModel, { nullable: true })
-	transaction: TransactionModel | null;
+	@ManyToOne(() => TransactionModel)
+	transaction: TransactionModel;
 
-	@ManyToOne(() => PaymentMethodModel, { nullable: true })
-	paymentMethod: PaymentMethodModel | null;
+	@ManyToOne(() => PaymentMethodModel)
+	paymentMethod: PaymentMethodModel;
 
 	constructor({
 		status,
+		transaction,
+		paymentMethod,
 		failureReason,
 		customerIp,
 		customerData,
 		attemptedAt = new Date(),
-		transaction,
-		paymentMethod,
-	}: Pick<PaymentAttemptModel, "status"> &
+	}: Pick<PaymentAttemptModel, "status" | "transaction" | "paymentMethod"> &
 		Partial<
 			Pick<
 				PaymentAttemptModel,
@@ -49,8 +49,6 @@ export class PaymentAttemptModel extends BaseModel implements IPaymentAttempt {
 				| "customerIp"
 				| "customerData"
 				| "attemptedAt"
-				| "transaction"
-				| "paymentMethod"
 			>
 		>) {
 		super();
@@ -59,7 +57,7 @@ export class PaymentAttemptModel extends BaseModel implements IPaymentAttempt {
 		this.customerIp = customerIp ?? null;
 		this.customerData = customerData ?? null;
 		this.attemptedAt = attemptedAt;
-		this.transaction = transaction ?? null;
-		this.paymentMethod = paymentMethod ?? null;
+		this.transaction = transaction;
+		this.paymentMethod = paymentMethod;
 	}
 }

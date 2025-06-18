@@ -18,7 +18,10 @@ export class MikroormOauth2ClientRepository implements IOAuth2ClientRepository {
 	findById: IOAuth2ClientRepository["findById"] = async (id) => {
 		const client = await this.options.em.findOne(
 			Oauth2ClientModel,
-			{ id },
+			{ 
+				id,
+				deletedAt: null,
+			},
 			{
 				populate: ["credential"],
 			},
@@ -30,9 +33,12 @@ export class MikroormOauth2ClientRepository implements IOAuth2ClientRepository {
 		interface WhereClause {
 			credential?: { id: string };
 			clientId?: string;
+			deletedAt: null;
 		}
 
-		const whereClause: WhereClause = {};
+		const whereClause: WhereClause = {
+			deletedAt: null,
+		};
 
 		if (params.credentialId) {
 			whereClause.credential = { id: params.credentialId };
@@ -49,16 +55,13 @@ export class MikroormOauth2ClientRepository implements IOAuth2ClientRepository {
 	};
 
 	create: IOAuth2ClientRepository["create"] = async (clientData) => {
-		let credential: ApiCredentialModel | null = null;
-		if (clientData.credentialId) {
-			credential = await this.options.em.findOne(ApiCredentialModel, {
-				id: clientData.credentialId,
-			});
-			if (!credential) {
-				throw new Error(
-					`ApiCredential with id ${clientData.credentialId} not found`,
-				);
-			}
+		const credential = await this.options.em.findOne(ApiCredentialModel, {
+			id: clientData.credentialId,
+		});
+		if (!credential) {
+			throw new Error(
+				`ApiCredential with id ${clientData.credentialId} not found`,
+			);
 		}
 
 		const clientModel = new Oauth2ClientModel({
@@ -74,25 +77,24 @@ export class MikroormOauth2ClientRepository implements IOAuth2ClientRepository {
 	};
 
 	update: IOAuth2ClientRepository["update"] = async (id, clientData) => {
-		const client = await this.options.em.findOne(Oauth2ClientModel, { id });
+		const client = await this.options.em.findOne(Oauth2ClientModel, {
+			id,
+			deletedAt: null,
+		});
 		if (!client) {
 			throw new Error(`OAuth2Client with id ${id} not found`);
 		}
 
 		if (clientData.credentialId !== undefined) {
-			if (clientData.credentialId === null) {
-				client.credential = null;
-			} else {
-				const credential = await this.options.em.findOne(ApiCredentialModel, {
-					id: clientData.credentialId,
-				});
-				if (!credential) {
-					throw new Error(
-						`ApiCredential with id ${clientData.credentialId} not found`,
-					);
-				}
-				client.credential = credential;
+			const credential = await this.options.em.findOne(ApiCredentialModel, {
+				id: clientData.credentialId,
+			});
+			if (!credential) {
+				throw new Error(
+					`ApiCredential with id ${clientData.credentialId} not found`,
+				);
 			}
+			client.credential = credential;
 		}
 
 		const { credentialId, ...updateData } = clientData;
@@ -106,23 +108,29 @@ export class MikroormOauth2ClientRepository implements IOAuth2ClientRepository {
 	};
 
 	delete: IOAuth2ClientRepository["delete"] = async (id) => {
-		const client = await this.options.em.findOne(Oauth2ClientModel, { id });
+		const client = await this.options.em.findOne(Oauth2ClientModel, { 
+			id,
+			deletedAt: null,
+		});
 		if (!client) {
 			return;
 		}
 
-		await this.options.em.removeAndFlush(client);
+		client.deletedAt = new Date();
+		await this.options.em.flush();
 	};
 
 	deleteByCredentialId: IOAuth2ClientRepository["deleteByCredentialId"] =
 		async (credentialId) => {
 			const client = await this.options.em.findOne(Oauth2ClientModel, {
 				credential: { id: credentialId },
+				deletedAt: null,
 			});
 			if (!client) {
 				return;
 			}
 
-			await this.options.em.removeAndFlush(client);
+			client.deletedAt = new Date();
+			await this.options.em.flush();
 		};
 }

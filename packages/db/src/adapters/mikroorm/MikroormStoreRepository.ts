@@ -21,7 +21,7 @@ export class MikroormStoreRepository implements IStoreRepository {
 	findById: IStoreRepository["findById"] = async (id) => {
 		const store = await this.options.em.findOne(
 			StoreModel,
-			{ id },
+			{ id, deletedAt: null },
 			{
 				populate: ["company"],
 			},
@@ -32,9 +32,12 @@ export class MikroormStoreRepository implements IStoreRepository {
 	findMany: IStoreRepository["findMany"] = async (params) => {
 		interface WhereClause {
 			company?: { id: string };
+			deletedAt: null;
 		}
 
-		const whereClause: WhereClause = {};
+		const whereClause: WhereClause = {
+			deletedAt: null,
+		};
 
 		if (params.companyId) {
 			whereClause.company = { id: params.companyId };
@@ -57,6 +60,7 @@ export class MikroormStoreRepository implements IStoreRepository {
 		if (storeData.companyId) {
 			const company = await this.options.em.findOne(CompanyModel, {
 				id: storeData.companyId,
+				deletedAt: null,
 			});
 			if (company) {
 				storeModel.company = company;
@@ -68,7 +72,10 @@ export class MikroormStoreRepository implements IStoreRepository {
 	};
 
 	update: IStoreRepository["update"] = async (id, storeData) => {
-		const store = await this.options.em.findOne(StoreModel, { id });
+		const store = await this.options.em.findOne(StoreModel, {
+			id,
+			deletedAt: null,
+		});
 		if (!store) {
 			throw new Error(`Store with id ${id} not found`);
 		}
@@ -79,6 +86,7 @@ export class MikroormStoreRepository implements IStoreRepository {
 			} else {
 				const company = await this.options.em.findOne(CompanyModel, {
 					id: storeData.companyId,
+					deletedAt: null,
 				});
 				if (company) {
 					store.company = company;
@@ -99,22 +107,30 @@ export class MikroormStoreRepository implements IStoreRepository {
 	};
 
 	delete: IStoreRepository["delete"] = async (id) => {
-		const store = await this.options.em.findOne(StoreModel, { id });
+		const store = await this.options.em.findOne(StoreModel, { 
+			id,
+			deletedAt: null,
+		});
 		if (!store) {
 			return;
 		}
 
-		await this.options.em.removeAndFlush(store);
+		// Soft delete by setting deletedAt timestamp
+		store.deletedAt = new Date();
+		await this.options.em.flush();
 	};
 
-	getStatus: IStoreRepository["getStatus"] = async (params) => {
+	getStatuses: IStoreRepository["getStatuses"] = async (params) => {
 		interface WhereClause {
 			store?: { id: string };
 			changedByUser?: { id: string };
 			status?: IStoreStatus["status"];
+			deletedAt: null;
 		}
 
-		const whereClause: WhereClause = {};
+		const whereClause: WhereClause = {
+			deletedAt: null,
+		};
 
 		if (params.storeId) {
 			whereClause.store = { id: params.storeId };
@@ -153,6 +169,7 @@ export class MikroormStoreRepository implements IStoreRepository {
 
 		const store = await this.options.em.findOne(StoreModel, {
 			id: statusData.storeId,
+			deletedAt: null,
 		});
 		if (!store) {
 			throw new Error(`Store with id ${statusData.storeId} not found`);
@@ -160,6 +177,7 @@ export class MikroormStoreRepository implements IStoreRepository {
 
 		const changedByUser = await this.options.em.findOne(UserModel, {
 			id: statusData.changedByUserId,
+			deletedAt: null,
 		});
 		if (!changedByUser) {
 			throw new Error(`User with id ${statusData.changedByUserId} not found`);
@@ -177,7 +195,10 @@ export class MikroormStoreRepository implements IStoreRepository {
 	};
 
 	updateStatus: IStoreRepository["updateStatus"] = async (id, statusData) => {
-		const storeStatus = await this.options.em.findOne(StoreStatusModel, { id });
+		const storeStatus = await this.options.em.findOne(StoreStatusModel, { 
+			id,
+			deletedAt: null,
+		});
 		if (!storeStatus) {
 			throw new Error(`StoreStatus with id ${id} not found`);
 		}
@@ -188,6 +209,7 @@ export class MikroormStoreRepository implements IStoreRepository {
 			}
 			const store = await this.options.em.findOne(StoreModel, {
 				id: statusData.storeId,
+				deletedAt: null,
 			});
 			if (!store) {
 				throw new Error(`Store with id ${statusData.storeId} not found`);
@@ -201,6 +223,7 @@ export class MikroormStoreRepository implements IStoreRepository {
 			}
 			const user = await this.options.em.findOne(UserModel, {
 				id: statusData.changedByUserId,
+				deletedAt: null,
 			});
 			if (!user) {
 				throw new Error(`User with id ${statusData.changedByUserId} not found`);
@@ -218,12 +241,32 @@ export class MikroormStoreRepository implements IStoreRepository {
 		return storeStatus as IStoreStatus;
 	};
 
+	getLastStatus: IStoreRepository["getLastStatus"] = async (storeId) => {
+		const storeStatus = await this.options.em.findOne(
+			StoreStatusModel,
+			{ 
+				store: { id: storeId },
+				deletedAt: null,
+			},
+			{ 
+				orderBy: { createdAt: "DESC" },
+				populate: ["store", "changedByUser"],
+			}
+		);
+		return storeStatus;
+	};
+
 	deleteStatus: IStoreRepository["deleteStatus"] = async (id) => {
-		const storeStatus = await this.options.em.findOne(StoreStatusModel, { id });
+		const storeStatus = await this.options.em.findOne(StoreStatusModel, { 
+			id,
+			deletedAt: null,
+		});
 		if (!storeStatus) {
 			return;
 		}
 
-		await this.options.em.removeAndFlush(storeStatus);
+		// Soft delete by setting deletedAt timestamp
+		storeStatus.deletedAt = new Date();
+		await this.options.em.flush();
 	};
 }

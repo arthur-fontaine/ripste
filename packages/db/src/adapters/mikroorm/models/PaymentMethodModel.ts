@@ -14,21 +14,18 @@ import { PaymentAttemptModel } from "./PaymentAttemptModel.ts";
 
 const MethodType = {
 	CHECKOUT_PAGE: "checkout_page",
-	API_DIRECT: "api_direct",
-	LINK: "link",
-	QR_CODE: "qr_code",
 } as const;
 
 @Entity()
 export class PaymentMethodModel extends BaseModel implements IPaymentMethod {
 	@Enum(() => MethodType)
-	methodType: "checkout_page" | "api_direct" | "link" | "qr_code";
+	methodType: "checkout_page";
 
 	@Property({ type: t.json, nullable: true })
 	methodData: Record<string, string> | null;
 
-	@ManyToOne(() => TransactionModel, { nullable: true })
-	transaction: TransactionModel | null;
+	@ManyToOne(() => TransactionModel)
+	transaction: TransactionModel;
 
 	@OneToMany(
 		() => PaymentAttemptModel,
@@ -42,13 +39,13 @@ export class PaymentMethodModel extends BaseModel implements IPaymentMethod {
 
 	constructor({
 		methodType,
-		methodData,
 		transaction,
-	}: Pick<PaymentMethodModel, "methodType"> &
-		Partial<Pick<PaymentMethodModel, "methodData" | "transaction">>) {
+		methodData,
+	}: Pick<PaymentMethodModel, "methodType" | "transaction"> &
+		Partial<Pick<PaymentMethodModel, "methodData">>) {
 		super();
 		this.methodType = methodType;
 		this.methodData = methodData ?? null;
-		this.transaction = transaction ?? null;
+		this.transaction = transaction;
 	}
 }

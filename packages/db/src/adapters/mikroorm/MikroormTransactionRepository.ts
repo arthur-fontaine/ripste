@@ -21,7 +21,10 @@ export class MikroormTransactionRepository implements ITransactionRepository {
 	findById: ITransactionRepository["findById"] = async (id) => {
 		const transaction = await this.options.em.findOne(
 			TransactionModel,
-			{ id },
+			{ 
+				id,
+				deletedAt: null,
+			},
 			{
 				populate: [
 					"store",
@@ -41,9 +44,12 @@ export class MikroormTransactionRepository implements ITransactionRepository {
 		interface WhereClause {
 			store?: { id: string };
 			reference?: string;
+			deletedAt: null;
 		}
 
-		const whereClause: WhereClause = {};
+		const whereClause: WhereClause = {
+			deletedAt: null,
+		};
 
 		if (params.storeId) {
 			whereClause.store = { id: params.storeId };
@@ -76,20 +82,19 @@ export class MikroormTransactionRepository implements ITransactionRepository {
 	};
 
 	create: ITransactionRepository["create"] = async (transactionData) => {
-		let store: StoreModel | null = null;
-		if (transactionData.storeId) {
-			store = await this.options.em.findOne(StoreModel, {
-				id: transactionData.storeId,
-			});
-			if (!store) {
-				throw new Error(`Store with id ${transactionData.storeId} not found`);
-			}
+		const store = await this.options.em.findOne(StoreModel, {
+			id: transactionData.storeId,
+			deletedAt: null,
+		});
+		if (!store) {
+			throw new Error(`Store with id ${transactionData.storeId} not found`);
 		}
 
 		let apiCredential: ApiCredentialModel | null = null;
 		if (transactionData.apiCredentialId) {
 			apiCredential = await this.options.em.findOne(ApiCredentialModel, {
 				id: transactionData.apiCredentialId,
+				deletedAt: null,
 			});
 			if (!apiCredential) {
 				throw new Error(
@@ -114,23 +119,23 @@ export class MikroormTransactionRepository implements ITransactionRepository {
 	};
 
 	update: ITransactionRepository["update"] = async (id, transactionData) => {
-		const transaction = await this.options.em.findOne(TransactionModel, { id });
+		const transaction = await this.options.em.findOne(TransactionModel, {
+			id,
+			deletedAt: null,
+		});
 		if (!transaction) {
 			throw new Error(`Transaction with id ${id} not found`);
 		}
 
 		if (transactionData.storeId !== undefined) {
-			if (transactionData.storeId === null) {
-				transaction.store = null;
-			} else {
-				const store = await this.options.em.findOne(StoreModel, {
-					id: transactionData.storeId,
-				});
-				if (!store) {
-					throw new Error(`Store with id ${transactionData.storeId} not found`);
-				}
-				transaction.store = store;
+			const store = await this.options.em.findOne(StoreModel, {
+				id: transactionData.storeId,
+				deletedAt: null,
+			});
+			if (!store) {
+				throw new Error(`Store with id ${transactionData.storeId} not found`);
 			}
+			transaction.store = store;
 		}
 
 		if (transactionData.apiCredentialId !== undefined) {
@@ -142,6 +147,7 @@ export class MikroormTransactionRepository implements ITransactionRepository {
 					ApiCredentialModel,
 					{
 						id: transactionData.apiCredentialId,
+						deletedAt: null,
 					},
 				);
 				if (!apiCredential) {
@@ -166,25 +172,27 @@ export class MikroormTransactionRepository implements ITransactionRepository {
 	};
 
 	delete: ITransactionRepository["delete"] = async (id) => {
-		const transaction = await this.options.em.findOne(TransactionModel, { id });
+		const transaction = await this.options.em.findOne(TransactionModel, { 
+			id,
+			deletedAt: null,
+		});
 		if (!transaction) {
 			return;
 		}
 
-		await this.options.em.removeAndFlush(transaction);
+		transaction.deletedAt = new Date();
+		await this.options.em.flush();
 	};
 
 	recordEvent: ITransactionRepository["recordEvent"] = async (eventData) => {
-		let transaction: TransactionModel | null = null;
-		if (eventData.transactionId) {
-			transaction = await this.options.em.findOne(TransactionModel, {
-				id: eventData.transactionId,
-			});
-			if (!transaction) {
-				throw new Error(
-					`Transaction with id ${eventData.transactionId} not found`,
-				);
-			}
+		const transaction = await this.options.em.findOne(TransactionModel, {
+			deletedAt: null,
+			id: eventData.transactionId,
+		});
+		if (!transaction) {
+			throw new Error(
+				`Transaction with id ${eventData.transactionId} not found`,
+			);
 		}
 
 		const eventModel = new TransactionEventModel({
@@ -211,19 +219,16 @@ export class MikroormTransactionRepository implements ITransactionRepository {
 		}
 
 		if (eventData.transactionId !== undefined) {
-			if (eventData.transactionId === null) {
-				transactionEvent.transaction = null;
-			} else {
-				const transaction = await this.options.em.findOne(TransactionModel, {
-					id: eventData.transactionId,
-				});
-				if (!transaction) {
-					throw new Error(
-						`Transaction with id ${eventData.transactionId} not found`,
-					);
-				}
-				transactionEvent.transaction = transaction;
+			const transaction = await this.options.em.findOne(TransactionModel, {
+			deletedAt: null,
+				id: eventData.transactionId,
+			});
+			if (!transaction) {
+				throw new Error(
+					`Transaction with id ${eventData.transactionId} not found`,
+				);
 			}
+			transactionEvent.transaction = transaction;
 		}
 
 		const { transactionId, ...updateData } = eventData;
@@ -240,11 +245,14 @@ export class MikroormTransactionRepository implements ITransactionRepository {
 		interface WhereClause {
 			transaction?: { id: string };
 			eventType?: string;
+			deletedAt?: null;
 			createdAt?: { $gte?: Date; $lte?: Date };
 			$or?: Array<{ eventType: string }>;
 		}
 
-		const whereClause: WhereClause = {};
+		const whereClause: WhereClause = {
+			deletedAt: null,
+		};
 
 		if (params.transactionId) {
 			whereClause.transaction = { id: params.transactionId };
@@ -285,7 +293,10 @@ export class MikroormTransactionRepository implements ITransactionRepository {
 	findEventById: ITransactionRepository["findEventById"] = async (id) => {
 		const transactionEvent = await this.options.em.findOne(
 			TransactionEventModel,
-			{ id },
+			{ 
+				id,
+				deletedAt: null,
+			},
 			{
 				populate: ["transaction"],
 			},
@@ -296,23 +307,31 @@ export class MikroormTransactionRepository implements ITransactionRepository {
 	deleteEvent: ITransactionRepository["deleteEvent"] = async (id) => {
 		const transactionEvent = await this.options.em.findOne(
 			TransactionEventModel,
-			{ id },
+			{ 
+				id,
+				deletedAt: null,
+			},
 		);
 		if (!transactionEvent) {
 			return;
 		}
 
-		await this.options.em.removeAndFlush(transactionEvent);
+		transactionEvent.deletedAt = new Date();
+		await this.options.em.flush();
 	};
 
 	deleteEventsByTransactionId: ITransactionRepository["deleteEventsByTransactionId"] =
 		async (transactionId) => {
 			const events = await this.options.em.find(TransactionEventModel, {
 				transaction: { id: transactionId },
+				deletedAt: null,
 			});
 
 			if (events.length > 0) {
-				await this.options.em.removeAndFlush(events);
+				for (const event of events) {
+					event.deletedAt = new Date();
+				}
+				await this.options.em.flush();
 			}
 		};
 }

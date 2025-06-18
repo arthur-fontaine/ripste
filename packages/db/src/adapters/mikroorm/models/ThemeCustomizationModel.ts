@@ -18,18 +18,18 @@ export class ThemeCustomizationModel
 	@Property({ type: t.string, nullable: true })
 	content: string | null;
 
-	@ManyToOne(() => CheckoutThemeModel, { nullable: true })
-	theme: CheckoutThemeModel | null;
+	@ManyToOne(() => CheckoutThemeModel)
+	theme: CheckoutThemeModel;
 
 	constructor({
 		customizationType,
-		content,
 		theme,
-	}: Pick<ThemeCustomizationModel, "customizationType"> &
-		Partial<Pick<ThemeCustomizationModel, "content" | "theme">>) {
+		content,
+	}: Pick<ThemeCustomizationModel, "customizationType" | "theme"> &
+		Partial<Pick<ThemeCustomizationModel, "content">>) {
 		super();
 		this.customizationType = customizationType;
 		this.content = content ?? null;
-		this.theme = theme ?? null;
+		this.theme = theme;
 	}
 }

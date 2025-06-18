@@ -18,7 +18,10 @@ export class MikroormUserRepository implements IUserRepository {
 	findById: IUserRepository["findById"] = async (id) => {
 		const user = await this.options.em.findOne(
 			UserModel,
-			{ id },
+			{ 
+				id,
+				deletedAt: null,
+			},
 			{
 				populate: ["profile"],
 			},
@@ -31,9 +34,12 @@ export class MikroormUserRepository implements IUserRepository {
 			email?: string;
 			permissionLevel?: "admin" | "user";
 			emailVerified?: boolean;
+			deletedAt?: null;
 		}
 
-		const whereClause: WhereClause = {};
+		const whereClause: WhereClause = {
+			deletedAt: null,
+		};
 
 		if (params.email) {
 			whereClause.email = params.email;
@@ -92,7 +98,10 @@ export class MikroormUserRepository implements IUserRepository {
 	update: IUserRepository["update"] = async (id, userData) => {
 		const user = await this.options.em.findOne(
 			UserModel,
-			{ id },
+			{ 
+				id,
+				deletedAt: null,
+			},
 			{
 				populate: ["profile"],
 			},
@@ -107,7 +116,10 @@ export class MikroormUserRepository implements IUserRepository {
 	};
 
 	delete: IUserRepository["delete"] = async (id) => {
-		const user = await this.options.em.findOne(UserModel, { id });
+		const user = await this.options.em.findOne(UserModel, { 
+			id,
+			deletedAt: null,
+		});
 		if (!user) {
 			return;
 		}
