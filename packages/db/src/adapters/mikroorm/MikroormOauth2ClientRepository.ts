@@ -1,59 +1,51 @@
-import type { EntityManager, FilterQuery } from "@mikro-orm/core";
+import type { FilterQuery } from "@mikro-orm/core";
 import type { IOAuth2ClientRepository } from "../../domain/ports/IOAuth2ClientRepository.ts";
 import type { IOAuth2Client } from "../../domain/models/IOAuth2Client.ts";
 import { Oauth2ClientModel } from "./models/Oauth2ClientModel.ts";
 import { ApiCredentialModel } from "./models/ApiCredentialModel.ts";
+import * as RepoUtils from "./BaseMikroormRepository.ts";
 
-interface IMikroormOauth2ClientRepositoryOptions {
-	em: EntityManager;
-}
+const POPULATE_FIELDS = ["credential"] as const;
 
 export class MikroormOauth2ClientRepository implements IOAuth2ClientRepository {
-	private options: IMikroormOauth2ClientRepositoryOptions;
+	private options: RepoUtils.IMikroormRepositoryOptions;
 
-	constructor(options: IMikroormOauth2ClientRepositoryOptions) {
+	constructor(options: RepoUtils.IMikroormRepositoryOptions) {
 		this.options = options;
 	}
 
 	findById: IOAuth2ClientRepository["findById"] = async (id) => {
-		const client = await this.options.em.findOne(
+		return RepoUtils.findById<IOAuth2Client, Oauth2ClientModel>(
+			this.options.em,
 			Oauth2ClientModel,
-			{
-				id,
-				deletedAt: null,
-			},
-			{
-				populate: ["credential"],
-			},
+			id,
+			POPULATE_FIELDS,
 		);
-		return client;
 	};
 
 	findMany: IOAuth2ClientRepository["findMany"] = async (params) => {
-		const whereClause: FilterQuery<Oauth2ClientModel> = {
-			deletedAt: null,
-		};
+		const whereClause: FilterQuery<Oauth2ClientModel> = {};
 
 		if (params.credentialId)
 			whereClause.credential = { id: params.credentialId };
 
 		if (params.clientId) whereClause.clientId = params.clientId;
 
-		const clients = await this.options.em.find(Oauth2ClientModel, whereClause, {
-			populate: ["credential"],
-		});
-		return clients;
+		return RepoUtils.findMany<IOAuth2Client, Oauth2ClientModel>(
+			this.options.em,
+			Oauth2ClientModel,
+			whereClause,
+			POPULATE_FIELDS,
+		);
 	};
 
 	create: IOAuth2ClientRepository["create"] = async (clientData) => {
-		const credential = await this.options.em.findOne(ApiCredentialModel, {
-			id: clientData.credentialId,
-		});
-		if (!credential) {
-			throw new Error(
-				`ApiCredential with id ${clientData.credentialId} not found`,
-			);
-		}
+		const credential = await RepoUtils.findRelatedEntity(
+			this.options.em,
+			ApiCredentialModel,
+			clientData.credentialId,
+			"ApiCredential",
+		);
 
 		const clientModel = new Oauth2ClientModel({
 			clientId: clientData.clientId,
@@ -68,47 +60,32 @@ export class MikroormOauth2ClientRepository implements IOAuth2ClientRepository {
 	};
 
 	update: IOAuth2ClientRepository["update"] = async (id, clientData) => {
-		const client = await this.options.em.findOne(Oauth2ClientModel, {
-			id,
-			deletedAt: null,
-		});
-		if (!client) {
-			throw new Error(`OAuth2Client with id ${id} not found`);
-		}
+		const updateData: Record<string, unknown> = {};
 
 		if (clientData.credentialId !== undefined) {
-			const credential = await this.options.em.findOne(ApiCredentialModel, {
-				id: clientData.credentialId,
-			});
-			if (!credential) {
-				throw new Error(
-					`ApiCredential with id ${clientData.credentialId} not found`,
-				);
-			}
-			client.credential = credential;
+			const credential = await RepoUtils.findRelatedEntity(
+				this.options.em,
+				ApiCredentialModel,
+				clientData.credentialId,
+				"ApiCredential",
+			);
+			updateData["credential"] = credential;
 		}
 
-		const { credentialId, ...updateData } = clientData;
-		const filteredUpdateData = Object.fromEntries(
-			Object.entries(updateData).filter(([_, value]) => value !== undefined),
-		);
+		const { credentialId, ...otherData } = clientData;
+		Object.assign(updateData, RepoUtils.filterUpdateData(otherData));
 
-		this.options.em.assign(client, filteredUpdateData);
-		await this.options.em.flush();
-		return client as IOAuth2Client;
+		return RepoUtils.updateEntity<IOAuth2Client, Oauth2ClientModel>(
+			this.options.em,
+			Oauth2ClientModel,
+			id,
+			updateData,
+			POPULATE_FIELDS,
+		);
 	};
 
 	delete: IOAuth2ClientRepository["delete"] = async (id) => {
-		const client = await this.options.em.findOne(Oauth2ClientModel, {
-			id,
-			deletedAt: null,
-		});
-		if (!client) {
-			return;
-		}
-
-		client.deletedAt = new Date();
-		await this.options.em.flush();
+		await RepoUtils.deleteEntity(this.options.em, Oauth2ClientModel, id);
 	};
 
 	deleteByCredentialId: IOAuth2ClientRepository["deleteByCredentialId"] =

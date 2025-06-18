@@ -1,45 +1,34 @@
-import type { EntityManager, FilterQuery } from "@mikro-orm/core";
+import type { FilterQuery } from "@mikro-orm/core";
 import type { IUserProfileRepository } from "../../domain/ports/IUserProfileRepository.ts";
 import type { IUserProfile } from "../../domain/models/IUserProfile.ts";
 import { UserProfileModel } from "./models/UserProfileModel.ts";
 import { UserModel } from "./models/UserModel.ts";
+import * as RepoUtils from "./BaseMikroormRepository.ts";
 
-interface IMikroormUserProfileRepositoryOptions {
-	em: EntityManager;
-}
+const POPULATE_FIELDS = ["user"] as const;
 
 export class MikroormUserProfileRepository implements IUserProfileRepository {
-	private options: IMikroormUserProfileRepositoryOptions;
+	private options: RepoUtils.IMikroormRepositoryOptions;
 
-	constructor(options: IMikroormUserProfileRepositoryOptions) {
+	constructor(options: RepoUtils.IMikroormRepositoryOptions) {
 		this.options = options;
 	}
 
 	findById: IUserProfileRepository["findById"] = async (id) => {
-		const profile = await this.options.em.findOne(
+		return RepoUtils.findById<IUserProfile, UserProfileModel>(
+			this.options.em,
 			UserProfileModel,
-			{
-				id,
-				deletedAt: null,
-			},
-			{
-				populate: ["user"],
-			},
+			id,
+			POPULATE_FIELDS,
 		);
-		return profile;
 	};
 
 	findMany: IUserProfileRepository["findMany"] = async (params) => {
-		const whereClause: FilterQuery<UserProfileModel> = {
-			deletedAt: null,
-		};
+		const whereClause: FilterQuery<UserProfileModel> = {};
 
 		if (params.userId) whereClause.user = { id: params.userId };
-
 		if (params.phone) whereClause.phone = params.phone;
-
 		if (params.firstName) whereClause.firstName = params.firstName;
-
 		if (params.lastName) whereClause.lastName = params.lastName;
 
 		if (params.searchTerm) {
@@ -49,19 +38,21 @@ export class MikroormUserProfileRepository implements IUserProfileRepository {
 			];
 		}
 
-		const profiles = await this.options.em.find(UserProfileModel, whereClause, {
-			populate: ["user"],
-		});
-		return profiles;
+		return RepoUtils.findMany<IUserProfile, UserProfileModel>(
+			this.options.em,
+			UserProfileModel,
+			whereClause,
+			POPULATE_FIELDS,
+		);
 	};
 
 	create: IUserProfileRepository["create"] = async (profileData) => {
-		const user = await this.options.em.findOne(UserModel, {
-			id: profileData.userId,
-		});
-		if (!user) {
-			throw new Error(`User with id ${profileData.userId} not found`);
-		}
+		const user = await RepoUtils.findRelatedEntity(
+			this.options.em,
+			UserModel,
+			profileData.userId,
+			"User",
+		);
 
 		const profileModel = new UserProfileModel({
 			firstName: profileData.firstName,
@@ -76,32 +67,28 @@ export class MikroormUserProfileRepository implements IUserProfileRepository {
 	};
 
 	update: IUserProfileRepository["update"] = async (id, profileData) => {
-		const profile = await this.options.em.findOne(UserProfileModel, {
-			id,
-			deletedAt: null,
-		});
-		if (!profile) {
-			throw new Error(`UserProfile with id ${id} not found`);
-		}
+		const updateData: Record<string, unknown> = {};
 
 		if (profileData.userId !== undefined) {
-			const user = await this.options.em.findOne(UserModel, {
-				id: profileData.userId,
-			});
-			if (!user) {
-				throw new Error(`User with id ${profileData.userId} not found`);
-			}
-			profile.user = user;
+			const user = await RepoUtils.findRelatedEntity(
+				this.options.em,
+				UserModel,
+				profileData.userId,
+				"User",
+			);
+			updateData["user"] = user;
 		}
 
-		const { userId, ...updateData } = profileData;
-		const filteredUpdateData = Object.fromEntries(
-			Object.entries(updateData).filter(([_, value]) => value !== undefined),
-		);
+		const { userId, ...otherData } = profileData;
+		Object.assign(updateData, RepoUtils.filterUpdateData(otherData));
 
-		this.options.em.assign(profile, filteredUpdateData);
-		await this.options.em.flush();
-		return profile as IUserProfile;
+		return RepoUtils.updateEntity<IUserProfile, UserProfileModel>(
+			this.options.em,
+			UserProfileModel,
+			id,
+			updateData,
+			POPULATE_FIELDS,
+		);
 	};
 
 	updateByUserId: IUserProfileRepository["updateByUserId"] = async (
@@ -117,9 +104,7 @@ export class MikroormUserProfileRepository implements IUserProfileRepository {
 		}
 
 		const { userId: _, ...updateData } = profileData;
-		const filteredUpdateData = Object.fromEntries(
-			Object.entries(updateData).filter(([_, value]) => value !== undefined),
-		);
+		const filteredUpdateData = RepoUtils.filterUpdateData(updateData);
 
 		this.options.em.assign(profile, filteredUpdateData);
 		await this.options.em.flush();
@@ -127,16 +112,7 @@ export class MikroormUserProfileRepository implements IUserProfileRepository {
 	};
 
 	delete: IUserProfileRepository["delete"] = async (id) => {
-		const profile = await this.options.em.findOne(UserProfileModel, {
-			id,
-			deletedAt: null,
-		});
-		if (!profile) {
-			return;
-		}
-
-		profile.deletedAt = new Date();
-		await this.options.em.flush();
+		await RepoUtils.deleteEntity(this.options.em, UserProfileModel, id);
 	};
 
 	deleteByUserId: IUserProfileRepository["deleteByUserId"] = async (userId) => {

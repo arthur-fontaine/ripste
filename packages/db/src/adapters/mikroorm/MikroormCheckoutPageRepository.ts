@@ -1,30 +1,26 @@
-import type { EntityManager, FilterQuery } from "@mikro-orm/core";
+import type { FilterQuery } from "@mikro-orm/core";
 import type { ICheckoutPageRepository } from "../../domain/ports/ICheckoutPageRepository.ts";
-import type { ICheckoutPage } from "../../domain/models/ICheckoutPage.ts";
 import { CheckoutPageModel } from "./models/CheckoutPageModel.ts";
 import { TransactionModel } from "./models/TransactionModel.ts";
 import { CheckoutThemeModel } from "./models/CheckoutThemeModel.ts";
+import * as RepoUtils from "./BaseMikroormRepository.ts";
 
-interface IMikroormCheckoutPageRepositoryOptions {
-	em: EntityManager;
-}
+const POPULATE_FIELDS = ["transaction", "theme"] as const;
 
 export class MikroormCheckoutPageRepository implements ICheckoutPageRepository {
-	private options: IMikroormCheckoutPageRepositoryOptions;
+	private options: RepoUtils.IMikroormRepositoryOptions;
 
-	constructor(options: IMikroormCheckoutPageRepositoryOptions) {
+	constructor(options: RepoUtils.IMikroormRepositoryOptions) {
 		this.options = options;
 	}
 
 	findById: ICheckoutPageRepository["findById"] = async (id) => {
-		const page = await this.options.em.findOne(
+		return await RepoUtils.findById(
+			this.options.em,
 			CheckoutPageModel,
-			{ id, deletedAt: null },
-			{
-				populate: ["transaction", "theme"],
-			},
+			id,
+			POPULATE_FIELDS,
 		);
-		return page;
 	};
 
 	findMany: ICheckoutPageRepository["findMany"] = async (params) => {
@@ -138,23 +134,19 @@ export class MikroormCheckoutPageRepository implements ICheckoutPageRepository {
 	};
 
 	create: ICheckoutPageRepository["create"] = async (pageData) => {
-		const transaction = await this.options.em.findOne(TransactionModel, {
-			id: pageData.transactionId,
-			deletedAt: null,
-		});
-		if (!transaction) {
-			throw new Error(
-				`Transaction with id ${pageData.transactionId} not found`,
-			);
-		}
+		const transaction = await RepoUtils.findRelatedEntity(
+			this.options.em,
+			TransactionModel,
+			pageData.transactionId,
+			"Transaction",
+		);
 
-		const theme = await this.options.em.findOne(CheckoutThemeModel, {
-			id: pageData.themeId,
-			deletedAt: null,
-		});
-		if (!theme) {
-			throw new Error(`CheckoutTheme with id ${pageData.themeId} not found`);
-		}
+		const theme = await RepoUtils.findRelatedEntity(
+			this.options.em,
+			CheckoutThemeModel,
+			pageData.themeId,
+			"CheckoutTheme",
+		);
 
 		const pageModel = new CheckoutPageModel({
 			uri: pageData.uri,
@@ -173,60 +165,42 @@ export class MikroormCheckoutPageRepository implements ICheckoutPageRepository {
 	};
 
 	update: ICheckoutPageRepository["update"] = async (id, pageData) => {
-		const page = await this.options.em.findOne(CheckoutPageModel, {
-			id,
-			deletedAt: null,
-		});
-		if (!page) {
-			throw new Error(`CheckoutPage with id ${id} not found`);
-		}
+		const updateData: Record<string, unknown> = {};
 
 		if (pageData.transactionId !== undefined) {
-			const transaction = await this.options.em.findOne(TransactionModel, {
-				id: pageData.transactionId,
-				deletedAt: null,
-			});
-			if (!transaction) {
-				throw new Error(
-					`Transaction with id ${pageData.transactionId} not found`,
-				);
-			}
-			page.transaction = transaction;
+			const transaction = await RepoUtils.findRelatedEntity(
+				this.options.em,
+				TransactionModel,
+				pageData.transactionId,
+				"Transaction",
+			);
+			updateData["transaction"] = transaction;
 		}
 
 		if (pageData.themeId !== undefined) {
-			const theme = await this.options.em.findOne(CheckoutThemeModel, {
-				id: pageData.themeId,
-				deletedAt: null,
-			});
-			if (!theme) {
-				throw new Error(`CheckoutTheme with id ${pageData.themeId} not found`);
-			}
-			page.theme = theme;
+			const theme = await RepoUtils.findRelatedEntity(
+				this.options.em,
+				CheckoutThemeModel,
+				pageData.themeId,
+				"CheckoutTheme",
+			);
+			updateData["theme"] = theme;
 		}
 
-		const { transactionId, themeId, ...updateData } = pageData;
-		const filteredUpdateData = Object.fromEntries(
-			Object.entries(updateData).filter(([_, value]) => value !== undefined),
-		);
+		const { transactionId, themeId, ...otherData } = pageData;
+		Object.assign(updateData, RepoUtils.filterUpdateData(otherData));
 
-		this.options.em.assign(page, filteredUpdateData);
-		await this.options.em.flush();
-		return page as ICheckoutPage;
+		return await RepoUtils.updateEntity(
+			this.options.em,
+			CheckoutPageModel,
+			id,
+			updateData,
+			POPULATE_FIELDS,
+		);
 	};
 
 	delete: ICheckoutPageRepository["delete"] = async (id) => {
-		const page = await this.options.em.findOne(CheckoutPageModel, {
-			id,
-			deletedAt: null,
-		});
-		if (!page) {
-			return;
-		}
-
-		// Soft delete by setting deletedAt timestamp
-		page.deletedAt = new Date();
-		await this.options.em.flush();
+		await RepoUtils.deleteEntity(this.options.em, CheckoutPageModel, id);
 	};
 
 	deleteExpiredPages: ICheckoutPageRepository["deleteExpiredPages"] =

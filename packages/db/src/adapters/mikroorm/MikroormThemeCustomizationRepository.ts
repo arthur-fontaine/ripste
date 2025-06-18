@@ -1,54 +1,44 @@
-import type { EntityManager, FilterQuery } from "@mikro-orm/core";
+import type { FilterQuery } from "@mikro-orm/core";
 import type { IThemeCustomizationRepository } from "../../domain/ports/IThemeCustomizationRepository.ts";
 import type { IThemeCustomization } from "../../domain/models/IThemeCustomization.ts";
 import { ThemeCustomizationModel } from "./models/ThemeCustomizationModel.ts";
 import { CheckoutThemeModel } from "./models/CheckoutThemeModel.ts";
+import * as RepoUtils from "./BaseMikroormRepository.ts";
 
-interface IMikroormThemeCustomizationRepositoryOptions {
-	em: EntityManager;
-}
+const POPULATE_FIELDS = ["theme"] as const;
 
 export class MikroormThemeCustomizationRepository
 	implements IThemeCustomizationRepository
 {
-	private options: IMikroormThemeCustomizationRepositoryOptions;
+	private options: RepoUtils.IMikroormRepositoryOptions;
 
-	constructor(options: IMikroormThemeCustomizationRepositoryOptions) {
+	constructor(options: RepoUtils.IMikroormRepositoryOptions) {
 		this.options = options;
 	}
 
 	findById: IThemeCustomizationRepository["findById"] = async (id) => {
-		const customization = await this.options.em.findOne(
+		return RepoUtils.findById<IThemeCustomization, ThemeCustomizationModel>(
+			this.options.em,
 			ThemeCustomizationModel,
-			{
-				id,
-				deletedAt: null,
-			},
-			{
-				populate: ["theme"],
-			},
+			id,
+			POPULATE_FIELDS,
 		);
-		return customization;
 	};
 
 	findMany: IThemeCustomizationRepository["findMany"] = async (params) => {
-		const whereClause: FilterQuery<ThemeCustomizationModel> = {
-			deletedAt: null,
-		};
+		const whereClause: FilterQuery<ThemeCustomizationModel> = {};
 
 		if (params.themeId) whereClause.theme = { id: params.themeId };
 
 		if (params.customizationType)
 			whereClause.customizationType = params.customizationType;
 
-		const customizations = await this.options.em.find(
+		return RepoUtils.findMany<IThemeCustomization, ThemeCustomizationModel>(
+			this.options.em,
 			ThemeCustomizationModel,
 			whereClause,
-			{
-				populate: ["theme"],
-			},
+			POPULATE_FIELDS,
 		);
-		return customizations;
 	};
 
 	create: IThemeCustomizationRepository["create"] = async (

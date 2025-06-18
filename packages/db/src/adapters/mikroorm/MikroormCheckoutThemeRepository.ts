@@ -3,10 +3,13 @@ import type { ICheckoutThemeRepository } from "../../domain/ports/ICheckoutTheme
 import type { ICheckoutTheme } from "../../domain/models/ICheckoutTheme.ts";
 import { CheckoutThemeModel } from "./models/CheckoutThemeModel.ts";
 import { StoreModel } from "./models/StoreModel.ts";
+import * as RepoUtils from "./BaseMikroormRepository.ts";
 
 interface IMikroormCheckoutThemeRepositoryOptions {
 	em: EntityManager;
 }
+
+const POPULATE_FIELDS = ["store", "customizations", "checkoutPages"] as const;
 
 export class MikroormCheckoutThemeRepository
 	implements ICheckoutThemeRepository
@@ -18,37 +21,28 @@ export class MikroormCheckoutThemeRepository
 	}
 
 	findById: ICheckoutThemeRepository["findById"] = async (id) => {
-		const theme = await this.options.em.findOne(
+		return RepoUtils.findById<ICheckoutTheme, CheckoutThemeModel>(
+			this.options.em,
 			CheckoutThemeModel,
-			{
-				id,
-				deletedAt: null,
-			},
-			{
-				populate: ["store", "customizations", "checkoutPages"],
-			},
+			id,
+			POPULATE_FIELDS,
 		);
-		return theme;
 	};
 
 	findMany: ICheckoutThemeRepository["findMany"] = async (params) => {
-		const whereClause: FilterQuery<CheckoutThemeModel> = {
-			deletedAt: null,
-		};
+		const whereClause: FilterQuery<CheckoutThemeModel> = {};
 
 		if (params.storeId) whereClause.store = { id: params.storeId };
-
 		if (params.name) whereClause.name = params.name;
-
 		if (params.version) whereClause.version = params.version;
 
 		if (params.latestVersion) {
 			if (params.storeId && params.name) {
 				const theme = await this.options.em.findOne(
 					CheckoutThemeModel,
-					whereClause,
+					{ ...whereClause, deletedAt: null },
 					{
-						populate: ["store", "customizations", "checkoutPages"],
+						populate: POPULATE_FIELDS,
 						orderBy: { version: "DESC" },
 					},
 				);
@@ -57,19 +51,21 @@ export class MikroormCheckoutThemeRepository
 
 			const themes = await this.options.em.find(
 				CheckoutThemeModel,
-				whereClause,
+				{ ...whereClause, deletedAt: null },
 				{
-					populate: ["store", "customizations", "checkoutPages"],
+					populate: POPULATE_FIELDS,
 					orderBy: { version: "DESC" },
 				},
 			);
 			return themes;
 		}
 
-		const themes = await this.options.em.find(CheckoutThemeModel, whereClause, {
-			populate: ["store", "customizations", "checkoutPages"],
-		});
-		return themes;
+		return RepoUtils.findMany<ICheckoutTheme, CheckoutThemeModel>(
+			this.options.em,
+			CheckoutThemeModel,
+			whereClause,
+			POPULATE_FIELDS,
+		);
 	};
 
 	getNextVersion: ICheckoutThemeRepository["getNextVersion"] = async (
@@ -90,13 +86,12 @@ export class MikroormCheckoutThemeRepository
 	};
 
 	create: ICheckoutThemeRepository["create"] = async (themeData) => {
-		const store = await this.options.em.findOne(StoreModel, {
-			id: themeData.storeId,
-			deletedAt: null,
-		});
-		if (!store) {
-			throw new Error(`Store with id ${themeData.storeId} not found`);
-		}
+		const store = await RepoUtils.findRelatedEntity(
+			this.options.em,
+			StoreModel,
+			themeData.storeId,
+			"Store",
+		);
 
 		const themeModel = new CheckoutThemeModel({
 			name: themeData.name,

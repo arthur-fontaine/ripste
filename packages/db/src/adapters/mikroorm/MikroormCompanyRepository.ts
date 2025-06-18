@@ -2,6 +2,9 @@ import type { EntityManager, FilterQuery } from "@mikro-orm/core";
 import type { ICompanyRepository } from "../../domain/ports/ICompanyRepository.ts";
 import type { ICompany } from "../../domain/models/ICompany.ts";
 import { CompanyModel } from "./models/CompanyModel.ts";
+import * as RepoUtils from "./BaseMikroormRepository.ts";
+
+const POPULATE_FIELDS = ["stores"] as const;
 
 interface IMikroormCompanyRepositoryOptions {
 	em: EntityManager;
@@ -15,32 +18,26 @@ export class MikroormCompanyRepository implements ICompanyRepository {
 	}
 
 	findById: ICompanyRepository["findById"] = async (id) => {
-		const company = await this.options.em.findOne(
+		return RepoUtils.findById<ICompany, CompanyModel>(
+			this.options.em,
 			CompanyModel,
-			{
-				id,
-				deletedAt: null,
-			},
-			{
-				populate: ["stores"],
-			},
+			id,
+			POPULATE_FIELDS,
 		);
-		return company;
 	};
 
 	findMany: ICompanyRepository["findMany"] = async (params) => {
-		const whereClause: FilterQuery<CompanyModel> = {
-			deletedAt: null,
-		};
+		const whereClause: FilterQuery<CompanyModel> = {};
 
 		if (params.kbis) whereClause.kbis = params.kbis;
-
 		if (params.vatNumber) whereClause.vatNumber = params.vatNumber;
 
-		const companies = await this.options.em.find(CompanyModel, whereClause, {
-			populate: ["stores"],
-		});
-		return companies;
+		return RepoUtils.findMany<ICompany, CompanyModel>(
+			this.options.em,
+			CompanyModel,
+			whereClause,
+			POPULATE_FIELDS,
+		);
 	};
 
 	create: ICompanyRepository["create"] = async (companyData) => {
@@ -57,32 +54,20 @@ export class MikroormCompanyRepository implements ICompanyRepository {
 	};
 
 	update: ICompanyRepository["update"] = async (id, companyData) => {
-		const company = await this.options.em.findOne(CompanyModel, {
+		return RepoUtils.updateEntity<ICompany, CompanyModel>(
+			this.options.em,
+			CompanyModel,
 			id,
-			deletedAt: null,
-		});
-		if (!company) {
-			throw new Error(`Company with id ${id} not found`);
-		}
-
-		const filteredCompanyData = Object.fromEntries(
-			Object.entries(companyData).filter(([_, value]) => value !== undefined),
+			RepoUtils.filterUpdateData(companyData),
+			POPULATE_FIELDS,
 		);
-		this.options.em.assign(company, filteredCompanyData);
-		await this.options.em.flush();
-		return company as ICompany;
 	};
 
 	delete: ICompanyRepository["delete"] = async (id) => {
-		const company = await this.options.em.findOne(CompanyModel, {
+		return RepoUtils.deleteEntity<ICompany, CompanyModel>(
+			this.options.em,
+			CompanyModel,
 			id,
-			deletedAt: null,
-		});
-		if (!company) {
-			return;
-		}
-
-		company.deletedAt = new Date();
-		await this.options.em.flush();
+		);
 	};
 }
