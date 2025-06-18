@@ -17,7 +17,10 @@ export class MikroormCompanyRepository implements ICompanyRepository {
 	findById: ICompanyRepository["findById"] = async (id) => {
 		const company = await this.options.em.findOne(
 			CompanyModel,
-			{ id },
+			{ 
+				id,
+				deletedAt: null,
+			},
 			{
 				populate: ["stores"],
 			},
@@ -29,9 +32,12 @@ export class MikroormCompanyRepository implements ICompanyRepository {
 		interface WhereClause {
 			kbis?: string;
 			vatNumber?: string;
+			deletedAt?: null;
 		}
 
-		const whereClause: WhereClause = {};
+		const whereClause: WhereClause = {
+			deletedAt: null,
+		};
 
 		if (params.kbis) {
 			whereClause.kbis = params.kbis;
@@ -61,7 +67,10 @@ export class MikroormCompanyRepository implements ICompanyRepository {
 	};
 
 	update: ICompanyRepository["update"] = async (id, companyData) => {
-		const company = await this.options.em.findOne(CompanyModel, { id });
+		const company = await this.options.em.findOne(CompanyModel, { 
+			id,
+			deletedAt: null,
+		});
 		if (!company) {
 			throw new Error(`Company with id ${id} not found`);
 		}
@@ -75,11 +84,15 @@ export class MikroormCompanyRepository implements ICompanyRepository {
 	};
 
 	delete: ICompanyRepository["delete"] = async (id) => {
-		const company = await this.options.em.findOne(CompanyModel, { id });
+		const company = await this.options.em.findOne(CompanyModel, { 
+			id,
+			deletedAt: null,
+		});
 		if (!company) {
 			return;
 		}
 
-		await this.options.em.removeAndFlush(company);
+		company.deletedAt = new Date();
+		await this.options.em.flush();
 	};
 }

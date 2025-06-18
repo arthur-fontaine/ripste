@@ -20,7 +20,10 @@ export class MikroormCheckoutThemeRepository
 	findById: ICheckoutThemeRepository["findById"] = async (id) => {
 		const theme = await this.options.em.findOne(
 			CheckoutThemeModel,
-			{ id },
+			{ 
+				id,
+				deletedAt: null,
+			},
 			{
 				populate: ["store", "customizations", "checkoutPages"],
 			},
@@ -33,9 +36,12 @@ export class MikroormCheckoutThemeRepository
 			store?: { id: string };
 			name?: string;
 			version?: number;
+			deletedAt: null;
 		}
 
-		const whereClause: WhereClause = {};
+		const whereClause: WhereClause = {
+			deletedAt: null,
+		};
 
 		if (params.storeId) {
 			whereClause.store = { id: params.storeId };
@@ -97,11 +103,12 @@ export class MikroormCheckoutThemeRepository
 	};
 
 	create: ICheckoutThemeRepository["create"] = async (themeData) => {
-		let store: StoreModel | null = null;
-		if (themeData.storeId) {
-			store = await this.options.em.findOne(StoreModel, {
-				id: themeData.storeId,
-			});
+		const store = await this.options.em.findOne(StoreModel, {
+			id: themeData.storeId,
+			deletedAt: null,
+		});
+		if (!store) {
+			throw new Error(`Store with id ${themeData.storeId} not found`);
 		}
 
 		const themeModel = new CheckoutThemeModel({
@@ -115,22 +122,23 @@ export class MikroormCheckoutThemeRepository
 	};
 
 	update: ICheckoutThemeRepository["update"] = async (id, themeData) => {
-		const theme = await this.options.em.findOne(CheckoutThemeModel, { id });
+		const theme = await this.options.em.findOne(CheckoutThemeModel, { 
+			id,
+			deletedAt: null,
+		});
 		if (!theme) {
 			throw new Error(`CheckoutTheme with id ${id} not found`);
 		}
 
 		if (themeData.storeId !== undefined) {
-			if (themeData.storeId === null) {
-				theme.store = null;
-			} else {
-				const store = await this.options.em.findOne(StoreModel, {
-					id: themeData.storeId,
-				});
-				if (store) {
-					theme.store = store;
-				}
+			const store = await this.options.em.findOne(StoreModel, {
+				id: themeData.storeId,
+				deletedAt: null,
+			});
+			if (!store) {
+				throw new Error(`Store with id ${themeData.storeId} not found`);
 			}
+			theme.store = store;
 		}
 
 		const { storeId, customizations, ...updateData } = themeData;
@@ -144,11 +152,15 @@ export class MikroormCheckoutThemeRepository
 	};
 
 	delete: ICheckoutThemeRepository["delete"] = async (id) => {
-		const theme = await this.options.em.findOne(CheckoutThemeModel, { id });
+		const theme = await this.options.em.findOne(CheckoutThemeModel, { 
+			id,
+			deletedAt: null,
+		});
 		if (!theme) {
 			return;
 		}
 
-		await this.options.em.removeAndFlush(theme);
+		theme.deletedAt = new Date();
+		await this.options.em.flush();
 	};
 }

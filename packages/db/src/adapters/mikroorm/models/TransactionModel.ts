@@ -45,8 +45,8 @@ export class TransactionModel extends BaseModel implements ITransaction {
 	@Property({ type: t.string, nullable: true })
 	apiCredentialId: string | null;
 
-	@ManyToOne(() => StoreModel, { nullable: true })
-	store: StoreModel | null;
+	@ManyToOne(() => StoreModel)
+	store: StoreModel;
 
 	@ManyToOne(() => ApiCredentialModel, { nullable: true })
 	apiCredential: ApiCredentialModel | null;
@@ -105,26 +105,26 @@ export class TransactionModel extends BaseModel implements ITransaction {
 		reference,
 		amount,
 		currency,
+		store,
 		status = TransactionStatus.CREATED,
 		metadata,
 		apiCredentialId,
-		store,
 		apiCredential,
-	}: Pick<TransactionModel, "reference" | "amount" | "currency"> &
+	}: Pick<TransactionModel, "reference" | "amount" | "currency" | "store"> &
 		Partial<
 			Pick<
 				TransactionModel,
-				"status" | "metadata" | "apiCredentialId" | "store" | "apiCredential"
+				"status" | "metadata" | "apiCredentialId" | "apiCredential"
 			>
 		>) {
 		super();
 		this.reference = reference;
 		this.amount = amount;
 		this.currency = currency;
+		this.store = store;
 		this.status = status;
 		this.metadata = metadata ?? null;
 		this.apiCredentialId = apiCredentialId ?? null;
-		this.store = store ?? null;
 		this.apiCredential = apiCredential ?? null;
 	}
 }

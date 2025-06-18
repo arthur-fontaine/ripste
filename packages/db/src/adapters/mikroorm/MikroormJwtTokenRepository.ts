@@ -18,7 +18,10 @@ export class MikroormJwtTokenRepository implements IJwtTokenRepository {
 	findById: IJwtTokenRepository["findById"] = async (id) => {
 		const token = await this.options.em.findOne(
 			JwtTokenModel,
-			{ id },
+			{ 
+				id,
+				deletedAt: null,
+			},
 			{
 				populate: ["credential"],
 			},
@@ -30,9 +33,12 @@ export class MikroormJwtTokenRepository implements IJwtTokenRepository {
 		interface WhereClause {
 			credential?: { id: string };
 			tokenHash?: string;
+			deletedAt: null;
 		}
 
-		const whereClause: WhereClause = {};
+		const whereClause: WhereClause = {
+			deletedAt: null,
+		};
 
 		if (params.credentialId) {
 			whereClause.credential = { id: params.credentialId };
@@ -49,16 +55,13 @@ export class MikroormJwtTokenRepository implements IJwtTokenRepository {
 	};
 
 	create: IJwtTokenRepository["create"] = async (tokenData) => {
-		let credential: ApiCredentialModel | null = null;
-		if (tokenData.credentialId) {
-			credential = await this.options.em.findOne(ApiCredentialModel, {
-				id: tokenData.credentialId,
-			});
-			if (!credential) {
-				throw new Error(
-					`ApiCredential with id ${tokenData.credentialId} not found`,
-				);
-			}
+		const credential = await this.options.em.findOne(ApiCredentialModel, {
+			id: tokenData.credentialId,
+		});
+		if (!credential) {
+			throw new Error(
+				`ApiCredential with id ${tokenData.credentialId} not found`,
+			);
 		}
 
 		const tokenModel = new JwtTokenModel({
@@ -72,25 +75,24 @@ export class MikroormJwtTokenRepository implements IJwtTokenRepository {
 	};
 
 	update: IJwtTokenRepository["update"] = async (id, tokenData) => {
-		const token = await this.options.em.findOne(JwtTokenModel, { id });
+		const token = await this.options.em.findOne(JwtTokenModel, {
+			id,
+			deletedAt: null,
+		});
 		if (!token) {
 			throw new Error(`JwtToken with id ${id} not found`);
 		}
 
 		if (tokenData.credentialId !== undefined) {
-			if (tokenData.credentialId === null) {
-				token.credential = null;
-			} else {
-				const credential = await this.options.em.findOne(ApiCredentialModel, {
-					id: tokenData.credentialId,
-				});
-				if (!credential) {
-					throw new Error(
-						`ApiCredential with id ${tokenData.credentialId} not found`,
-					);
-				}
-				token.credential = credential;
+			const credential = await this.options.em.findOne(ApiCredentialModel, {
+				id: tokenData.credentialId,
+			});
+			if (!credential) {
+				throw new Error(
+					`ApiCredential with id ${tokenData.credentialId} not found`,
+				);
 			}
+			token.credential = credential;
 		}
 
 		const { credentialId, ...updateData } = tokenData;
@@ -104,12 +106,16 @@ export class MikroormJwtTokenRepository implements IJwtTokenRepository {
 	};
 
 	delete: IJwtTokenRepository["delete"] = async (id) => {
-		const token = await this.options.em.findOne(JwtTokenModel, { id });
+		const token = await this.options.em.findOne(JwtTokenModel, { 
+			id,
+			deletedAt: null,
+		});
 		if (!token) {
 			return;
 		}
 
-		await this.options.em.removeAndFlush(token);
+		token.deletedAt = new Date();
+		await this.options.em.flush();
 	};
 
 	deleteByCredentialId: IJwtTokenRepository["deleteByCredentialId"] = async (
@@ -117,11 +123,13 @@ export class MikroormJwtTokenRepository implements IJwtTokenRepository {
 	) => {
 		const token = await this.options.em.findOne(JwtTokenModel, {
 			credential: { id: credentialId },
+			deletedAt: null,
 		});
 		if (!token) {
 			return;
 		}
 
-		await this.options.em.removeAndFlush(token);
+		token.deletedAt = new Date();
+		await this.options.em.flush();
 	};
 }

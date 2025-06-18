@@ -19,7 +19,10 @@ export class MikroormStoreMemberRepository implements IStoreMemberRepository {
 	findById: IStoreMemberRepository["findById"] = async (id) => {
 		const storeMember = await this.options.em.findOne(
 			StoreMemberModel,
-			{ id },
+			{ 
+				id,
+				deletedAt: null,
+			},
 			{
 				populate: ["user", "store"],
 			},
@@ -32,9 +35,12 @@ export class MikroormStoreMemberRepository implements IStoreMemberRepository {
 			user?: { id: string };
 			store?: { id: string };
 			permissionLevel?: "owner";
+			deletedAt?: null;
 		}
 
-		const whereClause: WhereClause = {};
+		const whereClause: WhereClause = {
+			deletedAt: null,
+		};
 
 		if (params.userId) {
 			whereClause.user = { id: params.userId };
@@ -69,6 +75,7 @@ export class MikroormStoreMemberRepository implements IStoreMemberRepository {
 		const storeMember = await this.options.em.findOne(StoreMemberModel, {
 			user: { id: userId },
 			store: { id: storeId },
+			deletedAt: null,
 		});
 		return !!storeMember;
 	};
@@ -112,7 +119,10 @@ export class MikroormStoreMemberRepository implements IStoreMemberRepository {
 	};
 
 	update: IStoreMemberRepository["update"] = async (id, memberData) => {
-		const storeMember = await this.options.em.findOne(StoreMemberModel, { id });
+		const storeMember = await this.options.em.findOne(StoreMemberModel, { 
+			id,
+			deletedAt: null,
+		});
 		if (!storeMember) {
 			throw new Error(`StoreMember with id ${id} not found`);
 		}
@@ -156,12 +166,16 @@ export class MikroormStoreMemberRepository implements IStoreMemberRepository {
 	};
 
 	delete: IStoreMemberRepository["delete"] = async (id) => {
-		const storeMember = await this.options.em.findOne(StoreMemberModel, { id });
+		const storeMember = await this.options.em.findOne(StoreMemberModel, { 
+			id,
+			deletedAt: null,
+		});
 		if (!storeMember) {
 			return;
 		}
 
-		await this.options.em.removeAndFlush(storeMember);
+		storeMember.deletedAt = new Date();
+		await this.options.em.flush();
 	};
 
 	removeUserFromStore: IStoreMemberRepository["removeUserFromStore"] = async (
@@ -171,11 +185,13 @@ export class MikroormStoreMemberRepository implements IStoreMemberRepository {
 		const storeMember = await this.options.em.findOne(StoreMemberModel, {
 			user: { id: userId },
 			store: { id: storeId },
+			deletedAt: null,
 		});
 		if (!storeMember) {
 			return;
 		}
 
-		await this.options.em.removeAndFlush(storeMember);
+		storeMember.deletedAt = new Date();
+		await this.options.em.flush();
 	};
 }

@@ -5,11 +5,11 @@ import { UserModel } from "./UserModel.ts";
 
 @Entity()
 export class UserProfileModel extends BaseModel implements IUserProfile {
-	@Property({ type: t.string, nullable: true })
-	firstName: string | null;
+	@Property({ type: t.string })
+	firstName: string;
 
-	@Property({ type: t.string, nullable: true })
-	lastName: string | null;
+	@Property({ type: t.string })
+	lastName: string;
 
 	@Property({ type: t.string, nullable: true })
 	phone: string | null;
@@ -21,18 +21,16 @@ export class UserProfileModel extends BaseModel implements IUserProfile {
 		return this.user.id;
 	}
 
-	get fullName(): string | null {
-		if (!this.firstName && !this.lastName) {
-			return null;
-		}
-		return `${this.firstName || ""} ${this.lastName || ""}`.trim();
+	get fullName(): string {
+		return `${this.firstName} ${this.lastName}`.trim();
 	}
 
 	constructor({
-		firstName = null,
-		lastName = null,
+		firstName,
+		lastName,
 		phone = null,
-	}: Partial<Pick<UserProfileModel, "firstName" | "lastName" | "phone">> = {}) {
+	}: Pick<UserProfileModel, "firstName" | "lastName"> & 
+		Partial<Pick<UserProfileModel, "phone">>) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;

@@ -20,8 +20,8 @@ export class CheckoutThemeModel extends BaseModel implements ICheckoutTheme {
 	@Property({ type: t.integer })
 	version: number;
 
-	@ManyToOne(() => StoreModel, { nullable: true })
-	store: StoreModel | null;
+	@ManyToOne(() => StoreModel)
+	store: StoreModel;
 
 	@OneToMany(
 		() => ThemeCustomizationModel,
@@ -47,11 +47,10 @@ export class CheckoutThemeModel extends BaseModel implements ICheckoutTheme {
 		name,
 		version,
 		store,
-	}: Pick<CheckoutThemeModel, "name" | "version"> &
-		Partial<Pick<CheckoutThemeModel, "store">>) {
+	}: Pick<CheckoutThemeModel, "name" | "version" | "store">) {
 		super();
 		this.name = name;
 		this.version = version;
-		this.store = store ?? null;
+		this.store = store;
 	}
 }

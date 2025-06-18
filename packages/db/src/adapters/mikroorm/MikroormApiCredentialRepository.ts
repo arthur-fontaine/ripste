@@ -20,7 +20,7 @@ export class MikroormApiCredentialRepository
 	findById: IApiCredentialRepository["findById"] = async (id) => {
 		const credential = await this.options.em.findOne(
 			ApiCredentialModel,
-			{ id },
+			{ id, deletedAt: null },
 			{
 				populate: [
 					"store",
@@ -41,10 +41,13 @@ export class MikroormApiCredentialRepository
 			credentialType?: "jwt" | "oauth2";
 			isActive?: boolean;
 			expiresAt?: { $lt: Date } | { $gt: Date };
+			deletedAt: null;
 			$or?: Array<{ expiresAt: null } | { expiresAt: { $gt: Date } }>;
 		}
 
-		const whereClause: WhereClause = {};
+		const whereClause: WhereClause = {
+			deletedAt: null,
+		};
 
 		if (params.storeId) {
 			whereClause.store = { id: params.storeId };
@@ -103,6 +106,7 @@ export class MikroormApiCredentialRepository
 	) => {
 		const credential = await this.options.em.findOne(ApiCredentialModel, {
 			id,
+			deletedAt: null,
 		});
 		if (!credential) {
 			throw new Error(`ApiCredential with id ${id} not found`);
@@ -116,7 +120,7 @@ export class MikroormApiCredentialRepository
 		async (id) => {
 			const credential = await this.options.em.findOne(
 				ApiCredentialModel,
-				{ id },
+				{ id, deletedAt: null },
 				{
 					populate: [
 						"store",
@@ -139,6 +143,7 @@ export class MikroormApiCredentialRepository
 	create: IApiCredentialRepository["create"] = async (credentialData) => {
 		const store = await this.options.em.findOne(StoreModel, {
 			id: credentialData.storeId,
+			deletedAt: null,
 		});
 		if (!store) {
 			throw new Error(`Store with id ${credentialData.storeId} not found`);
@@ -146,6 +151,7 @@ export class MikroormApiCredentialRepository
 
 		const createdByUser = await this.options.em.findOne(UserModel, {
 			id: credentialData.createdByUserId,
+			deletedAt: null,
 		});
 		if (!createdByUser) {
 			throw new Error(
@@ -170,6 +176,7 @@ export class MikroormApiCredentialRepository
 	update: IApiCredentialRepository["update"] = async (id, credentialData) => {
 		const credential = await this.options.em.findOne(ApiCredentialModel, {
 			id,
+			deletedAt: null,
 		});
 		if (!credential) {
 			throw new Error(`ApiCredential with id ${id} not found`);
@@ -185,6 +192,7 @@ export class MikroormApiCredentialRepository
 
 		const store = await this.options.em.findOne(StoreModel, {
 			id: credentialData.storeId,
+			deletedAt: null,
 		});
 		if (!store) {
 			throw new Error(`Store with id ${credentialData.storeId} not found`);
@@ -193,6 +201,7 @@ export class MikroormApiCredentialRepository
 
 		const user = await this.options.em.findOne(UserModel, {
 			id: credentialData.createdByUserId,
+			deletedAt: null,
 		});
 		if (!user) {
 			throw new Error(
@@ -214,11 +223,14 @@ export class MikroormApiCredentialRepository
 	delete: IApiCredentialRepository["delete"] = async (id) => {
 		const credential = await this.options.em.findOne(ApiCredentialModel, {
 			id,
+			deletedAt: null,
 		});
 		if (!credential) {
 			return;
 		}
 
-		await this.options.em.removeAndFlush(credential);
+		// Soft delete by setting deletedAt timestamp
+		credential.deletedAt = new Date();
+		await this.options.em.flush();
 	};
 }

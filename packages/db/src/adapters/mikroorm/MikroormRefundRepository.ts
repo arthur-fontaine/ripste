@@ -19,7 +19,7 @@ export class MikroormRefundRepository implements IRefundRepository {
 	findById: IRefundRepository["findById"] = async (id) => {
 		const refund = await this.options.em.findOne(
 			RefundModel,
-			{ id },
+			{ id, deletedAt: null },
 			{
 				populate: ["transaction", "initiatedByUser"],
 			},
@@ -32,9 +32,12 @@ export class MikroormRefundRepository implements IRefundRepository {
 			transaction?: { id: string };
 			initiatedByUser?: { id: string };
 			status?: "pending" | "processing" | "completed" | "failed";
+			deletedAt: null;
 		}
 
-		const whereClause: WhereClause = {};
+		const whereClause: WhereClause = {
+			deletedAt: null,
+		};
 
 		if (params.transactionId) {
 			whereClause.transaction = { id: params.transactionId };
@@ -66,16 +69,14 @@ export class MikroormRefundRepository implements IRefundRepository {
 	};
 
 	create: IRefundRepository["create"] = async (refundData) => {
-		let transaction: TransactionModel | null = null;
-		if (refundData.transactionId) {
-			transaction = await this.options.em.findOne(TransactionModel, {
-				id: refundData.transactionId,
-			});
-			if (!transaction) {
-				throw new Error(
-					`Transaction with id ${refundData.transactionId} not found`,
-				);
-			}
+		const transaction = await this.options.em.findOne(TransactionModel, {
+			deletedAt: null,
+			id: refundData.transactionId,
+		});
+		if (!transaction) {
+			throw new Error(
+				`Transaction with id ${refundData.transactionId} not found`,
+			);
 		}
 
 		let initiatedByUser: UserModel | null = null;
@@ -104,7 +105,10 @@ export class MikroormRefundRepository implements IRefundRepository {
 	};
 
 	update: IRefundRepository["update"] = async (id, refundData) => {
-		const refund = await this.options.em.findOne(RefundModel, { id });
+		const refund = await this.options.em.findOne(RefundModel, { 
+			id,
+			deletedAt: null,
+		});
 		if (!refund) {
 			throw new Error(`Refund with id ${id} not found`);
 		}
@@ -112,19 +116,16 @@ export class MikroormRefundRepository implements IRefundRepository {
 		const relationUpdates: Partial<RefundModel> = {};
 
 		if (refundData.transactionId !== undefined) {
-			if (refundData.transactionId === null) {
-				relationUpdates.transaction = null;
-			} else {
-				const transaction = await this.options.em.findOne(TransactionModel, {
-					id: refundData.transactionId,
-				});
-				if (!transaction) {
-					throw new Error(
-						`Transaction with id ${refundData.transactionId} not found`,
-					);
-				}
-				relationUpdates.transaction = transaction;
+			const transaction = await this.options.em.findOne(TransactionModel, {
+			deletedAt: null,
+				id: refundData.transactionId,
+			});
+			if (!transaction) {
+				throw new Error(
+					`Transaction with id ${refundData.transactionId} not found`,
+				);
 			}
+			relationUpdates.transaction = transaction;
 		}
 
 		if (refundData.initiatedByUserId !== undefined) {
@@ -157,11 +158,16 @@ export class MikroormRefundRepository implements IRefundRepository {
 	};
 
 	delete: IRefundRepository["delete"] = async (id) => {
-		const refund = await this.options.em.findOne(RefundModel, { id });
+		const refund = await this.options.em.findOne(RefundModel, { 
+			id,
+			deletedAt: null,
+		});
 		if (!refund) {
 			return;
 		}
 
-		await this.options.em.removeAndFlush(refund);
+		// Soft delete by setting deletedAt timestamp
+		refund.deletedAt = new Date();
+		await this.options.em.flush();
 	};
 }

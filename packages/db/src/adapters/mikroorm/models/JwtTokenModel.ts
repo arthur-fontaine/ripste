@@ -11,18 +11,17 @@ export class JwtTokenModel extends BaseModel implements IJwtToken {
 	@Property({ type: "json" })
 	permissions: string[];
 
-	@ManyToOne(() => ApiCredentialModel, { nullable: true })
-	credential: ApiCredentialModel | null;
+	@ManyToOne(() => ApiCredentialModel)
+	credential: ApiCredentialModel;
 
 	constructor({
 		tokenHash,
 		permissions,
-		credential = null,
-	}: Pick<JwtTokenModel, "tokenHash" | "permissions"> &
-		Partial<Pick<JwtTokenModel, "credential">>) {
+		credential,
+	}: Pick<JwtTokenModel, "tokenHash" | "permissions" | "credential">) {
 		super();
 		this.tokenHash = tokenHash;
 		this.permissions = permissions;
-		this.credential = credential ?? null;
+		this.credential = credential;
 	}
 }

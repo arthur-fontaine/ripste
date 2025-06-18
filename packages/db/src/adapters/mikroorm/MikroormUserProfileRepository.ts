@@ -18,7 +18,10 @@ export class MikroormUserProfileRepository implements IUserProfileRepository {
 	findById: IUserProfileRepository["findById"] = async (id) => {
 		const profile = await this.options.em.findOne(
 			UserProfileModel,
-			{ id },
+			{ 
+				id,
+				deletedAt: null,
+			},
 			{
 				populate: ["user"],
 			},
@@ -32,12 +35,15 @@ export class MikroormUserProfileRepository implements IUserProfileRepository {
 			phone?: string;
 			firstName?: string;
 			lastName?: string;
+			deletedAt?: null;
 			$or?: Array<
 				{ firstName: { $ilike: string } } | { lastName: { $ilike: string } }
 			>;
 		}
 
-		const whereClause: WhereClause = {};
+		const whereClause: WhereClause = {
+			deletedAt: null,
+		};
 
 		if (params.userId) {
 			whereClause.user = { id: params.userId };
@@ -89,7 +95,10 @@ export class MikroormUserProfileRepository implements IUserProfileRepository {
 	};
 
 	update: IUserProfileRepository["update"] = async (id, profileData) => {
-		const profile = await this.options.em.findOne(UserProfileModel, { id });
+		const profile = await this.options.em.findOne(UserProfileModel, { 
+			id,
+			deletedAt: null,
+		});
 		if (!profile) {
 			throw new Error(`UserProfile with id ${id} not found`);
 		}
@@ -120,6 +129,7 @@ export class MikroormUserProfileRepository implements IUserProfileRepository {
 	) => {
 		const profile = await this.options.em.findOne(UserProfileModel, {
 			user: { id: userId },
+			deletedAt: null,
 		});
 		if (!profile) {
 			throw new Error(`UserProfile for user ${userId} not found`);
@@ -136,22 +146,28 @@ export class MikroormUserProfileRepository implements IUserProfileRepository {
 	};
 
 	delete: IUserProfileRepository["delete"] = async (id) => {
-		const profile = await this.options.em.findOne(UserProfileModel, { id });
-		if (!profile) {
-			return;
-		}
-
-		await this.options.em.removeAndFlush(profile);
-	};
-
-	deleteByUserId: IUserProfileRepository["deleteByUserId"] = async (userId) => {
-		const profile = await this.options.em.findOne(UserProfileModel, {
-			user: { id: userId },
+		const profile = await this.options.em.findOne(UserProfileModel, { 
+			id,
+			deletedAt: null,
 		});
 		if (!profile) {
 			return;
 		}
 
-		await this.options.em.removeAndFlush(profile);
+		profile.deletedAt = new Date();
+		await this.options.em.flush();
+	};
+
+	deleteByUserId: IUserProfileRepository["deleteByUserId"] = async (userId) => {
+		const profile = await this.options.em.findOne(UserProfileModel, {
+			user: { id: userId },
+			deletedAt: null,
+		});
+		if (!profile) {
+			return;
+		}
+
+		profile.deletedAt = new Date();
+		await this.options.em.flush();
 	};
 }

@@ -9,4 +9,7 @@ export abstract class BaseModel {
 
 	@Property({ onUpdate: () => new Date() })
 	updatedAt = new Date();
+
+	@Property({ type: t.datetime, nullable: true })
+	deletedAt: Date | null = null;
 }

@@ -25,8 +25,8 @@ export class RefundModel extends BaseModel implements IRefund {
 	@Property({ type: t.datetime, nullable: true })
 	processedAt: Date | null;
 
-	@ManyToOne(() => TransactionModel, { nullable: true })
-	transaction: TransactionModel | null;
+	@ManyToOne(() => TransactionModel)
+	transaction: TransactionModel;
 
 	@ManyToOne(() => UserModel, { nullable: true })
 	initiatedByUser: UserModel | null;
@@ -38,11 +38,11 @@ export class RefundModel extends BaseModel implements IRefund {
 		processedAt,
 		transaction,
 		initiatedByUser,
-	}: Pick<RefundModel, "amount"> &
+	}: Pick<RefundModel, "amount" | "transaction"> &
 		Partial<
 			Pick<
 				RefundModel,
-				"reason" | "status" | "processedAt" | "transaction" | "initiatedByUser"
+				"reason" | "status" | "processedAt" | "initiatedByUser"
 			>
 		>) {
 		super();
@@ -50,7 +50,7 @@ export class RefundModel extends BaseModel implements IRefund {
 		this.reason = reason ?? null;
 		this.status = status;
 		this.processedAt = processedAt ?? null;
-		this.transaction = transaction ?? null;
+		this.transaction = transaction;
 		this.initiatedByUser = initiatedByUser ?? null;
 	}
 }

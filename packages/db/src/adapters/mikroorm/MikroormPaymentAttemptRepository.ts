@@ -21,7 +21,10 @@ export class MikroormPaymentAttemptRepository
 	findById: IPaymentAttemptRepository["findById"] = async (id) => {
 		const attempt = await this.options.em.findOne(
 			PaymentAttemptModel,
-			{ id },
+			{ 
+				id,
+				deletedAt: null,
+			},
 			{
 				populate: ["transaction", "paymentMethod"],
 			},
@@ -35,9 +38,12 @@ export class MikroormPaymentAttemptRepository
 			paymentMethod?: { id: string };
 			status?: "pending" | "success" | "failed";
 			customerIp?: string;
+			deletedAt?: null;
 		}
 
-		const whereClause: WhereClause = {};
+		const whereClause: WhereClause = {
+			deletedAt: null,
+		};
 
 		if (params.transactionId) {
 			whereClause.transaction = { id: params.transactionId };
@@ -68,6 +74,7 @@ export class MikroormPaymentAttemptRepository
 
 	create: IPaymentAttemptRepository["create"] = async (attemptData) => {
 		const transaction = await this.options.em.findOne(TransactionModel, {
+			deletedAt: null,
 			id: attemptData.transactionId,
 		});
 		if (!transaction) {
@@ -100,13 +107,17 @@ export class MikroormPaymentAttemptRepository
 	};
 
 	update: IPaymentAttemptRepository["update"] = async (id, attemptData) => {
-		const attempt = await this.options.em.findOne(PaymentAttemptModel, { id });
+		const attempt = await this.options.em.findOne(PaymentAttemptModel, { 
+			id,
+			deletedAt: null,
+		});
 		if (!attempt) {
 			throw new Error(`PaymentAttempt with id ${id} not found`);
 		}
 
 		if (attemptData.transactionId !== undefined) {
 			const transaction = await this.options.em.findOne(TransactionModel, {
+			deletedAt: null,
 				id: attemptData.transactionId,
 			});
 			if (!transaction) {
@@ -140,11 +151,15 @@ export class MikroormPaymentAttemptRepository
 	};
 
 	delete: IPaymentAttemptRepository["delete"] = async (id) => {
-		const attempt = await this.options.em.findOne(PaymentAttemptModel, { id });
+		const attempt = await this.options.em.findOne(PaymentAttemptModel, { 
+			id,
+			deletedAt: null,
+		});
 		if (!attempt) {
 			return;
 		}
 
-		await this.options.em.removeAndFlush(attempt);
+		attempt.deletedAt = new Date();
+		await this.options.em.flush();
 	};
 }

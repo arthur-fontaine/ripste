@@ -20,7 +20,10 @@ export class MikroormThemeCustomizationRepository
 	findById: IThemeCustomizationRepository["findById"] = async (id) => {
 		const customization = await this.options.em.findOne(
 			ThemeCustomizationModel,
-			{ id },
+			{ 
+				id,
+				deletedAt: null,
+			},
 			{
 				populate: ["theme"],
 			},
@@ -32,9 +35,12 @@ export class MikroormThemeCustomizationRepository
 		interface WhereClause {
 			theme?: { id: string };
 			customizationType?: "css";
+			deletedAt: null;
 		}
 
-		const whereClause: WhereClause = {};
+		const whereClause: WhereClause = {
+			deletedAt: null,
+		};
 
 		if (params.themeId) {
 			whereClause.theme = { id: params.themeId };
@@ -57,16 +63,13 @@ export class MikroormThemeCustomizationRepository
 	create: IThemeCustomizationRepository["create"] = async (
 		customizationData,
 	) => {
-		let theme: CheckoutThemeModel | null = null;
-		if (customizationData.themeId) {
-			theme = await this.options.em.findOne(CheckoutThemeModel, {
-				id: customizationData.themeId,
-			});
-			if (!theme) {
-				throw new Error(
-					`CheckoutTheme with id ${customizationData.themeId} not found`,
-				);
-			}
+		const theme = await this.options.em.findOne(CheckoutThemeModel, {
+			id: customizationData.themeId,
+		});
+		if (!theme) {
+			throw new Error(
+				`CheckoutTheme with id ${customizationData.themeId} not found`,
+			);
 		}
 
 		const customizationModel = new ThemeCustomizationModel({
@@ -85,26 +88,25 @@ export class MikroormThemeCustomizationRepository
 	) => {
 		const customization = await this.options.em.findOne(
 			ThemeCustomizationModel,
-			{ id },
+			{
+				id,
+				deletedAt: null,
+			},
 		);
 		if (!customization) {
 			throw new Error(`ThemeCustomization with id ${id} not found`);
 		}
 
 		if (customizationData.themeId !== undefined) {
-			if (customizationData.themeId === null) {
-				customization.theme = null;
-			} else {
-				const theme = await this.options.em.findOne(CheckoutThemeModel, {
-					id: customizationData.themeId,
-				});
-				if (!theme) {
-					throw new Error(
-						`CheckoutTheme with id ${customizationData.themeId} not found`,
-					);
-				}
-				customization.theme = theme;
+			const theme = await this.options.em.findOne(CheckoutThemeModel, {
+				id: customizationData.themeId,
+			});
+			if (!theme) {
+				throw new Error(
+					`CheckoutTheme with id ${customizationData.themeId} not found`,
+				);
 			}
+			customization.theme = theme;
 		}
 
 		const { themeId, ...updateData } = customizationData;
@@ -120,13 +122,17 @@ export class MikroormThemeCustomizationRepository
 	delete: IThemeCustomizationRepository["delete"] = async (id) => {
 		const customization = await this.options.em.findOne(
 			ThemeCustomizationModel,
-			{ id },
+			{ 
+				id,
+				deletedAt: null,
+			},
 		);
 		if (!customization) {
 			return;
 		}
 
-		await this.options.em.removeAndFlush(customization);
+		customization.deletedAt = new Date();
+		await this.options.em.flush();
 	};
 
 	deleteByThemeId: IThemeCustomizationRepository["deleteByThemeId"] = async (
@@ -134,10 +140,14 @@ export class MikroormThemeCustomizationRepository
 	) => {
 		const customizations = await this.options.em.find(ThemeCustomizationModel, {
 			theme: { id: themeId },
+			deletedAt: null,
 		});
 
 		if (customizations.length > 0) {
-			await this.options.em.removeAndFlush(customizations);
+			for (const customization of customizations) {
+				customization.deletedAt = new Date();
+			}
+			await this.options.em.flush();
 		}
 	};
 }

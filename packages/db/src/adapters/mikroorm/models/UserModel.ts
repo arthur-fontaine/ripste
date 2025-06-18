@@ -35,7 +35,7 @@ export class UserModel extends BaseModel implements IUser {
 	permissionLevel: "admin" | "user";
 
 	@Property({ type: t.datetime, nullable: true })
-	deletedAt: Date | null;
+	override deletedAt: Date | null;
 
 	@OneToOne(
 		() => UserProfileModel,

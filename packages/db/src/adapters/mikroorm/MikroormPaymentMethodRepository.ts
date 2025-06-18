@@ -20,7 +20,10 @@ export class MikroormPaymentMethodRepository
 	findById: IPaymentMethodRepository["findById"] = async (id) => {
 		const paymentMethod = await this.options.em.findOne(
 			PaymentMethodModel,
-			{ id },
+			{ 
+				id,
+				deletedAt: null,
+			},
 			{
 				populate: ["transaction", "paymentAttempts"],
 			},
@@ -29,19 +32,16 @@ export class MikroormPaymentMethodRepository
 	};
 
 	findMany: IPaymentMethodRepository["findMany"] = async (params) => {
-		interface WhereClause {
-			transaction?: { id: string };
-			methodType?: "checkout_page" | "api_direct" | "link" | "qr_code";
-		}
-
-		const whereClause: WhereClause = {};
+		const whereClause: Record<string, unknown> = {
+			deletedAt: null,
+		};
 
 		if (params.transactionId) {
-			whereClause.transaction = { id: params.transactionId };
+			whereClause["transaction"] = { id: params.transactionId };
 		}
 
 		if (params.methodType) {
-			whereClause.methodType = params.methodType;
+			whereClause["methodType"] = params.methodType;
 		}
 
 		const paymentMethods = await this.options.em.find(
@@ -56,16 +56,14 @@ export class MikroormPaymentMethodRepository
 	};
 
 	create: IPaymentMethodRepository["create"] = async (methodData) => {
-		let transaction: TransactionModel | null = null;
-		if (methodData.transactionId) {
-			transaction = await this.options.em.findOne(TransactionModel, {
-				id: methodData.transactionId,
-			});
-			if (!transaction) {
-				throw new Error(
-					`Transaction with id ${methodData.transactionId} not found`,
-				);
-			}
+		const transaction = await this.options.em.findOne(TransactionModel, {
+			deletedAt: null,
+			id: methodData.transactionId,
+		});
+		if (!transaction) {
+			throw new Error(
+				`Transaction with id ${methodData.transactionId} not found`,
+			);
 		}
 
 		const paymentMethodModel = new PaymentMethodModel({
@@ -81,22 +79,23 @@ export class MikroormPaymentMethodRepository
 	update: IPaymentMethodRepository["update"] = async (id, methodData) => {
 		const paymentMethod = await this.options.em.findOne(PaymentMethodModel, {
 			id,
+			deletedAt: null,
 		});
 		if (!paymentMethod) {
 			throw new Error(`PaymentMethod with id ${id} not found`);
 		}
 
 		if (methodData.transactionId !== undefined) {
-			if (methodData.transactionId === null) {
-				paymentMethod.transaction = null;
-			} else {
-				const transaction = await this.options.em.findOne(TransactionModel, {
-					id: methodData.transactionId,
-				});
-				if (transaction) {
-					paymentMethod.transaction = transaction;
-				}
+			const transaction = await this.options.em.findOne(TransactionModel, {
+			deletedAt: null,
+				id: methodData.transactionId,
+			});
+			if (!transaction) {
+				throw new Error(
+					`Transaction with id ${methodData.transactionId} not found`,
+				);
 			}
+			paymentMethod.transaction = transaction;
 		}
 
 		const { transactionId, ...updateData } = methodData;
@@ -112,22 +111,28 @@ export class MikroormPaymentMethodRepository
 	delete: IPaymentMethodRepository["delete"] = async (id) => {
 		const paymentMethod = await this.options.em.findOne(PaymentMethodModel, {
 			id,
+			deletedAt: null,
 		});
 		if (!paymentMethod) {
 			return;
 		}
 
-		await this.options.em.removeAndFlush(paymentMethod);
+		paymentMethod.deletedAt = new Date();
+		await this.options.em.flush();
 	};
 
 	deleteByTransactionId: IPaymentMethodRepository["deleteByTransactionId"] =
 		async (transactionId) => {
 			const paymentMethods = await this.options.em.find(PaymentMethodModel, {
 				transaction: { id: transactionId },
+				deletedAt: null,
 			});
 
 			if (paymentMethods.length > 0) {
-				await this.options.em.removeAndFlush(paymentMethods);
+				for (const paymentMethod of paymentMethods) {
+					paymentMethod.deletedAt = new Date();
+				}
+				await this.options.em.flush();
 			}
 		};
 }

@@ -17,8 +17,8 @@ export class Oauth2ClientModel extends BaseModel implements IOAuth2Client {
 	@Property({ type: t.json })
 	scopes: string[];
 
-	@ManyToOne(() => ApiCredentialModel, { nullable: true })
-	credential: Rel<ApiCredentialModel> | null;
+	@ManyToOne(() => ApiCredentialModel)
+	credential: Rel<ApiCredentialModel>;
 
 	constructor({
 		clientId,
@@ -28,14 +28,13 @@ export class Oauth2ClientModel extends BaseModel implements IOAuth2Client {
 		credential,
 	}: Pick<
 		Oauth2ClientModel,
-		"clientId" | "clientSecretHash" | "redirectUris" | "scopes"
-	> &
-		Partial<Pick<Oauth2ClientModel, "credential">>) {
+		"clientId" | "clientSecretHash" | "redirectUris" | "scopes" | "credential"
+	>) {
 		super();
 		this.clientId = clientId;
 		this.clientSecretHash = clientSecretHash;
 		this.redirectUris = redirectUris;
 		this.scopes = scopes;
-		this.credential = credential ?? null;
+		this.credential = credential;
 	}
 }

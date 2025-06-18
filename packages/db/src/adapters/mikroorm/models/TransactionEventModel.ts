@@ -20,22 +20,22 @@ export class TransactionEventModel
 	@Property({ type: t.datetime })
 	occurredAt: Date;
 
-	@ManyToOne(() => TransactionModel, { nullable: true })
-	transaction: TransactionModel | null;
+	@ManyToOne(() => TransactionModel)
+	transaction: TransactionModel;
 
 	constructor({
 		eventType,
+		transaction,
 		eventData,
 		occurredAt = new Date(),
-		transaction,
-	}: Pick<TransactionEventModel, "eventType"> &
+	}: Pick<TransactionEventModel, "eventType" | "transaction"> &
 		Partial<
-			Pick<TransactionEventModel, "eventData" | "occurredAt" | "transaction">
+			Pick<TransactionEventModel, "eventData" | "occurredAt">
 		>) {
 		super();
 		this.eventType = eventType;
 		this.eventData = eventData ?? null;
 		this.occurredAt = occurredAt;
-		this.transaction = transaction ?? null;
+		this.transaction = transaction;
 	}
 }
