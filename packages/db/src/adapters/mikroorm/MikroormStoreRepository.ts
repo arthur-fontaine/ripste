@@ -1,4 +1,4 @@
-import type { EntityManager } from "@mikro-orm/core";
+import type { EntityManager, FilterQuery } from "@mikro-orm/core";
 import type { IStoreRepository } from "../../domain/ports/IStoreRepository.ts";
 import type { IStore } from "../../domain/models/IStore.ts";
 import type { IStoreStatus } from "../../domain/models/IStoreStatus.ts";
@@ -30,12 +30,7 @@ export class MikroormStoreRepository implements IStoreRepository {
 	};
 
 	findMany: IStoreRepository["findMany"] = async (params) => {
-		interface WhereClause {
-			company?: { id: string };
-			deletedAt: null;
-		}
-
-		const whereClause: WhereClause = {
+		const whereClause: FilterQuery<StoreModel> = {
 			deletedAt: null,
 		};
 
@@ -119,14 +114,7 @@ export class MikroormStoreRepository implements IStoreRepository {
 	};
 
 	getStatuses: IStoreRepository["getStatuses"] = async (params) => {
-		interface WhereClause {
-			store?: { id: string };
-			changedByUser?: { id: string };
-			status?: IStoreStatus["status"];
-			deletedAt: null;
-		}
-
-		const whereClause: WhereClause = {
+		const whereClause: FilterQuery<StoreStatusModel> = {
 			deletedAt: null,
 		};
 

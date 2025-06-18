@@ -1,4 +1,4 @@
-import type { EntityManager } from "@mikro-orm/core";
+import type { EntityManager, FilterQuery } from "@mikro-orm/core";
 import type { IPaymentMethodRepository } from "../../domain/ports/IPaymentMethodRepository.ts";
 import type { IPaymentMethod } from "../../domain/models/IPaymentMethod.ts";
 import { PaymentMethodModel } from "./models/PaymentMethodModel.ts";
@@ -32,7 +32,7 @@ export class MikroormPaymentMethodRepository
 	};
 
 	findMany: IPaymentMethodRepository["findMany"] = async (params) => {
-		const whereClause: Record<string, unknown> = {
+		const whereClause: FilterQuery<PaymentMethodModel> = {
 			deletedAt: null,
 		};
 

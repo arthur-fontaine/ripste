@@ -1,4 +1,4 @@
-import type { EntityManager } from "@mikro-orm/core";
+import type { EntityManager, FilterQuery } from "@mikro-orm/core";
 import type { ITransactionRepository } from "../../domain/ports/ITransactionRepository.ts";
 import type { ITransaction } from "../../domain/models/ITransaction.ts";
 import type { ITransactionEvent } from "../../domain/models/ITransactionEvent.ts";
@@ -41,13 +41,7 @@ export class MikroormTransactionRepository implements ITransactionRepository {
 	};
 
 	findMany: ITransactionRepository["findMany"] = async (params) => {
-		interface WhereClause {
-			store?: { id: string };
-			reference?: string;
-			deletedAt: null;
-		}
-
-		const whereClause: WhereClause = {
+		const whereClause: FilterQuery<TransactionModel> = {
 			deletedAt: null,
 		};
 
@@ -238,15 +232,7 @@ export class MikroormTransactionRepository implements ITransactionRepository {
 	};
 
 	getEvents: ITransactionRepository["getEvents"] = async (params) => {
-		interface WhereClause {
-			transaction?: { id: string };
-			eventType?: string;
-			deletedAt?: null;
-			createdAt?: { $gte?: Date; $lte?: Date };
-			$or?: Array<{ eventType: string }>;
-		}
-
-		const whereClause: WhereClause = {
+		const whereClause: FilterQuery<TransactionEventModel> = {
 			deletedAt: null,
 		};
 

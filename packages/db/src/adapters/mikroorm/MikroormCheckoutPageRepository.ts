@@ -1,4 +1,4 @@
-import type { EntityManager } from "@mikro-orm/core";
+import type { EntityManager, FilterQuery } from "@mikro-orm/core";
 import type { ICheckoutPageRepository } from "../../domain/ports/ICheckoutPageRepository.ts";
 import type { ICheckoutPage } from "../../domain/models/ICheckoutPage.ts";
 import { CheckoutPageModel } from "./models/CheckoutPageModel.ts";
@@ -28,19 +28,7 @@ export class MikroormCheckoutPageRepository implements ICheckoutPageRepository {
 	};
 
 	findMany: ICheckoutPageRepository["findMany"] = async (params) => {
-		interface WhereClause {
-			transaction?: { id: string };
-			theme?: { id: string };
-			expiresAt?: { $lt: Date } | { $gt: Date };
-			uri?: string;
-			accessedAt?: { $ne: null } | { $gte?: Date; $lte?: Date };
-			completedAt?: { $ne: null } | { $gte?: Date; $lte?: Date } | null;
-			deletedAt?: null;
-			$or?: Array<{ expiresAt: null } | { expiresAt: { $gt: Date } }>;
-			createdAt?: { $gte?: Date; $lte?: Date };
-		}
-
-		const whereClause: WhereClause = {
+		const whereClause: FilterQuery<CheckoutPageModel> = {
 			deletedAt: null,
 		};
 

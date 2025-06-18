@@ -1,4 +1,4 @@
-import type { EntityManager } from "@mikro-orm/core";
+import type { EntityManager, FilterQuery } from "@mikro-orm/core";
 import type { ICheckoutThemeRepository } from "../../domain/ports/ICheckoutThemeRepository.ts";
 import type { ICheckoutTheme } from "../../domain/models/ICheckoutTheme.ts";
 import { CheckoutThemeModel } from "./models/CheckoutThemeModel.ts";
@@ -32,14 +32,7 @@ export class MikroormCheckoutThemeRepository
 	};
 
 	findMany: ICheckoutThemeRepository["findMany"] = async (params) => {
-		interface WhereClause {
-			store?: { id: string };
-			name?: string;
-			version?: number;
-			deletedAt: null;
-		}
-
-		const whereClause: WhereClause = {
+		const whereClause: FilterQuery<CheckoutThemeModel> = {
 			deletedAt: null,
 		};
 

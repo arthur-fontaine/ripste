@@ -1,4 +1,4 @@
-import type { EntityManager } from "@mikro-orm/core";
+import type { EntityManager, FilterQuery } from "@mikro-orm/core";
 import type { ICompanyRepository } from "../../domain/ports/ICompanyRepository.ts";
 import type { ICompany } from "../../domain/models/ICompany.ts";
 import { CompanyModel } from "./models/CompanyModel.ts";
@@ -29,13 +29,7 @@ export class MikroormCompanyRepository implements ICompanyRepository {
 	};
 
 	findMany: ICompanyRepository["findMany"] = async (params) => {
-		interface WhereClause {
-			kbis?: string;
-			vatNumber?: string;
-			deletedAt?: null;
-		}
-
-		const whereClause: WhereClause = {
+		const whereClause: FilterQuery<CompanyModel> = {
 			deletedAt: null,
 		};
 
