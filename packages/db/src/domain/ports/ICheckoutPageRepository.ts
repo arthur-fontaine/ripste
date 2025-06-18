@@ -1,4 +1,4 @@
-import type { CheckoutPage } from "../models/CheckoutPage.ts";
+import type { ICheckoutPage } from "../models/CheckoutPage.ts";
 import type { IBaseRepository } from "./utils/IBaseRepository.ts";
 
-export interface ICheckoutPageRepository extends IBaseRepository<CheckoutPage> {}
+export interface ICheckoutPageRepository extends IBaseRepository<ICheckoutPage> {}

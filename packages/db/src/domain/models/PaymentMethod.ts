@@ -1,5 +1,5 @@
 import * as z from "./utils/zod-db.ts";
-import { Transaction } from "./Transaction.ts";
+import { type ITransaction, Transaction } from "./Transaction.ts";
 import { PaymentAttempt } from "./PaymentAttempt.ts";
 import { zocker } from "zocker";
 
@@ -10,26 +10,26 @@ const paymentMethodTable = z.table({
 	...z.timestamps(),
 	transaction: z.relation.one(
 		"transactionId",
-		(): z.ZodMiniType<Pick<Transaction, "id">> => Transaction,
+		(): z.ZodMiniType<Pick<ITransaction, "id">> => Transaction,
 		"id",
 	),
 	paymentAttempts: z.relation.many(() => PaymentAttempt),
 });
 
 export const PaymentMethod = paymentMethodTable.select;
-export interface PaymentMethod extends z.infer<typeof PaymentMethod> {
-	transaction: Transaction;
+export interface IPaymentMethod extends z.infer<typeof PaymentMethod> {
+	transaction: ITransaction;
 }
 export const generateFakePaymentMethod = zocker(PaymentMethod).generate;
 
 export const PaymentMethodInsert = paymentMethodTable.insert;
-export interface PaymentMethodInsert
+export interface IPaymentMethodInsert
 	extends z.infer<typeof PaymentMethodInsert> {}
 export const generateFakePaymentMethodInsert =
 	zocker(PaymentMethodInsert).generate;
 
 export const PaymentMethodUpdate = paymentMethodTable.update;
-export interface PaymentMethodUpdate
+export interface IPaymentMethodUpdate
 	extends z.infer<typeof PaymentMethodUpdate> {}
 export const generateFakePaymentMethodUpdate =
 	zocker(PaymentMethodUpdate).generate;

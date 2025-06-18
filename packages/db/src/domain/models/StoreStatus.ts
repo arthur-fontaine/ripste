@@ -14,13 +14,13 @@ const storeStatusTable = z.table({
 });
 
 export const StoreStatus = storeStatusTable.select;
-export interface StoreStatus extends z.infer<typeof StoreStatus> {}
+export interface IStoreStatus extends z.infer<typeof StoreStatus> {}
 export const generateFakeStoreStatus = zocker(StoreStatus).generate;
 
 export const StoreStatusInsert = storeStatusTable.insert;
-export interface StoreStatusInsert extends z.infer<typeof StoreStatusInsert> {}
+export interface IStoreStatusInsert extends z.infer<typeof StoreStatusInsert> {}
 export const generateFakeStoreStatusInsert = zocker(StoreStatusInsert).generate;
 
 export const StoreStatusUpdate = storeStatusTable.update;
-export interface StoreStatusUpdate extends z.infer<typeof StoreStatusUpdate> {}
+export interface IStoreStatusUpdate extends z.infer<typeof StoreStatusUpdate> {}
 export const generateFakeStoreStatusUpdate = zocker(StoreStatusUpdate).generate;

@@ -14,13 +14,13 @@ const companyTable = z.table({
 });
 
 export const Company = companyTable.select;
-export interface Company extends z.infer<typeof Company> {}
+export interface ICompany extends z.infer<typeof Company> {}
 export const generateFakeCompany = zocker(Company).generate;
 
 export const CompanyInsert = companyTable.insert;
-export interface CompanyInsert extends z.infer<typeof CompanyInsert> {}
+export interface ICompanyInsert extends z.infer<typeof CompanyInsert> {}
 export const generateFakeCompanyInsert = zocker(CompanyInsert).generate;
 
 export const CompanyUpdate = companyTable.update;
-export interface CompanyUpdate extends z.infer<typeof CompanyUpdate> {}
+export interface ICompanyUpdate extends z.infer<typeof CompanyUpdate> {}
 export const generateFakeCompanyUpdate = zocker(CompanyUpdate).generate;

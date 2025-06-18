@@ -1,4 +1,4 @@
-import { User } from "./User.ts";
+import { type IUser, User } from "./User.ts";
 import * as z from "./utils/zod-db.ts";
 import { zocker } from "zocker";
 
@@ -11,21 +11,21 @@ const userProfileTable = z.table({
 	...z.timestamps(),
 	user: z.relation.one(
 		"userId",
-		(): z.ZodMiniType<Pick<User, "id">> => User,
+		(): z.ZodMiniType<Pick<IUser, "id">> => User,
 		"id",
 	),
 });
 
 export const UserProfile = userProfileTable.select;
-export interface UserProfile extends z.infer<typeof UserProfile> {
-	user: User;
+export interface IUserProfile extends z.infer<typeof UserProfile> {
+	user: IUser;
 }
 export const generateFakeUserProfile = zocker(UserProfile).generate;
 
 export const UserProfileInsert = userProfileTable.insert;
-export interface UserProfileInsert extends z.infer<typeof UserProfileInsert> {}
+export interface IUserProfileInsert extends z.infer<typeof UserProfileInsert> {}
 export const generateFakeUserProfileInsert = zocker(UserProfileInsert).generate;
 
 export const UserProfileUpdate = userProfileTable.update;
-export interface UserProfileUpdate extends z.infer<typeof UserProfileUpdate> {}
+export interface IUserProfileUpdate extends z.infer<typeof UserProfileUpdate> {}
 export const generateFakeUserProfileUpdate = zocker(UserProfileUpdate).generate;

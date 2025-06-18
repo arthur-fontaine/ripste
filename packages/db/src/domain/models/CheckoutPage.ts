@@ -18,17 +18,17 @@ export const checkoutPageTable = z.table({
 });
 
 export const CheckoutPage = checkoutPageTable.select;
-export interface CheckoutPage extends z.infer<typeof CheckoutPage> {}
+export interface ICheckoutPage extends z.infer<typeof CheckoutPage> {}
 export const generateFakeCheckoutPage = zocker(CheckoutPage).generate;
 
 export const CheckoutPageInsert = checkoutPageTable.insert;
-export interface CheckoutPageInsert
+export interface ICheckoutPageInsert
 	extends z.infer<typeof CheckoutPageInsert> {}
 export const generateFakeCheckoutPageInsert =
 	zocker(CheckoutPageInsert).generate;
 
 export const CheckoutPageUpdate = checkoutPageTable.update;
-export interface CheckoutPageUpdate
+export interface ICheckoutPageUpdate
 	extends z.infer<typeof CheckoutPageUpdate> {}
 export const generateFakeCheckoutPageUpdate =
 	zocker(CheckoutPageUpdate).generate;
@@ -43,7 +43,7 @@ export const CheckoutDisplayData = z.object({
 	settings: z.nullable(z.lazy(() => CheckoutSettings)),
 	customTexts: z.nullable(z.lazy(() => CheckoutCustomTexts)),
 });
-export type CheckoutDisplayData = z.infer<typeof CheckoutDisplayData>;
+export interface ICheckoutDisplayData extends z.infer<typeof CheckoutDisplayData> {}
 
 export const CheckoutLogo = z.object({
 	url: z.string(),
@@ -51,7 +51,7 @@ export const CheckoutLogo = z.object({
 	width: z.nullable(z.number()),
 	height: z.nullable(z.number()),
 });
-export type CheckoutLogo = z.infer<typeof CheckoutLogo>;
+export interface ICheckoutLogo extends z.infer<typeof CheckoutLogo> {}
 
 export const CheckoutColors = z.object({
 	primary: z.nullable(z.string()),
@@ -61,7 +61,7 @@ export const CheckoutColors = z.object({
 	success: z.nullable(z.string()),
 	error: z.nullable(z.string()),
 });
-export type CheckoutColors = z.infer<typeof CheckoutColors>;
+export interface ICheckoutColors extends z.infer<typeof CheckoutColors> {};
 
 export const CheckoutItem = z.object({
 	name: z.string(),
@@ -70,14 +70,14 @@ export const CheckoutItem = z.object({
 	unitPrice: z.number(),
 	imageUrl: z.nullable(z.string()),
 });
-export type CheckoutItem = z.infer<typeof CheckoutItem>;
+export interface ICheckoutItem extends z.infer<typeof CheckoutItem> {};
 
 export const CheckoutContact = z.object({
 	supportEmail: z.nullable(z.string()),
 	supportPhone: z.nullable(z.string()),
 	website: z.nullable(z.string()),
 });
-export type CheckoutContact = z.infer<typeof CheckoutContact>;
+export interface ICheckoutContact extends z.infer<typeof CheckoutContact> {};
 
 export const CheckoutSettings = z.object({
 	showItems: z.boolean(),
@@ -86,7 +86,7 @@ export const CheckoutSettings = z.object({
 	language: z.enum(["fr", "en", "es", "de"]),
 	showPoweredBy: z.boolean(),
 });
-export type CheckoutSettings = z.infer<typeof CheckoutSettings>;
+export interface ICheckoutSettings extends z.infer<typeof CheckoutSettings> {};
 
 export const CheckoutCustomTexts = z.object({
 	payButton: z.nullable(z.string()),
@@ -95,4 +95,4 @@ export const CheckoutCustomTexts = z.object({
 	successMessage: z.nullable(z.string()),
 	errorMessage: z.nullable(z.string()),
 });
-export type CheckoutCustomTexts = z.infer<typeof CheckoutCustomTexts>;
+export interface ICheckoutCustomTexts extends z.infer<typeof CheckoutCustomTexts> {};

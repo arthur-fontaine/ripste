@@ -1,10 +1,10 @@
 import * as z from "./utils/zod-db.ts";
-import { Store } from "./Store.ts";
-import { User } from "./User.ts";
+import { type IStore, Store } from "./Store.ts";
+import { User, type IUser } from "./User.ts";
+import { type ITransaction, Transaction } from "./Transaction.ts";
+import { zocker } from "zocker";
 import { JwtToken } from "./JwtToken.ts";
 import { OAuth2Client } from "./OAuth2Client.ts";
-import { Transaction } from "./Transaction.ts";
-import { zocker } from "zocker";
 
 const apiCredentialTable = z.table({
 	id: z.string(),
@@ -17,13 +17,13 @@ const apiCredentialTable = z.table({
 	...z.timestamps(),
 	store: z.relation.one(
 		"storeId",
-		(): z.ZodMiniNullable<z.ZodMiniType<Pick<Store, "id">>> =>
+		(): z.ZodMiniNullable<z.ZodMiniType<Pick<IStore, "id">>> =>
 			z.nullable(Store),
 		"id",
 	),
 	createdByUser: z.relation.one(
 		"createdByUserId",
-		(): z.ZodMiniNullable<z.ZodMiniType<Pick<User, "id">>> => z.nullable(User),
+		(): z.ZodMiniNullable<z.ZodMiniType<Pick<IUser, "id">>> => z.nullable(User),
 		"id",
 	),
 	jwtToken: z.relation.one("jwtTokenId", () => z.nullable(JwtToken), "id"),
@@ -33,26 +33,26 @@ const apiCredentialTable = z.table({
 		"id",
 	),
 	transactions: z.relation.many(
-		(): z.ZodMiniType<Pick<Transaction, "id">> => Transaction,
+		(): z.ZodMiniType<Pick<ITransaction, "id">> => Transaction,
 	),
 });
 
 export const ApiCredential = apiCredentialTable.select;
-export interface ApiCredential extends z.infer<typeof ApiCredential> {
-	store: Store | null;
-	createdByUser: User | null;
-	transactions: Transaction[];
+export interface IApiCredential extends z.infer<typeof ApiCredential> {
+	store: IStore | null;
+	createdByUser: IUser | null;
+	transactions: ITransaction[];
 }
 export const generateFakeApiCredential = zocker(ApiCredential).generate;
 
 export const ApiCredentialInsert = apiCredentialTable.insert;
-export interface ApiCredentialInsert
+export interface IApiCredentialInsert
 	extends z.infer<typeof ApiCredentialInsert> {}
 export const generateFakeApiCredentialInsert =
 	zocker(ApiCredentialInsert).generate;
 
 export const ApiCredentialUpdate = apiCredentialTable.update;
-export interface ApiCredentialUpdate
+export interface IApiCredentialUpdate
 	extends z.infer<typeof ApiCredentialUpdate> {}
 export const generateFakeApiCredentialUpdate =
 	zocker(ApiCredentialUpdate).generate;

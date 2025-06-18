@@ -1,6 +1,6 @@
 import * as z from "./utils/zod-db.ts";
-import { Transaction } from "./Transaction.ts";
-import { User } from "./User.ts";
+import { type ITransaction, Transaction } from "./Transaction.ts";
+import { type IUser, User } from "./User.ts";
 import { zocker } from "zocker";
 
 const refundTable = z.table({
@@ -12,27 +12,27 @@ const refundTable = z.table({
 	...z.timestamps(),
 	transaction: z.relation.one(
 		"transactionId",
-		(): z.ZodMiniType<Pick<Transaction, "id">> => Transaction,
+		(): z.ZodMiniType<Pick<ITransaction, "id">> => Transaction,
 		"id",
 	),
 	initiatedByUser: z.relation.one(
 		"initiatedByUserId",
-		(): z.ZodMiniNullable<z.ZodMiniType<Pick<User, "id">>> => z.nullable(User),
+		(): z.ZodMiniNullable<z.ZodMiniType<Pick<IUser, "id">>> => z.nullable(User),
 		"id",
 	),
 });
 
 export const Refund = refundTable.select;
-export interface Refund extends z.infer<typeof Refund> {
-	transaction: Transaction;
-	initiatedByUser: User | null;
+export interface IRefund extends z.infer<typeof Refund> {
+	transaction: ITransaction;
+	initiatedByUser: IUser | null;
 }
 export const generateFakeRefund = zocker(Refund).generate;
 
 export const RefundInsert = refundTable.insert;
-export interface RefundInsert extends z.infer<typeof RefundInsert> {}
+export interface IRefundInsert extends z.infer<typeof RefundInsert> {}
 export const generateFakeRefundInsert = zocker(RefundInsert).generate;
 
 export const RefundUpdate = refundTable.update;
-export interface RefundUpdate extends z.infer<typeof RefundUpdate> {}
+export interface IRefundUpdate extends z.infer<typeof RefundUpdate> {}
 export const generateFakeRefundUpdate = zocker(RefundUpdate).generate;

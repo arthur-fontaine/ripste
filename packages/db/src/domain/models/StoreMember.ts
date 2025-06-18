@@ -12,13 +12,13 @@ const storeMemberTable = z.table({
 });
 
 export const StoreMember = storeMemberTable.select;
-export interface StoreMember extends z.infer<typeof StoreMember> {}
+export interface IStoreMember extends z.infer<typeof StoreMember> {}
 export const generateFakeStoreMember = zocker(StoreMember).generate;
 
 export const StoreMemberInsert = storeMemberTable.insert;
-export interface StoreMemberInsert extends z.infer<typeof StoreMemberInsert> {}
+export interface IStoreMemberInsert extends z.infer<typeof StoreMemberInsert> {}
 export const generateFakeStoreMemberInsert = zocker(StoreMemberInsert).generate;
 
 export const StoreMemberUpdate = storeMemberTable.update;
-export interface StoreMemberUpdate extends z.infer<typeof StoreMemberUpdate> {}
+export interface IStoreMemberUpdate extends z.infer<typeof StoreMemberUpdate> {}
 export const generateFakeStoreMemberUpdate = zocker(StoreMemberUpdate).generate;
