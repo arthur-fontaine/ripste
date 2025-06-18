@@ -10,8 +10,9 @@ export interface ICompany {
 	address: string | null;
 	createdAt: Date;
 	updatedAt: Date | null;
+	deletedAt: Date | null;
 
-	stores: IStore[] | null;
+	stores: IStore[];
 }
 
 export type IInsertCompany = Insertable<ICompany, "stores">;

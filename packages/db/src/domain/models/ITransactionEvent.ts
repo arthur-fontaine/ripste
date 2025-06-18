@@ -1,21 +1,22 @@
 import type { Insertable } from "../../types/insertable.ts";
 import type { ITransaction } from "./ITransaction.ts";
+import type { IsoString } from "../../types/iso-string.ts";
 
 export interface ITransactionEvent {
 	id: string;
 	eventType: string;
 	eventData: TransactionEventData | null;
 	occurredAt: Date;
+	deletedAt: Date | null;
 
-	transaction: ITransaction | null;
+	transaction: ITransaction;
 }
 
 export type IInsertTransactionEvent = Insertable<
 	ITransactionEvent,
-	"transaction" | "eventData"
+	"transaction"
 > & {
-	transactionId: ITransaction["id"] | null;
-	eventData: TransactionEventData | null;
+	transactionId: ITransaction["id"];
 };
 
 export type TransactionEventData =
@@ -38,13 +39,13 @@ export interface TransactionCreatedEvent {
 export interface TransactionProcessingEvent {
 	type: "transaction_processing";
 	paymentMethodId: string;
-	processingStartedAt: string;
+	processingStartedAt: IsoString;
 }
 
 export interface TransactionCompletedEvent {
 	type: "transaction_completed";
 	paymentMethodId: string;
-	completedAt: string;
+	completedAt: IsoString;
 	paymentProcessorResponse: {
 		transactionId: string;
 		status: string;
@@ -54,16 +55,16 @@ export interface TransactionCompletedEvent {
 
 export interface TransactionFailedEvent {
 	type: "transaction_failed";
-	reason: string;
+	reason: string | null;
 	paymentMethodId: string | null;
 	errorCode: string | null;
 }
 
 export interface TransactionCancelledEvent {
 	type: "transaction_cancelled";
-	reason: string;
+	reason: string | null;
 	cancelledBy: "customer" | "merchant" | "system";
-	cancelledAt: string;
+	cancelledAt: IsoString;
 }
 
 export interface PaymentAttemptEvent {

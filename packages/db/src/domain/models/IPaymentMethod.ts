@@ -4,17 +4,18 @@ import type { ITransaction } from "./ITransaction.ts";
 
 export interface IPaymentMethod {
 	id: string;
-	methodType: "checkout_page" | "api_direct" | "link" | "qr_code";
+	methodType: "checkout_page";
 	methodData: Record<string, string> | null;
 	createdAt: Date;
+	deletedAt: Date | null;
 
-	transaction: ITransaction | null;
-	paymentAttempts: IPaymentAttempt[] | null;
+	transaction: ITransaction;
+	paymentAttempts: IPaymentAttempt[];
 }
 
 export type IInsertPaymentMethod = Insertable<
 	IPaymentMethod,
 	"transaction" | "paymentAttempts"
 > & {
-	transactionId?: ITransaction["id"] | null;
+	transactionId: ITransaction["id"];
 };

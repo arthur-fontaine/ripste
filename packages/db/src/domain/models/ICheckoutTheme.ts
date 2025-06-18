@@ -9,16 +9,17 @@ export interface ICheckoutTheme {
 	version: number;
 	createdAt: Date;
 	updatedAt: Date | null;
+	deletedAt: Date | null;
 
-	store: IStore | null;
-	customizations: IThemeCustomization[] | null;
-	checkoutPages: ICheckoutPage[] | null;
+	store: IStore;
+	customizations: IThemeCustomization[];
+	checkoutPages: ICheckoutPage[];
 }
 
 export type IInsertCheckoutTheme = Insertable<
 	ICheckoutTheme,
 	"store" | "customizations" | "checkoutPages"
 > & {
-	storeId: IStore["id"] | null;
-	customizations: IThemeCustomization[] | null;
+	storeId: IStore["id"];
+	customizations?: IThemeCustomization[] | null;
 };

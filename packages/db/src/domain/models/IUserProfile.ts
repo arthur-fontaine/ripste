@@ -3,15 +3,16 @@ import type { IUser } from "./IUser.ts";
 
 export interface IUserProfile {
 	id: string;
-	firstName: string | null;
-	lastName: string | null;
+	firstName: string;
+	lastName: string;
 	phone: string | null;
 	createdAt: Date;
 	updatedAt: Date | null;
+	deletedAt: Date | null;
 
 	user: IUser;
 
-	fullName: string | null;
+	fullName: string;
 }
 
 export type IInsertUserProfile = Insertable<IUserProfile, "user"> & {

@@ -9,6 +9,7 @@ export interface IStoreStatus {
 	isActive: boolean;
 	createdAt: Date;
 	updatedAt: Date | null;
+	deletedAt: Date | null;
 
 	store: IStore;
 	changedByUser: IUser;

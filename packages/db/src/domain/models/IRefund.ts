@@ -9,8 +9,9 @@ export interface IRefund {
 	status: "pending" | "processing" | "completed" | "failed";
 	createdAt: Date;
 	processedAt: Date | null;
+	deletedAt: Date | null;
 
-	transaction: ITransaction | null;
+	transaction: ITransaction;
 	initiatedByUser: IUser | null;
 }
 
@@ -18,6 +19,6 @@ export type IInsertRefund = Insertable<
 	IRefund,
 	"transaction" | "initiatedByUser"
 > & {
-	transactionId: ITransaction["id"] | null;
+	transactionId: ITransaction["id"];
 	initiatedByUserId: IUser["id"] | null;
 };

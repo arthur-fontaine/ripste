@@ -17,14 +17,15 @@ export interface ITransaction {
 	apiCredentialId: string | null;
 	createdAt: Date;
 	updatedAt: Date | null;
+	deletedAt: Date | null;
 
-	store: IStore | null;
+	store: IStore;
 	apiCredential: IApiCredential | null;
-	transactionEvents: ITransactionEvent[] | null;
-	paymentMethods: IPaymentMethod[] | null;
-	checkoutPages: ICheckoutPage[] | null;
-	paymentAttempts: IPaymentAttempt[] | null;
-	refunds: IRefund[] | null;
+	transactionEvents: ITransactionEvent[];
+	paymentMethods: IPaymentMethod[];
+	checkoutPages: ICheckoutPage[];
+	paymentAttempts: IPaymentAttempt[];
+	refunds: IRefund[];
 }
 
 export type IInsertTransaction = Insertable<
@@ -38,7 +39,7 @@ export type IInsertTransaction = Insertable<
 	| "paymentAttempts"
 	| "refunds"
 > & {
-	storeId: IStore["id"] | null;
+	storeId: IStore["id"];
 	apiCredentialId: IApiCredential["id"] | null;
 	paymentMethodId: IPaymentMethod["id"] | null;
 	metadata: Record<string, string> | null;
