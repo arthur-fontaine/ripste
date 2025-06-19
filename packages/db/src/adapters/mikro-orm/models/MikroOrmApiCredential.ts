@@ -4,7 +4,6 @@ import {
 	t,
 	Enum,
 	ManyToOne,
-	OneToOne,
 	OneToMany,
 	Collection,
 } from "@mikro-orm/core";
@@ -34,8 +33,8 @@ export class MikroOrmApiCredentialModel
 		Object.assign(this, params);
 	}
 
-	@ManyToOne(() => MikroOrmStoreModel)
-	store!: MikroOrmStoreModel;
+	@ManyToOne(() => MikroOrmStoreModel, { nullable: true })
+	store: MikroOrmStoreModel | null = null;
 
 	@Property({ type: t.string })
 	name!: string;
@@ -46,8 +45,8 @@ export class MikroOrmApiCredentialModel
 	@Property({ type: t.boolean, default: true })
 	isActive!: boolean;
 
-	@ManyToOne(() => MikroOrmUserModel)
-	createdByUser!: MikroOrmUserModel;
+	@ManyToOne(() => MikroOrmUserModel, { nullable: true })
+	createdByUser: MikroOrmUserModel | null = null;
 
 	@Property({ type: t.datetime, nullable: true })
 	expiresAt!: Date | null;
@@ -55,7 +54,7 @@ export class MikroOrmApiCredentialModel
 	@Property({ type: t.datetime, nullable: true })
 	lastUsedAt!: Date | null;
 
-	@OneToOne(
+	@OneToMany(
 		() => MikroOrmJwtTokenModel,
 		(token) => token.credential,
 		{
@@ -64,7 +63,7 @@ export class MikroOrmApiCredentialModel
 	)
 	jwtToken: MikroOrmJwtTokenModel | null = null;
 
-	@OneToOne(
+	@OneToMany(
 		() => MikroOrmOauth2ClientModel,
 		(client) => client.credential,
 		{
