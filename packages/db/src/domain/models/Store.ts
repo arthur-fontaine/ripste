@@ -40,12 +40,12 @@ export interface IStore extends z.infer<typeof Store> {
 	checkoutThemes: ICheckoutTheme[];
 	transactions: ITransaction[];
 }
-export const generateFakeStore = zocker(Store).generate;
+export const generateFakeStore = () => zocker(Store).generate();
 
 export const StoreInsert = storeTable.insert;
 export interface IStoreInsert extends z.infer<typeof StoreInsert> {}
-export const generateFakeStoreInsert = zocker(StoreInsert).generate;
+export const generateFakeStoreInsert = () => zocker(StoreInsert).generate();
 
 export const StoreUpdate = storeTable.update;
 export interface IStoreUpdate extends z.infer<typeof StoreUpdate> {}
-export const generateFakeStoreUpdate = zocker(StoreUpdate).generate;
+export const generateFakeStoreUpdate = () => zocker(StoreUpdate).generate();

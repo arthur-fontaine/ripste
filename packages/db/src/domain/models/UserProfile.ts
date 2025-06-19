@@ -20,12 +20,14 @@ export const UserProfile = userProfileTable.select;
 export interface IUserProfile extends z.infer<typeof UserProfile> {
 	user: IUser;
 }
-export const generateFakeUserProfile = zocker(UserProfile).generate;
+export const generateFakeUserProfile = () => zocker(UserProfile).generate();
 
 export const UserProfileInsert = userProfileTable.insert;
 export interface IUserProfileInsert extends z.infer<typeof UserProfileInsert> {}
-export const generateFakeUserProfileInsert = zocker(UserProfileInsert).generate;
+export const generateFakeUserProfileInsert = () =>
+	zocker(UserProfileInsert).generate();
 
 export const UserProfileUpdate = userProfileTable.update;
 export interface IUserProfileUpdate extends z.infer<typeof UserProfileUpdate> {}
-export const generateFakeUserProfileUpdate = zocker(UserProfileUpdate).generate;
+export const generateFakeUserProfileUpdate = () =>
+	zocker(UserProfileUpdate).generate();

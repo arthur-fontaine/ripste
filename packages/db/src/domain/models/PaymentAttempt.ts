@@ -28,16 +28,17 @@ export interface IPaymentAttempt extends z.infer<typeof PaymentAttempt> {
 	transaction: ITransaction;
 	paymentMethod: IPaymentMethod;
 }
-export const generateFakePaymentAttempt = zocker(PaymentAttempt).generate;
+export const generateFakePaymentAttempt = () =>
+	zocker(PaymentAttempt).generate();
 
 export const PaymentAttemptInsert = paymentAttemptTable.insert;
 export interface IPaymentAttemptInsert
 	extends z.infer<typeof PaymentAttemptInsert> {}
-export const generateFakePaymentAttemptInsert =
-	zocker(PaymentAttemptInsert).generate;
+export const generateFakePaymentAttemptInsert = () =>
+	zocker(PaymentAttemptInsert).generate();
 
 export const PaymentAttemptUpdate = paymentAttemptTable.update;
 export interface IPaymentAttemptUpdate
 	extends z.infer<typeof PaymentAttemptUpdate> {}
-export const generateFakePaymentAttemptUpdate =
-	zocker(PaymentAttemptUpdate).generate;
+export const generateFakePaymentAttemptUpdate = () =>
+	zocker(PaymentAttemptUpdate).generate();

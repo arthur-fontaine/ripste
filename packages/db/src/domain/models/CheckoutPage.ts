@@ -19,19 +19,19 @@ export const checkoutPageTable = z.table({
 
 export const CheckoutPage = checkoutPageTable.select;
 export interface ICheckoutPage extends z.infer<typeof CheckoutPage> {}
-export const generateFakeCheckoutPage = zocker(CheckoutPage).generate;
+export const generateFakeCheckoutPage = () => zocker(CheckoutPage).generate();
 
 export const CheckoutPageInsert = checkoutPageTable.insert;
 export interface ICheckoutPageInsert
 	extends z.infer<typeof CheckoutPageInsert> {}
-export const generateFakeCheckoutPageInsert =
-	zocker(CheckoutPageInsert).generate;
+export const generateFakeCheckoutPageInsert = () =>
+	zocker(CheckoutPageInsert).generate();
 
 export const CheckoutPageUpdate = checkoutPageTable.update;
 export interface ICheckoutPageUpdate
 	extends z.infer<typeof CheckoutPageUpdate> {}
-export const generateFakeCheckoutPageUpdate =
-	zocker(CheckoutPageUpdate).generate;
+export const generateFakeCheckoutPageUpdate = () =>
+	zocker(CheckoutPageUpdate).generate();
 
 export const CheckoutDisplayData = z.object({
 	title: z.string(),

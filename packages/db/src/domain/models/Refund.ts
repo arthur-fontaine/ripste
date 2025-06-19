@@ -27,12 +27,12 @@ export interface IRefund extends z.infer<typeof Refund> {
 	transaction: ITransaction;
 	initiatedByUser: IUser | null;
 }
-export const generateFakeRefund = zocker(Refund).generate;
+export const generateFakeRefund = () => zocker(Refund).generate();
 
 export const RefundInsert = refundTable.insert;
 export interface IRefundInsert extends z.infer<typeof RefundInsert> {}
-export const generateFakeRefundInsert = zocker(RefundInsert).generate;
+export const generateFakeRefundInsert = () => zocker(RefundInsert).generate();
 
 export const RefundUpdate = refundTable.update;
 export interface IRefundUpdate extends z.infer<typeof RefundUpdate> {}
-export const generateFakeRefundUpdate = zocker(RefundUpdate).generate;
+export const generateFakeRefundUpdate = () => zocker(RefundUpdate).generate();

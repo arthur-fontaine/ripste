@@ -13,19 +13,17 @@ const themeCustomizationTable = z.table({
 export const ThemeCustomization = themeCustomizationTable.select;
 export interface IThemeCustomization
 	extends z.infer<typeof ThemeCustomization> {}
-export const generateFakeThemeCustomization =
-	zocker(ThemeCustomization).generate;
+export const generateFakeThemeCustomization = () =>
+	zocker(ThemeCustomization).generate();
 
 export const ThemeCustomizationInsert = themeCustomizationTable.insert;
 export interface IThemeCustomizationInsert
 	extends z.infer<typeof ThemeCustomizationInsert> {}
-export const generateFakeThemeCustomizationInsert = zocker(
-	ThemeCustomizationInsert,
-).generate;
+export const generateFakeThemeCustomizationInsert = () =>
+	zocker(ThemeCustomizationInsert).generate();
 
 export const ThemeCustomizationUpdate = themeCustomizationTable.update;
 export interface IThemeCustomizationUpdate
 	extends z.infer<typeof ThemeCustomizationUpdate> {}
-export const generateFakeThemeCustomizationUpdate = zocker(
-	ThemeCustomizationUpdate,
-).generate;
+export const generateFakeThemeCustomizationUpdate = () =>
+	zocker(ThemeCustomizationUpdate).generate();

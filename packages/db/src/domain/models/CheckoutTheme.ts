@@ -31,16 +31,16 @@ export interface ICheckoutTheme extends z.infer<typeof CheckoutTheme> {
 	customizations: IThemeCustomization[];
 	checkoutPages: ICheckoutPage[];
 }
-export const generateFakeCheckoutTheme = zocker(CheckoutTheme).generate;
+export const generateFakeCheckoutTheme = () => zocker(CheckoutTheme).generate();
 
 export const CheckoutThemeInsert = checkoutThemeTable.insert;
 export interface ICheckoutThemeInsert
 	extends z.infer<typeof CheckoutThemeInsert> {}
-export const generateFakeCheckoutThemeInsert =
-	zocker(CheckoutThemeInsert).generate;
+export const generateFakeCheckoutThemeInsert = () =>
+	zocker(CheckoutThemeInsert).generate();
 
 export const CheckoutThemeUpdate = checkoutThemeTable.update;
 export interface ICheckoutThemeUpdate
 	extends z.infer<typeof CheckoutThemeUpdate> {}
-export const generateFakeCheckoutThemeUpdate =
-	zocker(CheckoutThemeUpdate).generate;
+export const generateFakeCheckoutThemeUpdate = () =>
+	zocker(CheckoutThemeUpdate).generate();

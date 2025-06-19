@@ -42,16 +42,16 @@ export interface IApiCredential extends z.infer<typeof ApiCredential> {
 	createdByUser: IUser | null;
 	transactions: ITransaction[];
 }
-export const generateFakeApiCredential = zocker(ApiCredential).generate;
+export const generateFakeApiCredential = () => zocker(ApiCredential).generate();
 
 export const ApiCredentialInsert = apiCredentialTable.insert;
 export interface IApiCredentialInsert
 	extends z.infer<typeof ApiCredentialInsert> {}
-export const generateFakeApiCredentialInsert =
-	zocker(ApiCredentialInsert).generate;
+export const generateFakeApiCredentialInsert = () =>
+	zocker(ApiCredentialInsert).generate();
 
 export const ApiCredentialUpdate = apiCredentialTable.update;
 export interface IApiCredentialUpdate
 	extends z.infer<typeof ApiCredentialUpdate> {}
-export const generateFakeApiCredentialUpdate =
-	zocker(ApiCredentialUpdate).generate;
+export const generateFakeApiCredentialUpdate = () =>
+	zocker(ApiCredentialUpdate).generate();

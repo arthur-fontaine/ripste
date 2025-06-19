@@ -12,18 +12,17 @@ const transactionEventTable = z.table({
 
 export const TransactionEvent = transactionEventTable.select;
 export interface ITransactionEvent extends z.infer<typeof TransactionEvent> {}
-export const generateFakeTransactionEvent = zocker(TransactionEvent).generate;
+export const generateFakeTransactionEvent = () =>
+	zocker(TransactionEvent).generate();
 
 export const TransactionEventInsert = transactionEventTable.insert;
 export interface ITransactionEventInsert
 	extends z.infer<typeof TransactionEventInsert> {}
-export const generateFakeTransactionEventInsert = zocker(
-	TransactionEventInsert,
-).generate;
+export const generateFakeTransactionEventInsert = () =>
+	zocker(TransactionEventInsert).generate();
 
 export const TransactionEventUpdate = transactionEventTable.update;
 export interface ITransactionEventUpdate
 	extends z.infer<typeof TransactionEventUpdate> {}
-export const generateFakeTransactionEventUpdate = zocker(
-	TransactionEventUpdate,
-).generate;
+export const generateFakeTransactionEventUpdate = () =>
+	zocker(TransactionEventUpdate).generate();

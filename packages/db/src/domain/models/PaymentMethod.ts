@@ -20,16 +20,16 @@ export const PaymentMethod = paymentMethodTable.select;
 export interface IPaymentMethod extends z.infer<typeof PaymentMethod> {
 	transaction: ITransaction;
 }
-export const generateFakePaymentMethod = zocker(PaymentMethod).generate;
+export const generateFakePaymentMethod = () => zocker(PaymentMethod).generate();
 
 export const PaymentMethodInsert = paymentMethodTable.insert;
 export interface IPaymentMethodInsert
 	extends z.infer<typeof PaymentMethodInsert> {}
-export const generateFakePaymentMethodInsert =
-	zocker(PaymentMethodInsert).generate;
+export const generateFakePaymentMethodInsert = () =>
+	zocker(PaymentMethodInsert).generate();
 
 export const PaymentMethodUpdate = paymentMethodTable.update;
 export interface IPaymentMethodUpdate
 	extends z.infer<typeof PaymentMethodUpdate> {}
-export const generateFakePaymentMethodUpdate =
-	zocker(PaymentMethodUpdate).generate;
+export const generateFakePaymentMethodUpdate = () =>
+	zocker(PaymentMethodUpdate).generate();

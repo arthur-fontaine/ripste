@@ -46,12 +46,14 @@ export interface ITransaction extends z.infer<typeof Transaction> {
 	transactionEvents: ITransactionEvent[];
 	checkoutPages: ICheckoutPage[];
 }
-export const generateFakeTransaction = zocker(Transaction).generate;
+export const generateFakeTransaction = () => zocker(Transaction).generate();
 
 export const TransactionInsert = transactionTable.insert;
 export interface ITransactionInsert extends z.infer<typeof TransactionInsert> {}
-export const generateFakeTransactionInsert = zocker(TransactionInsert).generate;
+export const generateFakeTransactionInsert = () =>
+	zocker(TransactionInsert).generate();
 
 export const TransactionUpdate = transactionTable.update;
 export interface ITransactionUpdate extends z.infer<typeof TransactionUpdate> {}
-export const generateFakeTransactionUpdate = zocker(TransactionUpdate).generate;
+export const generateFakeTransactionUpdate = () =>
+	zocker(TransactionUpdate).generate();
