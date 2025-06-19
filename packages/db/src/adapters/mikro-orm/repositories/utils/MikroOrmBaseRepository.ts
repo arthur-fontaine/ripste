@@ -6,17 +6,21 @@ interface IMikroOrmBaseRepositoryOptions {
 	em: EntityManager;
 }
 
-export function MikroOrmBaseRepository<T extends BaseModel>(
-	model: new (...args: never) => T,
-) {
-	return class MikroOrmBaseRepository implements IBaseRepository<T> {
+export function MikroOrmBaseRepository<
+	Selectable extends BaseModel,
+	Insertable,
+	Updatable,
+>(model: new (...args: never) => Selectable) {
+	type I = IBaseRepository<Selectable, Insertable, Updatable>;
+
+	return class MikroOrmBaseRepository implements I {
 		#em: EntityManager;
 
 		constructor(options: IMikroOrmBaseRepositoryOptions) {
 			this.#em = options.em;
 		}
 
-		findOne: IBaseRepository<T>["findOne"] = async (id) => {
+		findOne: I["findOne"] = async (id) => {
 			const entity = await this.#em.findOne(model, {
 				id,
 				deletedAt: null,
@@ -24,17 +28,17 @@ export function MikroOrmBaseRepository<T extends BaseModel>(
 			return entity || null;
 		};
 
-		findAll: IBaseRepository<T>["findAll"] = async () => {
+		findAll: I["findAll"] = async () => {
 			throw new Error("Method not implemented.");
 		};
 
-		insert: IBaseRepository<T>["insert"] = async (entity) => {
-			const newEntity = this.#em.create(model, entity);
+		insert: I["insert"] = async (entity) => {
+			const newEntity = this.#em.create(model, entity as never);
 			await this.#em.persistAndFlush(newEntity);
 			return newEntity;
 		};
 
-		update: IBaseRepository<T>["update"] = async (id, entity) => {
+		update: I["update"] = async (id, entity) => {
 			const existingEntity = await this.#em.findOne(model, { id });
 			if (!existingEntity) return null;
 			Object.assign(existingEntity, entity);
@@ -43,7 +47,7 @@ export function MikroOrmBaseRepository<T extends BaseModel>(
 			return existingEntity;
 		};
 
-		delete: IBaseRepository<T>["delete"] = async (id) => {
+		delete: I["delete"] = async (id) => {
 			const entity = await this.#em.findOne(model, { id });
 			if (!entity) {
 				throw new Error("Entity not found");

@@ -1,5 +1,5 @@
-import type { IPaymentAttempt } from "../../models/PaymentAttempt.ts";
+import type { IPaymentAttempt, IPaymentAttemptInsert, IPaymentAttemptUpdate } from "../../models/PaymentAttempt.ts";
 import type { IBaseRepository } from "./utils/IBaseRepository.ts";
 
 export interface IPaymentAttemptRepository
-	extends IBaseRepository<IPaymentAttempt> {}
+	extends IBaseRepository<IPaymentAttempt, IPaymentAttemptInsert, IPaymentAttemptUpdate> {}

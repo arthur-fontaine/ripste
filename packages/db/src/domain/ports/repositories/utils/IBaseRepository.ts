@@ -1,7 +1,11 @@
-export interface IBaseRepository<M extends { id: unknown }> {
-	findOne(id: M["id"]): Promise<M | null>;
-	findAll(): Promise<M[]>;
-	insert(item: M): Promise<M>;
-	update(id: M["id"], item: Partial<M>): Promise<M | null>;
-	delete(id: M["id"]): Promise<boolean>;
+export interface IBaseRepository<
+	Selectable extends { id: unknown },
+	Insertable,
+	Updatable = Partial<Insertable>,
+> {
+	findOne(id: Selectable["id"]): Promise<Selectable | null>;
+	findAll(): Promise<Selectable[]>;
+	insert(item: Insertable): Promise<Selectable>;
+	update(id: Selectable["id"], item: Updatable): Promise<Selectable | null>;
+	delete(id: Selectable["id"]): Promise<boolean>;
 }
