@@ -11,9 +11,8 @@ const apiCredentialTable = z.table({
 	name: z.string(),
 	credentialType: z.enum(["jwt", "oauth2"]),
 	isActive: z.boolean(),
-	createdBy: z.string(),
-	expiresAt: z.nullable(z.iso.datetime()),
-	lastUsedAt: z.nullable(z.iso.datetime()),
+	expiresAt: z.nullable(z.coerce.date()),
+	lastUsedAt: z.nullable(z.coerce.date()),
 	...z.timestamps(),
 	store: z.relation.one(
 		"storeId",

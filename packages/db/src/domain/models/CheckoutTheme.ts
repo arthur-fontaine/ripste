@@ -1,7 +1,10 @@
 import * as z from "./utils/zod-db.ts";
 import { Store, type IStore } from "./Store.ts";
 import { CheckoutPage, type ICheckoutPage } from "./CheckoutPage.ts";
-import { type IThemeCustomization, ThemeCustomization } from "./ThemeCustomization.ts";
+import {
+	type IThemeCustomization,
+	ThemeCustomization,
+} from "./ThemeCustomization.ts";
 import { zocker } from "zocker";
 
 const checkoutThemeTable = z.table({

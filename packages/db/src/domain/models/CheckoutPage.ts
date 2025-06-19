@@ -9,9 +9,9 @@ export const checkoutPageTable = z.table({
 	redirectSuccessUrl: z.nullable(z.string()),
 	redirectCancelUrl: z.nullable(z.string()),
 	displayData: z.lazy(() => CheckoutDisplayData),
-	expiresAt: z.nullable(z.iso.datetime()),
-	accessedAt: z.nullable(z.iso.datetime()),
-	completedAt: z.nullable(z.iso.datetime()),
+	expiresAt: z.nullable(z.coerce.date()),
+	accessedAt: z.nullable(z.coerce.date()),
+	completedAt: z.nullable(z.coerce.date()),
 	...z.timestamps(),
 	transaction: z.relation.one("transactionId", () => Transaction, "id"),
 	theme: z.relation.one("themeId", () => CheckoutTheme, "id"),
@@ -43,7 +43,8 @@ export const CheckoutDisplayData = z.object({
 	settings: z.nullable(z.lazy(() => CheckoutSettings)),
 	customTexts: z.nullable(z.lazy(() => CheckoutCustomTexts)),
 });
-export interface ICheckoutDisplayData extends z.infer<typeof CheckoutDisplayData> {}
+export interface ICheckoutDisplayData
+	extends z.infer<typeof CheckoutDisplayData> {}
 
 export const CheckoutLogo = z.object({
 	url: z.string(),
@@ -61,7 +62,7 @@ export const CheckoutColors = z.object({
 	success: z.nullable(z.string()),
 	error: z.nullable(z.string()),
 });
-export interface ICheckoutColors extends z.infer<typeof CheckoutColors> {};
+export interface ICheckoutColors extends z.infer<typeof CheckoutColors> {}
 
 export const CheckoutItem = z.object({
 	name: z.string(),
@@ -70,14 +71,14 @@ export const CheckoutItem = z.object({
 	unitPrice: z.number(),
 	imageUrl: z.nullable(z.string()),
 });
-export interface ICheckoutItem extends z.infer<typeof CheckoutItem> {};
+export interface ICheckoutItem extends z.infer<typeof CheckoutItem> {}
 
 export const CheckoutContact = z.object({
 	supportEmail: z.nullable(z.string()),
 	supportPhone: z.nullable(z.string()),
 	website: z.nullable(z.string()),
 });
-export interface ICheckoutContact extends z.infer<typeof CheckoutContact> {};
+export interface ICheckoutContact extends z.infer<typeof CheckoutContact> {}
 
 export const CheckoutSettings = z.object({
 	showItems: z.boolean(),
@@ -86,7 +87,7 @@ export const CheckoutSettings = z.object({
 	language: z.enum(["fr", "en", "es", "de"]),
 	showPoweredBy: z.boolean(),
 });
-export interface ICheckoutSettings extends z.infer<typeof CheckoutSettings> {};
+export interface ICheckoutSettings extends z.infer<typeof CheckoutSettings> {}
 
 export const CheckoutCustomTexts = z.object({
 	payButton: z.nullable(z.string()),
@@ -95,4 +96,5 @@ export const CheckoutCustomTexts = z.object({
 	successMessage: z.nullable(z.string()),
 	errorMessage: z.nullable(z.string()),
 });
-export interface ICheckoutCustomTexts extends z.infer<typeof CheckoutCustomTexts> {};
+export interface ICheckoutCustomTexts
+	extends z.infer<typeof CheckoutCustomTexts> {}

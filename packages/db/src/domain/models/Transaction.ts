@@ -5,7 +5,10 @@ import { PaymentAttempt } from "./PaymentAttempt.ts";
 import { PaymentMethod } from "./PaymentMethod.ts";
 import { Refund } from "./Refund.ts";
 import { type IStore, Store } from "./Store.ts";
-import { type ITransactionEvent, TransactionEvent } from "./TransactionEvent.ts";
+import {
+	type ITransactionEvent,
+	TransactionEvent,
+} from "./TransactionEvent.ts";
 import { zocker } from "zocker";
 
 const transactionTable = z.table({
@@ -15,7 +18,6 @@ const transactionTable = z.table({
 	currency: z.string(),
 	status: z.enum(["created", "processing", "completed", "failed", "cancelled"]),
 	metadata: z.nullable(z.record(z.string(), z.string())),
-	apiCredentialId: z.nullable(z.string()),
 	...z.timestamps(),
 	store: z.relation.one(
 		"storeId",

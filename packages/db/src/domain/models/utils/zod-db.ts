@@ -9,9 +9,9 @@ export const generated = <T extends z.ZodMiniType>(schema: T): Generated<T> => {
 };
 
 export const timestamps = () => ({
-	createdAt: generated(z.iso.datetime()),
-	updatedAt: z.nullable(z.iso.datetime()),
-	deletedAt: z.nullable(z.iso.datetime()),
+	createdAt: generated(z.coerce.date()),
+	updatedAt: z.nullable(z.coerce.date()),
+	deletedAt: z.nullable(z.coerce.date()),
 });
 
 const relationOneSourceNameSymbol = Symbol("relationOneSourceName");

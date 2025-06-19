@@ -4,6 +4,7 @@
 	"version": "1.0.0",
 	"files": ["src"],
 	"dependencies": {
+		"@mikro-orm/core": "^6.4.16",
 		"zocker": "^2.0.3",
 		"zod": "^3.22.4"
 	},
