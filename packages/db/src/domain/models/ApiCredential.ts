@@ -7,7 +7,7 @@ import { JwtToken } from "./JwtToken.ts";
 import { OAuth2Client } from "./OAuth2Client.ts";
 
 const apiCredentialTable = z.table({
-	id: z.string(),
+	id: z.generated(z.string()),
 	name: z.string(),
 	credentialType: z.enum(["jwt", "oauth2"]),
 	isActive: z.boolean(),

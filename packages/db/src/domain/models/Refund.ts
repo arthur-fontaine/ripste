@@ -4,7 +4,7 @@ import { type IUser, User } from "./User.ts";
 import { zocker } from "zocker";
 
 const refundTable = z.table({
-	id: z.string(),
+	id: z.generated(z.string()),
 	amount: z.number(),
 	reason: z.nullable(z.string()),
 	status: z.enum(["pending", "processing", "completed", "failed"]),

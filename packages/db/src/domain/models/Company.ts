@@ -3,7 +3,7 @@ import { Store } from "./Store.ts";
 import { zocker } from "zocker";
 
 const companyTable = z.table({
-	id: z.string(),
+	id: z.generated(z.string()),
 	legalName: z.string(),
 	tradeName: z.nullable(z.string()),
 	kbis: z.string(),

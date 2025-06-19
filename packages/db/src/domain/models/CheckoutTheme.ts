@@ -8,7 +8,7 @@ import {
 import { zocker } from "zocker";
 
 const checkoutThemeTable = z.table({
-	id: z.string(),
+	id: z.generated(z.string()),
 	name: z.string(),
 	version: z.number(),
 	...z.timestamps(),

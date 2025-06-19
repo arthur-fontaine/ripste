@@ -3,7 +3,7 @@ import { ApiCredential, type IApiCredential } from "./ApiCredential.ts";
 import { zocker } from "zocker";
 
 const oauth2ClientTable = z.table({
-	id: z.string(),
+	id: z.generated(z.string()),
 	clientId: z.string(),
 	clientSecretHash: z.string(),
 	redirectUris: z.array(z.string()),

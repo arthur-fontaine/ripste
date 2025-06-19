@@ -3,7 +3,7 @@ import { Transaction } from "./Transaction.ts";
 import { zocker } from "zocker";
 
 const transactionEventTable = z.table({
-	id: z.string(),
+	id: z.generated(z.string()),
 	eventType: z.string(),
 	eventData: z.nullable(z.any()), // You may want to refine this
 	...z.timestamps(),

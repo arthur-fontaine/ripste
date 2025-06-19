@@ -3,7 +3,7 @@ import { ApiCredential, type IApiCredential } from "./ApiCredential.ts";
 import { zocker } from "zocker";
 
 const jwtTokenTable = z.table({
-	id: z.string(),
+	id: z.generated(z.string()),
 	tokenHash: z.string(),
 	permissions: z.array(z.string()),
 	...z.timestamps(),

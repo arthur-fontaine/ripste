@@ -4,7 +4,7 @@ import { type IPaymentMethod, PaymentMethod } from "./PaymentMethod.ts";
 import { zocker } from "zocker";
 
 const paymentAttemptTable = z.table({
-	id: z.string(),
+	id: z.generated(z.string()),
 	status: z.enum(["pending", "success", "failed"]),
 	failureReason: z.nullable(z.string()),
 	customerIp: z.nullable(z.string()),

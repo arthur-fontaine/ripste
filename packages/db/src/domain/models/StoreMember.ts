@@ -4,7 +4,7 @@ import { Store } from "./Store.ts";
 import { zocker } from "zocker";
 
 const storeMemberTable = z.table({
-	id: z.string(),
+	id: z.generated(z.string()),
 	permissionLevel: z.enum(["owner"]),
 	...z.timestamps(),
 	user: z.relation.one("userId", () => User, "id"),

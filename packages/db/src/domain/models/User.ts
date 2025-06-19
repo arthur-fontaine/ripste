@@ -6,7 +6,7 @@ import { UserProfile } from "./UserProfile.ts";
 import { zocker } from "zocker";
 
 const userTable = z.table({
-	id: z.string(),
+	id: z.generated(z.string()),
 	email: z.string(),
 	passwordHash: z.string(),
 	emailVerified: z.boolean(),

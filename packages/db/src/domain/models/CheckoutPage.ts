@@ -4,7 +4,7 @@ import { CheckoutTheme } from "./CheckoutTheme.ts";
 import { zocker } from "zocker";
 
 export const checkoutPageTable = z.table({
-	id: z.string(),
+	id: z.generated(z.string()),
 	uri: z.string(),
 	redirectSuccessUrl: z.nullable(z.string()),
 	redirectCancelUrl: z.nullable(z.string()),

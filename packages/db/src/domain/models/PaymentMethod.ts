@@ -4,7 +4,7 @@ import { PaymentAttempt } from "./PaymentAttempt.ts";
 import { zocker } from "zocker";
 
 const paymentMethodTable = z.table({
-	id: z.string(),
+	id: z.generated(z.string()),
 	methodType: z.enum(["checkout_page"]),
 	methodData: z.nullable(z.record(z.string(), z.string())),
 	...z.timestamps(),

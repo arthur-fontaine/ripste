@@ -12,7 +12,7 @@ import {
 import { zocker } from "zocker";
 
 const transactionTable = z.table({
-	id: z.string(),
+	id: z.generated(z.string()),
 	reference: z.string(),
 	amount: z.number(),
 	currency: z.string(),

@@ -3,7 +3,7 @@ import { CheckoutTheme } from "./CheckoutTheme.ts";
 import { zocker } from "zocker";
 
 const themeCustomizationTable = z.table({
-	id: z.string(),
+	id: z.generated(z.string()),
 	customizationType: z.enum(["css"]),
 	content: z.nullable(z.string()),
 	...z.timestamps(),

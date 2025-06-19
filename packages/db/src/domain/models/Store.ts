@@ -8,7 +8,7 @@ import { Company, type ICompany } from "./Company.ts";
 import { zocker } from "zocker";
 
 const storeTable = z.table({
-	id: z.string(),
+	id: z.generated(z.string()),
 	name: z.string(),
 	slug: z.string(),
 	contactEmail: z.string(),

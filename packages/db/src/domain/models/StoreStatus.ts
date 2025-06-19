@@ -4,7 +4,7 @@ import { User } from "./User.ts";
 import { zocker } from "zocker";
 
 const storeStatusTable = z.table({
-	id: z.string(),
+	id: z.generated(z.string()),
 	status: z.enum(["pending", "active", "suspended", "refused"]),
 	reason: z.nullable(z.string()),
 	isActive: z.boolean(),
