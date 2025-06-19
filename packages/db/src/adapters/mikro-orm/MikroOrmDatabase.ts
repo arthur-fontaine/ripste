@@ -36,43 +36,43 @@ import { MikroOrmOauth2ClientRepository } from "./repositories/MikroOrmOauth2Cli
 import { MikroOrmUserRepository } from "./repositories/MikroOrmUserRepository.ts";
 
 export class MikroOrmDatabase implements IDatabase {
-  constructor(em: EntityManager) {
-    const params = { em };
+	constructor(em: EntityManager) {
+		const params = { em };
 
-    this.apiCredential = new MikroOrmApiCredentialRepository(params);
-    this.checkoutPage = new MikroOrmCheckoutPageRepository(params);
-    this.checkoutTheme = new MikroOrmCheckoutThemeRepository(params);
-    this.company = new MikroOrmCompanyRepository(params);
-    this.jwtToken = new MikroOrmJwtTokenRepository(params);
-    this.oauth2Client = new MikroOrmOauth2ClientRepository(params);
-    this.paymentAttempt = new MikroOrmPaymentAttemptRepository(params);
-    this.paymentMethod = new MikroOrmPaymentMethodRepository(params);
-    this.refund = new MikroOrmRefundRepository(params);
-    this.storeMember = new MikroOrmStoreMemberRepository(params);
-    this.store = new MikroOrmStoreRepository(params);
-    this.storeStatus = new MikroOrmStoreStatusRepository(params);
-    this.themeCustomization = new MikroOrmThemeCustomizationRepository(params);
-    this.transactionEvent = new MikroOrmTransactionEventRepository(params);
-    this.transaction = new MikroOrmTransactionRepository(params);
-    this.userProfile = new MikroOrmUserProfileRepository(params);
-    this.user = new MikroOrmUserRepository(params);
-  }
+		this.apiCredential = new MikroOrmApiCredentialRepository(params);
+		this.checkoutPage = new MikroOrmCheckoutPageRepository(params);
+		this.checkoutTheme = new MikroOrmCheckoutThemeRepository(params);
+		this.company = new MikroOrmCompanyRepository(params);
+		this.jwtToken = new MikroOrmJwtTokenRepository(params);
+		this.oauth2Client = new MikroOrmOauth2ClientRepository(params);
+		this.paymentAttempt = new MikroOrmPaymentAttemptRepository(params);
+		this.paymentMethod = new MikroOrmPaymentMethodRepository(params);
+		this.refund = new MikroOrmRefundRepository(params);
+		this.storeMember = new MikroOrmStoreMemberRepository(params);
+		this.store = new MikroOrmStoreRepository(params);
+		this.storeStatus = new MikroOrmStoreStatusRepository(params);
+		this.themeCustomization = new MikroOrmThemeCustomizationRepository(params);
+		this.transactionEvent = new MikroOrmTransactionEventRepository(params);
+		this.transaction = new MikroOrmTransactionRepository(params);
+		this.userProfile = new MikroOrmUserProfileRepository(params);
+		this.user = new MikroOrmUserRepository(params);
+	}
 
-  apiCredential: IApiCredentialRepository;
-  checkoutPage: ICheckoutPageRepository;
-  checkoutTheme: ICheckoutThemeRepository;
-  company: ICompanyRepository;
-  jwtToken: IJwtTokenRepository;
-  oauth2Client: IOAuth2ClientRepository;
-  paymentAttempt: IPaymentAttemptRepository;
-  paymentMethod: IPaymentMethodRepository;
-  refund: IRefundRepository;
-  storeMember: IStoreMemberRepository;
-  store: IStoreRepository;
-  storeStatus: IStoreStatusRepository;
-  themeCustomization: IThemeCustomizationRepository;
-  transactionEvent: ITransactionEventRepository;
-  transaction: ITransactionRepository;
-  userProfile: IUserProfileRepository;
-  user: IUserRepository;
+	apiCredential: IApiCredentialRepository;
+	checkoutPage: ICheckoutPageRepository;
+	checkoutTheme: ICheckoutThemeRepository;
+	company: ICompanyRepository;
+	jwtToken: IJwtTokenRepository;
+	oauth2Client: IOAuth2ClientRepository;
+	paymentAttempt: IPaymentAttemptRepository;
+	paymentMethod: IPaymentMethodRepository;
+	refund: IRefundRepository;
+	storeMember: IStoreMemberRepository;
+	store: IStoreRepository;
+	storeStatus: IStoreStatusRepository;
+	themeCustomization: IThemeCustomizationRepository;
+	transactionEvent: ITransactionEventRepository;
+	transaction: ITransactionRepository;
+	userProfile: IUserProfileRepository;
+	user: IUserRepository;
 }

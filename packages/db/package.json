@@ -3,13 +3,20 @@
 	"type": "module",
 	"version": "1.0.0",
 	"files": ["src"],
+	"scripts": {
+		"test": "vitest run",
+		"test:watch": "vitest"
+	},
 	"dependencies": {
 		"@mikro-orm/core": "^6.4.16",
 		"zocker": "^2.0.3",
 		"zod": "^3.22.4"
 	},
 	"devDependencies": {
+		"@mikro-orm/sqlite": "^6.4.16",
 		"@ripste/tsconfig": "workspace:*",
-		"@types/node": "^24.0.3"
+		"@types/node": "^24.0.3",
+		"unplugin-swc": "^1.5.5",
+		"vite": "^6.3.5"
 	}
 }
