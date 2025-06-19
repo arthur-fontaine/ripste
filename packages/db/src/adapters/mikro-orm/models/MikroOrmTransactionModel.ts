@@ -12,7 +12,7 @@ import type {
 	ITransactionInsert,
 } from "../../../domain/models/Transaction.ts";
 import { MikroOrmStoreModel } from "./MikroOrmStoreModel.ts";
-import { ApiCredentialModel } from "./MikroOrmApiCredential.ts";
+import { MikroOrmApiCredentialModel } from "./MikroOrmApiCredential.ts";
 import { MikroOrmTransactionEventModel } from "./MikroOrmTransactionEventModel.ts";
 import { MikroOrmPaymentMethodModel } from "./MikroOrmPaymentMethodModel.ts";
 import { MikroOrmCheckoutPageModel } from "./MikroOrmCheckoutPageModel.ts";
@@ -47,8 +47,8 @@ export class MikroOrmTransactionModel
 	@ManyToOne(() => MikroOrmStoreModel)
 	store!: MikroOrmStoreModel;
 
-	@ManyToOne(() => ApiCredentialModel, { nullable: true })
-	apiCredential: ApiCredentialModel | null = null;
+	@ManyToOne(() => MikroOrmApiCredentialModel, { nullable: true })
+	apiCredential: MikroOrmApiCredentialModel | null = null;
 
 	@OneToMany(
 		() => MikroOrmTransactionEventModel,

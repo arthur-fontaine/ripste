@@ -4,7 +4,7 @@ import type {
 	IJwtToken,
 	IJwtTokenInsert,
 } from "../../../domain/models/JwtToken.ts";
-import { ApiCredentialModel } from "./MikroOrmApiCredential.ts";
+import { MikroOrmApiCredentialModel } from "./MikroOrmApiCredential.ts";
 
 @Entity()
 export class MikroOrmJwtTokenModel extends BaseModel implements IJwtToken {
@@ -19,6 +19,6 @@ export class MikroOrmJwtTokenModel extends BaseModel implements IJwtToken {
 	@Property({ type: t.array })
 	permissions!: string[];
 
-	@ManyToOne(() => ApiCredentialModel)
-	credential!: ApiCredentialModel;
+	@ManyToOne(() => MikroOrmApiCredentialModel)
+	credential!: MikroOrmApiCredentialModel;
 }

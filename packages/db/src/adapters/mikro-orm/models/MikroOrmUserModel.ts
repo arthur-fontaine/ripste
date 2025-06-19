@@ -3,7 +3,7 @@ import { BaseModel } from "./utils/MikroOrmBaseModel.ts";
 import type { IUser, IUserInsert } from "../../../domain/models/User.ts";
 import { MikroOrmUserProfileModel } from "./MikroOrmUserProfileModel.ts";
 import { MikroOrmStoreMemberModel } from "./MikroOrmStoreMemberModel.ts";
-import { ApiCredentialModel } from "./MikroOrmApiCredential.ts";
+import { MikroOrmApiCredentialModel } from "./MikroOrmApiCredential.ts";
 import { MikroOrmRefundModel } from "./MikroOrmRefundModel.ts";
 
 @Entity()
@@ -44,11 +44,11 @@ export class MikroOrmUserModel extends BaseModel implements IUser {
 	}
 
 	@OneToMany(
-		() => ApiCredentialModel,
+		() => MikroOrmApiCredentialModel,
 		(cred) => cred.createdByUser,
 	)
-	_createdCredentials = new Collection<ApiCredentialModel>(this);
-	get createdCredentials(): ApiCredentialModel[] {
+	_createdCredentials = new Collection<MikroOrmApiCredentialModel>(this);
+	get createdCredentials(): MikroOrmApiCredentialModel[] {
 		return this._createdCredentials.getItems();
 	}
 

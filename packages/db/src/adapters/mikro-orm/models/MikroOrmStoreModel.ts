@@ -11,7 +11,7 @@ import type { IStore, IStoreInsert } from "../../../domain/models/Store.ts";
 import { MikroOrmCompanyModel } from "./MikroOrmCompanyModel.ts";
 import { MikroOrmStoreMemberModel } from "./MikroOrmStoreMemberModel.ts";
 import { MikroOrmStoreStatusModel } from "./MikroOrmStoreStatusModel.ts";
-import { ApiCredentialModel } from "./MikroOrmApiCredential.ts";
+import { MikroOrmApiCredentialModel } from "./MikroOrmApiCredential.ts";
 import { MikroOrmCheckoutThemeModel } from "./MikroOrmCheckoutThemeModel.ts";
 import { MikroOrmTransactionModel } from "./MikroOrmTransactionModel.ts";
 
@@ -56,11 +56,11 @@ export class MikroOrmStoreModel extends BaseModel implements IStore {
 	}
 
 	@OneToMany(
-		() => ApiCredentialModel,
+		() => MikroOrmApiCredentialModel,
 		(cred) => cred.store,
 	)
-	_apiCredentials = new Collection<ApiCredentialModel>(this);
-	get apiCredentials(): ApiCredentialModel[] {
+	_apiCredentials = new Collection<MikroOrmApiCredentialModel>(this);
+	get apiCredentials(): MikroOrmApiCredentialModel[] {
 		return this._apiCredentials.getItems();
 	}
 

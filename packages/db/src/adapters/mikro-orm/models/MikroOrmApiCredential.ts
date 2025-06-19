@@ -25,7 +25,10 @@ const CredentialType = {
 } as const;
 
 @Entity()
-export class ApiCredentialModel extends BaseModel implements IApiCredential {
+export class MikroOrmApiCredentialModel
+	extends BaseModel
+	implements IApiCredential
+{
 	constructor(params: IApiCredentialInsert) {
 		super();
 		Object.assign(this, params);

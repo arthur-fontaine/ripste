@@ -4,7 +4,7 @@ import type {
 	IOAuth2Client,
 	IOAuth2ClientInsert,
 } from "../../../domain/models/OAuth2Client.ts";
-import { ApiCredentialModel } from "./MikroOrmApiCredential.ts";
+import { MikroOrmApiCredentialModel } from "./MikroOrmApiCredential.ts";
 
 @Entity()
 export class MikroOrmOauth2ClientModel
@@ -28,6 +28,6 @@ export class MikroOrmOauth2ClientModel
 	@Property({ type: t.array })
 	scopes!: string[];
 
-	@ManyToOne(() => ApiCredentialModel)
-	credential!: ApiCredentialModel;
+	@ManyToOne(() => MikroOrmApiCredentialModel)
+	credential!: MikroOrmApiCredentialModel;
 }
