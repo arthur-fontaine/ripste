@@ -16,15 +16,10 @@ Description of the project.
 
 1. Install dependencies:
    ```bash
-    npm install
+    pnpm install
    ```
 
-2. Build the project:
-    ```bash
-    pnpm build
-   ```
-
-3. Start the development server:
+2. Start the development server:
    ```bash
     pnpm run start-docker:dev
    ```
