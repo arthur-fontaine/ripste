@@ -1,6 +1,6 @@
 import type { EntityManager } from "@mikro-orm/core";
 import type { BaseModel } from "../../models/utils/MikroOrmBaseModel.ts";
-import type { IBaseRepository } from "../../../../domain/ports/utils/IBaseRepository.ts";
+import type { IBaseRepository } from "../../../../domain/ports/repositories/utils/IBaseRepository.ts";
 
 interface IMikroOrmBaseRepositoryOptions {
 	em: EntityManager;
