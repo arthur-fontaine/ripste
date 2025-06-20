@@ -5,6 +5,7 @@ import { NodeSDK } from "@opentelemetry/sdk-node";
 import { ConsoleSpanExporter } from "@opentelemetry/sdk-trace-node";
 
 const otelSdk = new NodeSDK({
+	serviceName: "psp-api",
 	traceExporter: new ConsoleSpanExporter(),
 });
 
@@ -12,7 +13,10 @@ otelSdk.start();
 
 app.use("*", otel());
 
-const server = serve(app);
+const server = serve({
+	fetch: app.fetch,
+	port: Number(process.env["PSP_API_PORT"]) || 3001,
+});
 
 process.on("SIGINT", () => {
 	server.close();
