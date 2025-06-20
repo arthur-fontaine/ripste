@@ -3,7 +3,7 @@
 
 import { inject } from "vue";
 import type { App, InjectionKey } from "vue";
-import { type PageContext } from "./types.ts";
+import type { PageContext } from "./types.ts";
 
 export { usePageContext };
 export { setPageContext };
