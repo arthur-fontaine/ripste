@@ -1,25 +1,26 @@
-# Ripste
+# RIPSTE
 
-# Description :
+## Description
 
-Description of the project.
+Description du projet.
 
-# Installation :
-
-# Prerequisites :
+## Prérequis
 
 - Docker
 - Node.js
 - Pnpm
 
-# Steps :
+## Installation
+
 
 1. Install dependencies:
    ```bash
     pnpm install
    ```
 
-2. Start the development server:
+## Lancer l'environnement de développement
+
+1. Start the development server:
    ```bash
     pnpm run start-docker:dev
    ```
