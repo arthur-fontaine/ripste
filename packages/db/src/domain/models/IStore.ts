@@ -13,7 +13,7 @@ export interface IStoreTable extends IBaseModel {
 	slug: string;
 	contactEmail: string;
 	contactPhone: string | null;
-	company: ISU.SingleReference<ICompanyTable | null, 'companyId', 'id'>;
+	company: ISU.SingleReference<ICompanyTable | null, "companyId", "id">;
 	storeMembers: ISU.ManyReference<IStoreMemberTable>;
 	storeStatuses: ISU.ManyReference<IStoreStatusTable>;
 	apiCredentials: ISU.ManyReference<IApiCredentialTable>;
@@ -25,8 +25,11 @@ export interface IStore extends ISU.Selectable<IStoreTable> {}
 export interface IInsertStore extends ISU.Insertable<IStoreTable> {}
 export interface IUpdateStore extends ISU.Updateable<IStoreTable> {}
 
-export const generateFakeStore = createFakeGenerator<IStore>('IStore', __filename);
+export const generateFakeStore = createFakeGenerator<IStore>(
+	"IStore",
+	__filename,
+);
 export const generateFakeInsertStore = createFakeGenerator<IInsertStore>(
 	"IInsertStore",
-	__filename
+	__filename,
 );

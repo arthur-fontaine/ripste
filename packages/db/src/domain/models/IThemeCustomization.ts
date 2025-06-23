@@ -9,16 +9,18 @@ export interface IThemeCustomizationTable extends IBaseModel {
 	theme: ISU.SingleReference<ICheckoutThemeTable, "themeId", "id">;
 }
 
-export interface IThemeCustomization extends ISU.Selectable<IThemeCustomizationTable> {}
-export interface IInsertThemeCustomization extends ISU.Insertable<IThemeCustomizationTable> {}
-export interface IUpdateThemeCustomization extends ISU.Updateable<IThemeCustomizationTable> {}
+export interface IThemeCustomization
+	extends ISU.Selectable<IThemeCustomizationTable> {}
+export interface IInsertThemeCustomization
+	extends ISU.Insertable<IThemeCustomizationTable> {}
+export interface IUpdateThemeCustomization
+	extends ISU.Updateable<IThemeCustomizationTable> {}
 
-export const generateFakeThemeCustomization = createFakeGenerator<IThemeCustomization>(
-	"IThemeCustomization",
-	__filename
-);
+export const generateFakeThemeCustomization =
+	createFakeGenerator<IThemeCustomization>("IThemeCustomization", __filename);
 
-export const generateFakeInsertThemeCustomization = createFakeGenerator<IInsertThemeCustomization>(
-	"IInsertThemeCustomization",
-	__filename
-);
+export const generateFakeInsertThemeCustomization =
+	createFakeGenerator<IInsertThemeCustomization>(
+		"IInsertThemeCustomization",
+		__filename,
+	);

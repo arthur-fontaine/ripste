@@ -15,7 +15,11 @@ export interface ITransactionTable extends IBaseModel {
 	currency: string;
 	status: "created" | "processing" | "completed" | "failed" | "cancelled";
 	metadata: Record<string, string> | null;
-	apiCredential: ISU.SingleReference<IApiCredentialTable | null, "apiCredentialId", "id">;
+	apiCredential: ISU.SingleReference<
+		IApiCredentialTable | null,
+		"apiCredentialId",
+		"id"
+	>;
 	store: ISU.SingleReference<IStoreTable, "storeId", "id">;
 	transactionEvents: ISU.ManyReference<ITransactionEventTable>;
 	paymentMethods: ISU.ManyReference<IPaymentMethodTable>;
@@ -28,9 +32,10 @@ export interface ITransaction extends ISU.Selectable<ITransactionTable> {}
 export interface IInsertTransaction extends ISU.Insertable<ITransactionTable> {}
 export interface IUpdateTransaction extends ISU.Updateable<ITransactionTable> {}
 
-export const generateFakeTransaction = createFakeGenerator<ITransaction>("ITransaction", __filename);
-
-export const generateFakeInsertTransaction = createFakeGenerator<IInsertTransaction>(
-	"IInsertTransaction",
-	__filename
+export const generateFakeTransaction = createFakeGenerator<ITransaction>(
+	"ITransaction",
+	__filename,
 );
+
+export const generateFakeInsertTransaction =
+	createFakeGenerator<IInsertTransaction>("IInsertTransaction", __filename);

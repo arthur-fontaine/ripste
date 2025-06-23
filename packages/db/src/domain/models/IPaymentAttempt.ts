@@ -12,19 +12,26 @@ export interface IPaymentAttemptTable extends IBaseModel {
 	attemptedAt: Date;
 
 	transaction: ISU.SingleReference<ITransactionTable, "transactionId", "id">;
-	paymentMethod: ISU.SingleReference<IPaymentMethodTable, "paymentMethodId", "id">;
+	paymentMethod: ISU.SingleReference<
+		IPaymentMethodTable,
+		"paymentMethodId",
+		"id"
+	>;
 }
 
 export interface IPaymentAttempt extends ISU.Selectable<IPaymentAttemptTable> {}
-export interface IInsertPaymentAttempt extends ISU.Insertable<IPaymentAttemptTable> {}
-export interface IUpdatePaymentAttempt extends ISU.Updateable<IPaymentAttemptTable> {}
+export interface IInsertPaymentAttempt
+	extends ISU.Insertable<IPaymentAttemptTable> {}
+export interface IUpdatePaymentAttempt
+	extends ISU.Updateable<IPaymentAttemptTable> {}
 
 export const generateFakePaymentAttempt = createFakeGenerator<IPaymentAttempt>(
 	"IPaymentAttempt",
-	__filename
+	__filename,
 );
 
-export const generateFakeInsertPaymentAttempt = createFakeGenerator<IInsertPaymentAttempt>(
-	"IInsertPaymentAttempt",
-	__filename
-);
+export const generateFakeInsertPaymentAttempt =
+	createFakeGenerator<IInsertPaymentAttempt>(
+		"IInsertPaymentAttempt",
+		__filename,
+	);

@@ -7,7 +7,7 @@ export interface IUserProfileTable extends IBaseModel {
 	firstName: string;
 	lastName: string;
 	phone: string | null;
-	user: ISU.SingleReference<IUserTable, 'userId', 'id'>;
+	user: ISU.SingleReference<IUserTable, "userId", "id">;
 	fullName: ISU.Generated<string>;
 }
 
@@ -15,8 +15,9 @@ export interface IUserProfile extends ISU.Selectable<IUserProfileTable> {}
 export interface IInsertUserProfile extends ISU.Insertable<IUserProfileTable> {}
 export interface IUpdateUserProfile extends ISU.Updateable<IUserProfileTable> {}
 
-export const generateFakeUserProfile = createFakeGenerator<IUserProfile>('IUserProfile', __filename);
-export const generateFakeInsertUserProfile = createFakeGenerator<IInsertUserProfile>(
-	"IInsertUserProfile",
-	__filename
+export const generateFakeUserProfile = createFakeGenerator<IUserProfile>(
+	"IUserProfile",
+	__filename,
 );
+export const generateFakeInsertUserProfile =
+	createFakeGenerator<IInsertUserProfile>("IInsertUserProfile", __filename);

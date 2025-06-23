@@ -10,7 +10,11 @@ export interface IRefundTable extends IBaseModel {
 	status: "pending" | "processing" | "completed" | "failed";
 	processedAt: Date | null;
 	transaction: ISU.SingleReference<ITransactionTable, "transactionId", "id">;
-	initiatedByUser: ISU.SingleReference<IUserTable | null, "initiatedByUserId", "id">;
+	initiatedByUser: ISU.SingleReference<
+		IUserTable | null,
+		"initiatedByUserId",
+		"id"
+	>;
 }
 
 export interface IRefund extends ISU.Selectable<IRefundTable> {}
@@ -19,10 +23,10 @@ export interface IUpdateRefund extends ISU.Updateable<IRefundTable> {}
 
 export const generateFakeRefund = createFakeGenerator<IRefund>(
 	"IRefund",
-	__filename
+	__filename,
 );
 
 export const generateFakeInsertRefund = createFakeGenerator<IInsertRefund>(
 	"IInsertRefund",
-	__filename
+	__filename,
 );

@@ -14,19 +14,26 @@ export interface IApiCredentialTable extends IBaseModel {
 	expiresAt: Date | null;
 	lastUsedAt: Date | null;
 
-	store: ISU.SingleReference<IStore | null, 'storeId', 'id'>;
-	createdByUser: ISU.SingleReference<IUser | null, 'createdByUserId', 'id'>;
-	jwtToken: ISU.SingleReference<IJwtToken | null, 'jwtTokenId', 'id'>;
-	oauth2Client: ISU.SingleReference<IOAuth2Client | null, 'oauth2ClientId', 'id'>;
+	store: ISU.SingleReference<IStore | null, "storeId", "id">;
+	createdByUser: ISU.SingleReference<IUser | null, "createdByUserId", "id">;
+	jwtToken: ISU.SingleReference<IJwtToken | null, "jwtTokenId", "id">;
+	oauth2Client: ISU.SingleReference<
+		IOAuth2Client | null,
+		"oauth2ClientId",
+		"id"
+	>;
 	transactions: ISU.ManyReference<ITransaction>;
 }
 
 export interface IApiCredential extends ISU.Selectable<IApiCredentialTable> {}
-export interface IInsertApiCredential extends ISU.Insertable<IApiCredentialTable> {}
-export interface IUpdateApiCredential extends ISU.Updateable<IApiCredentialTable> {}
+export interface IInsertApiCredential
+	extends ISU.Insertable<IApiCredentialTable> {}
+export interface IUpdateApiCredential
+	extends ISU.Updateable<IApiCredentialTable> {}
 
-export const generateFakeApiCredential = createFakeGenerator<IApiCredential>('IApiCredential', __filename);
-export const generateFakeInsertApiCredential = createFakeGenerator<IInsertApiCredential>(
-	"IInsertApiCredential",
-	__filename
+export const generateFakeApiCredential = createFakeGenerator<IApiCredential>(
+	"IApiCredential",
+	__filename,
 );
+export const generateFakeInsertApiCredential =
+	createFakeGenerator<IInsertApiCredential>("IInsertApiCredential", __filename);

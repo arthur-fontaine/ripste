@@ -11,7 +11,7 @@ export interface IUserTable extends IBaseModel {
 	passwordHash: string;
 	emailVerified: boolean;
 	permissionLevel: "admin" | "user";
-	profile: ISU.SingleReference<IUserProfileTable | null, 'profileId', 'id'>;
+	profile: ISU.SingleReference<IUserProfileTable | null, "profileId", "id">;
 	storeMembers: ISU.ManyReference<IStoreMemberTable>;
 	createdCredentials: ISU.ManyReference<IApiCredentialTable>;
 	initiatedRefunds: ISU.ManyReference<IRefundTable>;
@@ -21,8 +21,8 @@ export interface IUser extends ISU.Selectable<IUserTable> {}
 export interface IInsertUser extends ISU.Insertable<IUserTable> {}
 export interface IUpdateUser extends ISU.Updateable<IUserTable> {}
 
-export const generateFakeUser = createFakeGenerator<IUser>('IUser', __filename);
+export const generateFakeUser = createFakeGenerator<IUser>("IUser", __filename);
 export const generateFakeInsertUser = createFakeGenerator<IInsertUser>(
 	"IInsertUser",
-	__filename
+	__filename,
 );

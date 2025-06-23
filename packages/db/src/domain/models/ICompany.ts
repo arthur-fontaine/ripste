@@ -16,8 +16,11 @@ export interface ICompany extends ISU.Selectable<ICompanyTable> {}
 export interface IInsertCompany extends ISU.Insertable<ICompanyTable> {}
 export interface IUpdateCompany extends ISU.Updateable<ICompanyTable> {}
 
-export const generateFakeCompany = createFakeGenerator<ICompany>("ICompany", __filename);
+export const generateFakeCompany = createFakeGenerator<ICompany>(
+	"ICompany",
+	__filename,
+);
 export const generateFakeInsertCompany = createFakeGenerator<IInsertCompany>(
 	"IInsertCompany",
-	__filename
+	__filename,
 );

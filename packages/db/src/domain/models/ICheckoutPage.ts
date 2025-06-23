@@ -18,8 +18,10 @@ export interface ICheckoutPageTable extends IBaseModel {
 }
 
 export interface ICheckoutPage extends ISU.Selectable<ICheckoutPageTable> {}
-export interface IInsertCheckoutPage extends ISU.Insertable<ICheckoutPageTable> {}
-export interface IUpdateCheckoutPage extends ISU.Updateable<ICheckoutPageTable> {}
+export interface IInsertCheckoutPage
+	extends ISU.Insertable<ICheckoutPageTable> {}
+export interface IUpdateCheckoutPage
+	extends ISU.Updateable<ICheckoutPageTable> {}
 
 export interface CheckoutDisplayData {
 	title: string;
@@ -74,10 +76,8 @@ export interface CheckoutDisplayData {
 
 export const generateFakeCheckoutPage = createFakeGenerator<ICheckoutPage>(
 	"ICheckoutPage",
-	__filename
+	__filename,
 );
 
-export const generateFakeInsertCheckoutPage = createFakeGenerator<IInsertCheckoutPage>(
-	"IInsertCheckoutPage",
-	__filename
-);
+export const generateFakeInsertCheckoutPage =
+	createFakeGenerator<IInsertCheckoutPage>("IInsertCheckoutPage", __filename);

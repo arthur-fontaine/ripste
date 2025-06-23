@@ -18,10 +18,8 @@ export interface IUpdateStoreStatus extends ISU.Updateable<IStoreStatusTable> {}
 
 export const generateFakeStoreStatus = createFakeGenerator<IStoreStatus>(
 	"IStoreStatus",
-	__filename
+	__filename,
 );
 
-export const generateFakeInsertStoreStatus = createFakeGenerator<IInsertStoreStatus>(
-	"IInsertStoreStatus",
-	__filename
-);
+export const generateFakeInsertStoreStatus =
+	createFakeGenerator<IInsertStoreStatus>("IInsertStoreStatus", __filename);

@@ -12,15 +12,15 @@ export interface IPaymentMethodTable extends IBaseModel {
 }
 
 export interface IPaymentMethod extends ISU.Selectable<IPaymentMethodTable> {}
-export interface IInsertPaymentMethod extends ISU.Insertable<IPaymentMethodTable> {}
-export interface IUpdatePaymentMethod extends ISU.Updateable<IPaymentMethodTable> {}
+export interface IInsertPaymentMethod
+	extends ISU.Insertable<IPaymentMethodTable> {}
+export interface IUpdatePaymentMethod
+	extends ISU.Updateable<IPaymentMethodTable> {}
 
 export const generateFakePaymentMethod = createFakeGenerator<IPaymentMethod>(
 	"IPaymentMethod",
-	__filename
+	__filename,
 );
 
-export const generateFakeInsertPaymentMethod = createFakeGenerator<IInsertPaymentMethod>(
-	"IInsertPaymentMethod",
-	__filename
-);
+export const generateFakeInsertPaymentMethod =
+	createFakeGenerator<IInsertPaymentMethod>("IInsertPaymentMethod", __filename);

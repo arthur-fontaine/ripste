@@ -16,10 +16,8 @@ export interface IUpdateStoreMember extends ISU.Updateable<IStoreMemberTable> {}
 
 export const generateFakeStoreMember = createFakeGenerator<IStoreMember>(
 	"IStoreMember",
-	__filename
+	__filename,
 );
 
-export const generateFakeInsertStoreMember = createFakeGenerator<IInsertStoreMember>(
-	"IInsertStoreMember",
-	__filename
-);
+export const generateFakeInsertStoreMember =
+	createFakeGenerator<IInsertStoreMember>("IInsertStoreMember", __filename);

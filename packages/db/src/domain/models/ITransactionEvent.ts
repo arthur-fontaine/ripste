@@ -11,9 +11,12 @@ export interface ITransactionEventTable extends IBaseModel {
 	transaction: ISU.SingleReference<ITransactionTable, "transactionId", "id">;
 }
 
-export interface ITransactionEvent extends ISU.Selectable<ITransactionEventTable> {}
-export interface IInsertTransactionEvent extends ISU.Insertable<ITransactionEventTable> {}
-export interface IUpdateTransactionEvent extends ISU.Updateable<ITransactionEventTable> {}
+export interface ITransactionEvent
+	extends ISU.Selectable<ITransactionEventTable> {}
+export interface IInsertTransactionEvent
+	extends ISU.Insertable<ITransactionEventTable> {}
+export interface IUpdateTransactionEvent
+	extends ISU.Updateable<ITransactionEventTable> {}
 
 export type TransactionEventData =
 	| TransactionCreatedEvent
@@ -78,12 +81,11 @@ export interface RefundEvent {
 	reason: string | null;
 }
 
-export const generateFakeTransactionEvent = createFakeGenerator<ITransactionEvent>(
-	"ITransactionEvent",
-	__filename
-);
+export const generateFakeTransactionEvent =
+	createFakeGenerator<ITransactionEvent>("ITransactionEvent", __filename);
 
-export const generateFakeInsertTransactionEvent = createFakeGenerator<IInsertTransactionEvent>(
-	"IInsertTransactionEvent",
-	__filename
-);
+export const generateFakeInsertTransactionEvent =
+	createFakeGenerator<IInsertTransactionEvent>(
+		"IInsertTransactionEvent",
+		__filename,
+	);
