@@ -1,4 +1,8 @@
 {
+	"name": "@ripste/checkout-page",
+	"private": true,
+	"version": "0.0.1",
+	"type": "module",
 	"scripts": {
 		"dev": "pnpm run server:dev",
 		"prod": "pnpm run build && pnpm run server:prod",
@@ -24,6 +28,5 @@
 	},
 	"devDependencies": {
 		"@ripste/tsconfig": "workspace:*"
-	},
-	"type": "module"
+	}
 }
