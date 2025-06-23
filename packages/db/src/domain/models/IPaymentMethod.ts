@@ -1,21 +1,26 @@
-import type { Insertable } from "../../types/insertable.ts";
-import type { IPaymentAttempt } from "./IPaymentAttempt.ts";
-import type { ITransaction } from "./ITransaction.ts";
+import type { ISU } from "isutypes";
+import type { IBaseModel } from "./IBaseModel.ts";
+import { createFakeGenerator } from "interface-faker";
+import type { IPaymentAttemptTable } from "./IPaymentAttempt.ts";
+import type { ITransactionTable } from "./ITransaction.ts";
 
-export interface IPaymentMethod {
-	id: string;
+export interface IPaymentMethodTable extends IBaseModel {
 	methodType: "checkout_page";
 	methodData: Record<string, string> | null;
-	createdAt: Date;
-	deletedAt: Date | null;
-
-	transaction: ITransaction;
-	paymentAttempts: IPaymentAttempt[];
+	transaction: ISU.SingleReference<ITransactionTable, "transactionId", "id">;
+	paymentAttempts: ISU.ManyReference<IPaymentAttemptTable>;
 }
 
-export type IInsertPaymentMethod = Insertable<
-	IPaymentMethod,
-	"transaction" | "paymentAttempts"
-> & {
-	transactionId: ITransaction["id"];
-};
+export interface IPaymentMethod extends ISU.Selectable<IPaymentMethodTable> {}
+export interface IInsertPaymentMethod extends ISU.Insertable<IPaymentMethodTable> {}
+export interface IUpdatePaymentMethod extends ISU.Updateable<IPaymentMethodTable> {}
+
+export const generateFakePaymentMethod = createFakeGenerator<IPaymentMethod>(
+	"IPaymentMethod",
+	__filename
+);
+
+export const generateFakeInsertPaymentMethod = createFakeGenerator<IInsertPaymentMethod>(
+	"IInsertPaymentMethod",
+	__filename
+);

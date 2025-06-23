@@ -1,24 +1,28 @@
-import type { Insertable } from "../../types/insertable.ts";
-import type { ITransaction } from "./ITransaction.ts";
-import type { IUser } from "./IUser.ts";
+import type { ISU } from "isutypes";
+import type { IBaseModel } from "./IBaseModel.ts";
+import { createFakeGenerator } from "interface-faker";
+import type { ITransactionTable } from "./ITransaction.ts";
+import type { IUserTable } from "./IUser.ts";
 
-export interface IRefund {
-	id: string;
+export interface IRefundTable extends IBaseModel {
 	amount: number;
 	reason: string | null;
 	status: "pending" | "processing" | "completed" | "failed";
-	createdAt: Date;
 	processedAt: Date | null;
-	deletedAt: Date | null;
-
-	transaction: ITransaction;
-	initiatedByUser: IUser | null;
+	transaction: ISU.SingleReference<ITransactionTable, "transactionId", "id">;
+	initiatedByUser: ISU.SingleReference<IUserTable | null, "initiatedByUserId", "id">;
 }
 
-export type IInsertRefund = Insertable<
-	IRefund,
-	"transaction" | "initiatedByUser"
-> & {
-	transactionId: ITransaction["id"];
-	initiatedByUserId: IUser["id"] | null;
-};
+export interface IRefund extends ISU.Selectable<IRefundTable> {}
+export interface IInsertRefund extends ISU.Insertable<IRefundTable> {}
+export interface IUpdateRefund extends ISU.Updateable<IRefundTable> {}
+
+export const generateFakeRefund = createFakeGenerator<IRefund>(
+	"IRefund",
+	__filename
+);
+
+export const generateFakeInsertRefund = createFakeGenerator<IInsertRefund>(
+	"IInsertRefund",
+	__filename
+);

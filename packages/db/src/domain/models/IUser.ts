@@ -1,26 +1,28 @@
-import type { Insertable } from "../../types/insertable.ts";
-import type { IApiCredential } from "./IApiCredential.ts";
-import type { IRefund } from "./IRefund.ts";
-import type { IStoreMember } from "./IStoreMember.ts";
-import type { IUserProfile } from "./IUserProfile.ts";
+import type { ISU } from "isutypes";
+import type { IBaseModel } from "./IBaseModel.ts";
+import { createFakeGenerator } from "interface-faker";
+import type { IUserProfileTable } from "./IUserProfile.ts";
+import type { IStoreMemberTable } from "./IStoreMember.ts";
+import type { IApiCredentialTable } from "./IApiCredential.ts";
+import type { IRefundTable } from "./IRefund.ts";
 
-export interface IUser {
-	id: string;
+export interface IUserTable extends IBaseModel {
 	email: string;
 	passwordHash: string;
 	emailVerified: boolean;
 	permissionLevel: "admin" | "user";
-	createdAt: Date;
-	updatedAt: Date | null;
-	deletedAt: Date | null;
-
-	profile: IUserProfile | null;
-	storeMembers: IStoreMember[];
-	createdCredentials: IApiCredential[];
-	initiatedRefunds: IRefund[];
+	profile: ISU.SingleReference<IUserProfileTable | null, 'profileId', 'id'>;
+	storeMembers: ISU.ManyReference<IStoreMemberTable>;
+	createdCredentials: ISU.ManyReference<IApiCredentialTable>;
+	initiatedRefunds: ISU.ManyReference<IRefundTable>;
 }
 
-export type IInsertUser = Insertable<
-	IUser,
-	"profile" | "storeMembers" | "createdCredentials" | "initiatedRefunds"
->;
+export interface IUser extends ISU.Selectable<IUserTable> {}
+export interface IInsertUser extends ISU.Insertable<IUserTable> {}
+export interface IUpdateUser extends ISU.Updateable<IUserTable> {}
+
+export const generateFakeUser = createFakeGenerator<IUser>('IUser', __filename);
+export const generateFakeInsertUser = createFakeGenerator<IInsertUser>(
+	"IInsertUser",
+	__filename
+);

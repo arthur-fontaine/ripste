@@ -1,18 +1,23 @@
-import type { Insertable } from "../../types/insertable.ts";
-import type { IStore } from "./IStore.ts";
+import type { ISU } from "isutypes";
+import type { IBaseModel } from "./IBaseModel.ts";
+import { createFakeGenerator } from "interface-faker";
+import type { IStoreTable } from "./IStore.ts";
 
-export interface ICompany {
-	id: string;
+export interface ICompanyTable extends IBaseModel {
 	legalName: string;
 	tradeName: string | null;
 	kbis: string;
 	vatNumber: string | null;
 	address: string | null;
-	createdAt: Date;
-	updatedAt: Date | null;
-	deletedAt: Date | null;
-
-	stores: IStore[];
+	stores: ISU.ManyReference<IStoreTable>;
 }
 
-export type IInsertCompany = Insertable<ICompany, "stores">;
+export interface ICompany extends ISU.Selectable<ICompanyTable> {}
+export interface IInsertCompany extends ISU.Insertable<ICompanyTable> {}
+export interface IUpdateCompany extends ISU.Updateable<ICompanyTable> {}
+
+export const generateFakeCompany = createFakeGenerator<ICompany>("ICompany", __filename);
+export const generateFakeInsertCompany = createFakeGenerator<IInsertCompany>(
+	"IInsertCompany",
+	__filename
+);

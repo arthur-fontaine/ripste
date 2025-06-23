@@ -1,23 +1,19 @@
-import type { Insertable } from "../../types/insertable.ts";
-import type { ITransaction } from "./ITransaction.ts";
-import type { IsoString } from "../../types/iso-string.ts";
+import type { ISU } from "isutypes";
+import type { IBaseModel } from "./IBaseModel.ts";
+import { createFakeGenerator } from "interface-faker";
+import type { ITransactionTable } from "./ITransaction.ts";
+import type { IsoString } from "../../types/iso-string.d.ts";
 
-export interface ITransactionEvent {
-	id: string;
+export interface ITransactionEventTable extends IBaseModel {
 	eventType: string;
 	eventData: TransactionEventData | null;
 	occurredAt: Date;
-	deletedAt: Date | null;
-
-	transaction: ITransaction;
+	transaction: ISU.SingleReference<ITransactionTable, "transactionId", "id">;
 }
 
-export type IInsertTransactionEvent = Insertable<
-	ITransactionEvent,
-	"transaction"
-> & {
-	transactionId: ITransaction["id"];
-};
+export interface ITransactionEvent extends ISU.Selectable<ITransactionEventTable> {}
+export interface IInsertTransactionEvent extends ISU.Insertable<ITransactionEventTable> {}
+export interface IUpdateTransactionEvent extends ISU.Updateable<ITransactionEventTable> {}
 
 export type TransactionEventData =
 	| TransactionCreatedEvent
@@ -81,3 +77,13 @@ export interface RefundEvent {
 	amount: number;
 	reason: string | null;
 }
+
+export const generateFakeTransactionEvent = createFakeGenerator<ITransactionEvent>(
+	"ITransactionEvent",
+	__filename
+);
+
+export const generateFakeInsertTransactionEvent = createFakeGenerator<IInsertTransactionEvent>(
+	"IInsertTransactionEvent",
+	__filename
+);

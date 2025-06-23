@@ -1,31 +1,25 @@
-import type { Insertable } from "../../types/insertable.ts";
-import type { ICheckoutTheme } from "./ICheckoutTheme.ts";
-import type { ITransaction } from "./ITransaction.ts";
+import type { ISU } from "isutypes";
+import type { IBaseModel } from "./IBaseModel.ts";
+import { createFakeGenerator } from "interface-faker";
+import type { ITransactionTable } from "./ITransaction.ts";
+import type { ICheckoutThemeTable } from "./ICheckoutTheme.ts";
 
-export interface ICheckoutPage {
-	id: string;
+export interface ICheckoutPageTable extends IBaseModel {
 	uri: string;
 	redirectSuccessUrl: string | null;
 	redirectCancelUrl: string | null;
 	displayData: CheckoutDisplayData;
 	expiresAt: Date | null;
-	createdAt: Date;
 	accessedAt: Date | null;
 	completedAt: Date | null;
-	deletedAt: Date | null;
 
-	transaction: ITransaction;
-	theme: ICheckoutTheme;
+	transaction: ISU.SingleReference<ITransactionTable, "transactionId", "id">;
+	theme: ISU.SingleReference<ICheckoutThemeTable, "themeId", "id">;
 }
 
-export type IInsertCheckoutPage = Insertable<
-	ICheckoutPage,
-	"transaction" | "theme" | "displayData"
-> & {
-	transactionId: ITransaction["id"];
-	themeId: ICheckoutTheme["id"];
-	displayData: CheckoutDisplayData;
-};
+export interface ICheckoutPage extends ISU.Selectable<ICheckoutPageTable> {}
+export interface IInsertCheckoutPage extends ISU.Insertable<ICheckoutPageTable> {}
+export interface IUpdateCheckoutPage extends ISU.Updateable<ICheckoutPageTable> {}
 
 export interface CheckoutDisplayData {
 	title: string;
@@ -77,3 +71,13 @@ export interface CheckoutDisplayData {
 		errorMessage: string | null;
 	} | null;
 }
+
+export const generateFakeCheckoutPage = createFakeGenerator<ICheckoutPage>(
+	"ICheckoutPage",
+	__filename
+);
+
+export const generateFakeInsertCheckoutPage = createFakeGenerator<IInsertCheckoutPage>(
+	"IInsertCheckoutPage",
+	__filename
+);

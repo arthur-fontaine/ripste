@@ -1,46 +1,36 @@
-import type { Insertable } from "../../types/insertable.ts";
-import type { IApiCredential } from "./IApiCredential.ts";
-import type { ICheckoutPage } from "./ICheckoutPage.ts";
-import type { IPaymentAttempt } from "./IPaymentAttempt.ts";
-import type { IPaymentMethod } from "./IPaymentMethod.ts";
-import type { IRefund } from "./IRefund.ts";
-import type { IStore } from "./IStore.ts";
-import type { ITransactionEvent } from "./ITransactionEvent.ts";
+import type { ISU } from "isutypes";
+import type { IBaseModel } from "./IBaseModel.ts";
+import { createFakeGenerator } from "interface-faker";
+import type { IApiCredentialTable } from "./IApiCredential.ts";
+import type { IStoreTable } from "./IStore.ts";
+import type { ITransactionEventTable } from "./ITransactionEvent.ts";
+import type { IPaymentMethodTable } from "./IPaymentMethod.ts";
+import type { ICheckoutPageTable } from "./ICheckoutPage.ts";
+import type { IPaymentAttemptTable } from "./IPaymentAttempt.ts";
+import type { IRefundTable } from "./IRefund.ts";
 
-export interface ITransaction {
-	id: string;
+export interface ITransactionTable extends IBaseModel {
 	reference: string;
 	amount: number;
 	currency: string;
 	status: "created" | "processing" | "completed" | "failed" | "cancelled";
 	metadata: Record<string, string> | null;
-	apiCredentialId: string | null;
-	createdAt: Date;
-	updatedAt: Date | null;
-	deletedAt: Date | null;
-
-	store: IStore;
-	apiCredential: IApiCredential | null;
-	transactionEvents: ITransactionEvent[];
-	paymentMethods: IPaymentMethod[];
-	checkoutPages: ICheckoutPage[];
-	paymentAttempts: IPaymentAttempt[];
-	refunds: IRefund[];
+	apiCredential: ISU.SingleReference<IApiCredentialTable | null, "apiCredentialId", "id">;
+	store: ISU.SingleReference<IStoreTable, "storeId", "id">;
+	transactionEvents: ISU.ManyReference<ITransactionEventTable>;
+	paymentMethods: ISU.ManyReference<IPaymentMethodTable>;
+	checkoutPages: ISU.ManyReference<ICheckoutPageTable>;
+	paymentAttempts: ISU.ManyReference<IPaymentAttemptTable>;
+	refunds: ISU.ManyReference<IRefundTable>;
 }
 
-export type IInsertTransaction = Insertable<
-	ITransaction,
-	| "metadata"
-	| "store"
-	| "apiCredential"
-	| "transactionEvents"
-	| "paymentMethods"
-	| "checkoutPages"
-	| "paymentAttempts"
-	| "refunds"
-> & {
-	storeId: IStore["id"];
-	apiCredentialId: IApiCredential["id"] | null;
-	paymentMethodId: IPaymentMethod["id"] | null;
-	metadata: Record<string, string> | null;
-};
+export interface ITransaction extends ISU.Selectable<ITransactionTable> {}
+export interface IInsertTransaction extends ISU.Insertable<ITransactionTable> {}
+export interface IUpdateTransaction extends ISU.Updateable<ITransactionTable> {}
+
+export const generateFakeTransaction = createFakeGenerator<ITransaction>("ITransaction", __filename);
+
+export const generateFakeInsertTransaction = createFakeGenerator<IInsertTransaction>(
+	"IInsertTransaction",
+	__filename
+);

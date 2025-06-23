@@ -1,20 +1,24 @@
-import type { Insertable } from "../../types/insertable.ts";
-import type { ICheckoutTheme } from "./ICheckoutTheme.ts";
+import type { ISU } from "isutypes";
+import type { IBaseModel } from "./IBaseModel.ts";
+import { createFakeGenerator } from "interface-faker";
+import type { ICheckoutThemeTable } from "./ICheckoutTheme.ts";
 
-export interface IThemeCustomization {
-	id: string;
+export interface IThemeCustomizationTable extends IBaseModel {
 	customizationType: "css";
 	content: string | null;
-	createdAt: Date;
-	updatedAt: Date | null;
-	deletedAt: Date | null;
-
-	theme: ICheckoutTheme;
+	theme: ISU.SingleReference<ICheckoutThemeTable, "themeId", "id">;
 }
 
-export type IInsertThemeCustomization = Insertable<
-	IThemeCustomization,
-	"theme"
-> & {
-	themeId: ICheckoutTheme["id"];
-};
+export interface IThemeCustomization extends ISU.Selectable<IThemeCustomizationTable> {}
+export interface IInsertThemeCustomization extends ISU.Insertable<IThemeCustomizationTable> {}
+export interface IUpdateThemeCustomization extends ISU.Updateable<IThemeCustomizationTable> {}
+
+export const generateFakeThemeCustomization = createFakeGenerator<IThemeCustomization>(
+	"IThemeCustomization",
+	__filename
+);
+
+export const generateFakeInsertThemeCustomization = createFakeGenerator<IInsertThemeCustomization>(
+	"IInsertThemeCustomization",
+	__filename
+);

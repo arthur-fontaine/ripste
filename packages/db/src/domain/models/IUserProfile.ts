@@ -1,20 +1,22 @@
-import type { Insertable } from "../../types/insertable.ts";
-import type { IUser } from "./IUser.ts";
+import type { ISU } from "isutypes";
+import type { IBaseModel } from "./IBaseModel.ts";
+import { createFakeGenerator } from "interface-faker";
+import type { IUserTable } from "./IUser.ts";
 
-export interface IUserProfile {
-	id: string;
+export interface IUserProfileTable extends IBaseModel {
 	firstName: string;
 	lastName: string;
 	phone: string | null;
-	createdAt: Date;
-	updatedAt: Date | null;
-	deletedAt: Date | null;
-
-	user: IUser;
-
-	fullName: string;
+	user: ISU.SingleReference<IUserTable, 'userId', 'id'>;
+	fullName: ISU.Generated<string>;
 }
 
-export type IInsertUserProfile = Insertable<IUserProfile, "user"> & {
-	userId: IUser["id"];
-};
+export interface IUserProfile extends ISU.Selectable<IUserProfileTable> {}
+export interface IInsertUserProfile extends ISU.Insertable<IUserProfileTable> {}
+export interface IUpdateUserProfile extends ISU.Updateable<IUserProfileTable> {}
+
+export const generateFakeUserProfile = createFakeGenerator<IUserProfile>('IUserProfile', __filename);
+export const generateFakeInsertUserProfile = createFakeGenerator<IInsertUserProfile>(
+	"IInsertUserProfile",
+	__filename
+);

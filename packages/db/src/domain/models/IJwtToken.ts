@@ -1,15 +1,21 @@
-import type { Insertable } from "../../types/insertable.ts";
-import type { IApiCredential } from "./IApiCredential.ts";
+import type { ISU } from "isutypes";
+import type { IBaseModel } from "./IBaseModel.ts";
+import { createFakeGenerator } from "interface-faker";
+import type { IApiCredentialTable } from "./IApiCredential.ts";
 
-export interface IJwtToken {
-	id: string;
+export interface IJwtTokenTable extends IBaseModel {
 	tokenHash: string;
 	permissions: string[];
-	deletedAt: Date | null;
-
-	credential: IApiCredential;
+	credential: ISU.SingleReference<IApiCredentialTable, 'credentialId', 'id'>;
 }
 
-export type IInsertJwtToken = Insertable<IJwtToken, "credential"> & {
-	credentialId: IApiCredential["id"];
-};
+export interface IJwtToken extends ISU.Selectable<IJwtTokenTable> {}
+export interface IInsertJwtToken extends ISU.Insertable<IJwtTokenTable> {}
+export interface IUpdateJwtToken extends ISU.Updateable<IJwtTokenTable> {}
+
+export const generateFakeJwtToken = createFakeGenerator<IJwtToken>('IJwtToken', __filename);
+
+export const generateFakeInsertJwtToken = createFakeGenerator<IInsertJwtToken>(
+	"IInsertJwtToken",
+	__filename
+);
