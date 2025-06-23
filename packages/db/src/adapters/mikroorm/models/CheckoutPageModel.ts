@@ -33,8 +33,16 @@ export class CheckoutPageModel extends BaseModel implements ICheckoutPage {
 	@ManyToOne(() => TransactionModel)
 	transaction: TransactionModel;
 
+	get transactionId(): string {
+		return this.transaction.id;
+	}
+
 	@ManyToOne(() => CheckoutThemeModel)
 	theme: CheckoutThemeModel;
+
+	get themeId(): string {
+		return this.theme.id;
+	}
 
 	constructor({
 		uri,

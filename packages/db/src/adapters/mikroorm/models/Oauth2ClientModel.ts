@@ -20,6 +20,10 @@ export class Oauth2ClientModel extends BaseModel implements IOAuth2Client {
 	@ManyToOne(() => ApiCredentialModel)
 	credential: Rel<ApiCredentialModel>;
 
+	get credentialId(): string {
+		return this.credential.id;
+	}
+
 	constructor({
 		clientId,
 		clientSecretHash,

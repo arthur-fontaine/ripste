@@ -107,7 +107,7 @@ export class MikroormApiCredentialRepository
 		};
 
 	create: IApiCredentialRepository["create"] = async (credentialData) => {
-		const store = await RepoUtils.findRelatedEntity(
+		const store = credentialData.storeId === null ? null : await RepoUtils.findRelatedEntity(
 			this.options.em,
 			StoreModel,
 			credentialData.storeId,
@@ -160,13 +160,17 @@ export class MikroormApiCredentialRepository
 			throw new Error("createdByUserId cannot be null");
 		}
 
-		const store = await RepoUtils.findRelatedEntity(
-			this.options.em,
-			StoreModel,
-			credentialData.storeId,
-			"Store",
-		);
-		credential.store = store;
+		if (credentialData.storeId) {
+			const store = await RepoUtils.findRelatedEntity(
+				this.options.em,
+				StoreModel,
+				credentialData.storeId,
+				"Store",
+			);
+			credential.store = store;
+		} else if (credential.storeId === null) {
+			credential.store = null;
+		}
 
 		const user = await RepoUtils.findRelatedEntity(
 			this.options.em,

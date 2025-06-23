@@ -14,6 +14,10 @@ export class JwtTokenModel extends BaseModel implements IJwtToken {
 	@ManyToOne(() => ApiCredentialModel)
 	credential: ApiCredentialModel;
 
+	get credentialId(): string {
+		return this.credential.id;
+	}
+
 	constructor({
 		tokenHash,
 		permissions,

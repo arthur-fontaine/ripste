@@ -28,8 +28,16 @@ export class RefundModel extends BaseModel implements IRefund {
 	@ManyToOne(() => TransactionModel)
 	transaction: TransactionModel;
 
+	get transactionId(): string {
+		return this.transaction.id;
+	}
+
 	@ManyToOne(() => UserModel, { nullable: true })
 	initiatedByUser: UserModel | null;
+
+	get initiatedByUserId(): string | null {
+		return this.initiatedByUser ? this.initiatedByUser.id : null;
+	}
 
 	constructor({
 		amount,

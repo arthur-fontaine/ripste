@@ -23,6 +23,10 @@ export class CheckoutThemeModel extends BaseModel implements ICheckoutTheme {
 	@ManyToOne(() => StoreModel)
 	store: StoreModel;
 
+	get storeId(): string {
+		return this.store.id;
+	}
+
 	@OneToMany(
 		() => ThemeCustomizationModel,
 		(customization) => customization.theme,

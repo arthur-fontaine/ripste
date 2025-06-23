@@ -21,6 +21,10 @@ export class ThemeCustomizationModel
 	@ManyToOne(() => CheckoutThemeModel)
 	theme: CheckoutThemeModel;
 
+	get themeId(): string {
+		return this.theme.id;
+	}
+
 	constructor({
 		customizationType,
 		theme,

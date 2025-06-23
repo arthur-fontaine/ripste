@@ -48,6 +48,10 @@ export class TransactionModel extends BaseModel implements ITransaction {
 	@ManyToOne(() => StoreModel)
 	store: StoreModel;
 
+	get storeId(): string {
+		return this.store.id;
+	}
+
 	@ManyToOne(() => ApiCredentialModel, { nullable: true })
 	apiCredential: ApiCredentialModel | null;
 

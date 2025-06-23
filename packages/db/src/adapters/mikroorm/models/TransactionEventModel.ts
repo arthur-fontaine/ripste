@@ -23,6 +23,10 @@ export class TransactionEventModel
 	@ManyToOne(() => TransactionModel)
 	transaction: TransactionModel;
 
+	get transactionId(): string {
+		return this.transaction.id;
+	}
+
 	constructor({
 		eventType,
 		transaction,

@@ -23,8 +23,8 @@ const CredentialType = {
 
 @Entity()
 export class ApiCredentialModel extends BaseModel implements IApiCredential {
-	@ManyToOne(() => StoreModel)
-	store: StoreModel;
+	@ManyToOne(() => StoreModel, { nullable: true })
+	store: StoreModel | null;
 
 	@Property({ type: t.string })
 	name: string;
@@ -53,6 +53,10 @@ export class ApiCredentialModel extends BaseModel implements IApiCredential {
 	)
 	jwtToken: JwtTokenModel | null = null;
 
+	get jwtTokenId(): string | null {
+		return this.jwtToken ? this.jwtToken.id : null;
+	}
+
 	@OneToOne(
 		() => Oauth2ClientModel,
 		(client) => client.credential,
@@ -61,6 +65,10 @@ export class ApiCredentialModel extends BaseModel implements IApiCredential {
 		},
 	)
 	oauth2Client: Oauth2ClientModel | null = null;
+
+	get oauth2ClientId(): string | null {
+		return this.oauth2Client ? this.oauth2Client.id : null;
+	}
 
 	@OneToMany(
 		() => TransactionModel,
@@ -73,6 +81,14 @@ export class ApiCredentialModel extends BaseModel implements IApiCredential {
 	}
 
 	get createdBy(): string {
+		return this.createdByUser.id;
+	}
+
+	get storeId(): string | null {
+		return this.store ? this.store.id : null;
+	}
+
+	get createdByUserId(): string {
 		return this.createdByUser.id;
 	}
 

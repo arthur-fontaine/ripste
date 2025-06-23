@@ -123,7 +123,7 @@ export class MikroormCheckoutThemeRepository
 			theme.store = store;
 		}
 
-		const { storeId, customizations, ...updateData } = themeData;
+		const { storeId, ...updateData } = themeData;
 		const filteredUpdateData = Object.fromEntries(
 			Object.entries(updateData).filter(([_, value]) => value !== undefined),
 		);

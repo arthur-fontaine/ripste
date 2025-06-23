@@ -32,6 +32,10 @@ export class StoreModel extends BaseModel implements IStore {
 	@ManyToOne(() => CompanyModel, { nullable: true })
 	company: CompanyModel | null;
 
+	get companyId(): string | null {
+		return this.company ? this.company.id : null;
+	}
+
 	@OneToMany(
 		() => StoreStatusModel,
 		(status) => status.store,

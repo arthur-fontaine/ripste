@@ -17,8 +17,16 @@ export class StoreMemberModel extends BaseModel implements IStoreMember {
 	@ManyToOne(() => UserModel, { nullable: false })
 	user: UserModel;
 
+	get userId(): string {
+		return this.user.id;
+	}
+
 	@ManyToOne(() => StoreModel, { nullable: false })
 	store: StoreModel;
+
+	get storeId(): string {
+		return this.store.id;
+	}
 
 	constructor({
 		permissionLevel = PermissionLevel.OWNER,

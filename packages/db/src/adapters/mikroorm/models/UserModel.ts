@@ -34,9 +34,6 @@ export class UserModel extends BaseModel implements IUser {
 	@Enum(() => PermissionLevel)
 	permissionLevel: "admin" | "user";
 
-	@Property({ type: t.datetime, nullable: true })
-	override deletedAt: Date | null;
-
 	@OneToOne(
 		() => UserProfileModel,
 		(profile) => profile.user,
@@ -45,6 +42,10 @@ export class UserModel extends BaseModel implements IUser {
 		},
 	)
 	profile: UserProfileModel | null;
+
+	get profileId(): string | null {
+		return this.profile ? this.profile.id : null;
+	}
 
 	@OneToMany(
 		() => StoreMemberModel,

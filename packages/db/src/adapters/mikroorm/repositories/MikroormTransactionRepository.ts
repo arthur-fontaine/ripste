@@ -126,7 +126,7 @@ export class MikroormTransactionRepository implements ITransactionRepository {
 			}
 		}
 
-		const { storeId, apiCredentialId, paymentMethodId, ...otherData } =
+		const { storeId, apiCredentialId, ...otherData } =
 			transactionData;
 		Object.assign(updateData, RepoUtils.filterUpdateData(otherData));
 

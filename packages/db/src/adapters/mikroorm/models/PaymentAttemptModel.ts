@@ -30,8 +30,16 @@ export class PaymentAttemptModel extends BaseModel implements IPaymentAttempt {
 	@ManyToOne(() => TransactionModel)
 	transaction: TransactionModel;
 
+	get transactionId(): string {
+		return this.transaction.id;
+	}
+
 	@ManyToOne(() => PaymentMethodModel)
 	paymentMethod: PaymentMethodModel;
+
+	get paymentMethodId(): string {
+		return this.paymentMethod.id;
+	}
 
 	constructor({
 		status,

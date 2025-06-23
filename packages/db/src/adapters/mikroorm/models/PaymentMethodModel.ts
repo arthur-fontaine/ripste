@@ -27,6 +27,10 @@ export class PaymentMethodModel extends BaseModel implements IPaymentMethod {
 	@ManyToOne(() => TransactionModel)
 	transaction: TransactionModel;
 
+	get transactionId(): string {
+		return this.transaction.id;
+	}
+
 	@OneToMany(
 		() => PaymentAttemptModel,
 		(attempt) => attempt.paymentMethod,

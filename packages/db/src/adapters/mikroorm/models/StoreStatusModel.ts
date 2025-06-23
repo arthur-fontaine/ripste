@@ -16,6 +16,10 @@ export class StoreStatusModel extends BaseModel implements IStoreStatus {
 	@ManyToOne(() => StoreModel)
 	store: StoreModel;
 
+	get storeId(): string {
+		return this.store.id;
+	}
+
 	@Enum(() => StoreStatus)
 	status: "active" | "suspended" | "pending" | "refused";
 
@@ -24,6 +28,10 @@ export class StoreStatusModel extends BaseModel implements IStoreStatus {
 
 	@ManyToOne(() => UserModel)
 	changedByUser: UserModel;
+
+	get changedByUserId(): string {
+		return this.changedByUser.id;
+	}
 
 	@Property({ type: t.boolean, default: true })
 	isActive: boolean;
