@@ -1,8 +1,8 @@
 import type { EntityManager, FilterQuery } from "@mikro-orm/core";
-import type { IJwtTokenRepository } from "../../domain/ports/IJwtTokenRepository.ts";
-import type { IJwtToken } from "../../domain/models/IJwtToken.ts";
-import { JwtTokenModel } from "./models/JwtTokenModel.ts";
-import { ApiCredentialModel } from "./models/ApiCredentialModel.ts";
+import type { IJwtTokenRepository } from "../../../domain/ports/IJwtTokenRepository.ts";
+import type { IJwtToken } from "../../../domain/models/IJwtToken.ts";
+import { JwtTokenModel } from "../models/JwtTokenModel.ts";
+import { ApiCredentialModel } from "../models/ApiCredentialModel.ts";
 import * as RepoUtils from "./BaseMikroormRepository.ts";
 
 interface IMikroormJwtTokenRepositoryOptions {

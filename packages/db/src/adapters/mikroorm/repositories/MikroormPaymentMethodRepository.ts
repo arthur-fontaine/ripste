@@ -1,8 +1,8 @@
 import type { EntityManager, FilterQuery } from "@mikro-orm/core";
-import type { IPaymentMethodRepository } from "../../domain/ports/IPaymentMethodRepository.ts";
-import type { IPaymentMethod } from "../../domain/models/IPaymentMethod.ts";
-import { PaymentMethodModel } from "./models/PaymentMethodModel.ts";
-import { TransactionModel } from "./models/TransactionModel.ts";
+import type { IPaymentMethodRepository } from "../../../domain/ports/IPaymentMethodRepository.ts";
+import type { IPaymentMethod } from "../../../domain/models/IPaymentMethod.ts";
+import { PaymentMethodModel } from "../models/PaymentMethodModel.ts";
+import { TransactionModel } from "../models/TransactionModel.ts";
 import * as RepoUtils from "./BaseMikroormRepository.ts";
 
 const POPULATE_FIELDS = ["transaction", "paymentAttempts"] as const;

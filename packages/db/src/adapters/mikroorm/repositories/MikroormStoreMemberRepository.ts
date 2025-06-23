@@ -1,7 +1,7 @@
-import type { IStoreMemberRepository } from "../../domain/ports/IStoreMemberRepository.ts";
-import { StoreMemberModel } from "./models/StoreMemberModel.ts";
-import { UserModel } from "./models/UserModel.ts";
-import { StoreModel } from "./models/StoreModel.ts";
+import type { IStoreMemberRepository } from "../../../domain/ports/IStoreMemberRepository.ts";
+import { StoreMemberModel } from "../models/StoreMemberModel.ts";
+import { UserModel } from "../models/UserModel.ts";
+import { StoreModel } from "../models/StoreModel.ts";
 import * as RepoUtils from "./BaseMikroormRepository.ts";
 import type { FilterQuery } from "@mikro-orm/core";
 

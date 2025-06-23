@@ -1,9 +1,9 @@
 import type { FilterQuery } from "@mikro-orm/core";
-import type { IPaymentAttemptRepository } from "../../domain/ports/IPaymentAttemptRepository.ts";
-import type { IPaymentAttempt } from "../../domain/models/IPaymentAttempt.ts";
-import { PaymentAttemptModel } from "./models/PaymentAttemptModel.ts";
-import { TransactionModel } from "./models/TransactionModel.ts";
-import { PaymentMethodModel } from "./models/PaymentMethodModel.ts";
+import type { IPaymentAttemptRepository } from "../../../domain/ports/IPaymentAttemptRepository.ts";
+import type { IPaymentAttempt } from "../../../domain/models/IPaymentAttempt.ts";
+import { PaymentAttemptModel } from "../models/PaymentAttemptModel.ts";
+import { TransactionModel } from "../models/TransactionModel.ts";
+import { PaymentMethodModel } from "../models/PaymentMethodModel.ts";
 import * as RepoUtils from "./BaseMikroormRepository.ts";
 
 const POPULATE_FIELDS = ["transaction", "paymentMethod"] as const;

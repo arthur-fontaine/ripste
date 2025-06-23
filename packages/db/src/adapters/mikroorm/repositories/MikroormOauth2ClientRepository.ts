@@ -1,8 +1,8 @@
 import type { FilterQuery } from "@mikro-orm/core";
-import type { IOAuth2ClientRepository } from "../../domain/ports/IOAuth2ClientRepository.ts";
-import type { IOAuth2Client } from "../../domain/models/IOAuth2Client.ts";
-import { Oauth2ClientModel } from "./models/Oauth2ClientModel.ts";
-import { ApiCredentialModel } from "./models/ApiCredentialModel.ts";
+import type { IOAuth2ClientRepository } from "../../../domain/ports/IOAuth2ClientRepository.ts";
+import type { IOAuth2Client } from "../../../domain/models/IOAuth2Client.ts";
+import { Oauth2ClientModel } from "../models/Oauth2ClientModel.ts";
+import { ApiCredentialModel } from "../models/ApiCredentialModel.ts";
 import * as RepoUtils from "./BaseMikroormRepository.ts";
 
 const POPULATE_FIELDS = ["credential"] as const;

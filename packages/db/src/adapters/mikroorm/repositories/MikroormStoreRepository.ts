@@ -1,10 +1,10 @@
 import type { FilterQuery } from "@mikro-orm/core";
-import type { IStoreRepository } from "../../domain/ports/IStoreRepository.ts";
-import type { IStoreStatus } from "../../domain/models/IStoreStatus.ts";
-import { StoreModel } from "./models/StoreModel.ts";
-import { CompanyModel } from "./models/CompanyModel.ts";
-import { StoreStatusModel } from "./models/StoreStatusModel.ts";
-import { UserModel } from "./models/UserModel.ts";
+import type { IStoreRepository } from "../../../domain/ports/IStoreRepository.ts";
+import type { IStoreStatus } from "../../../domain/models/IStoreStatus.ts";
+import { StoreModel } from "../models/StoreModel.ts";
+import { CompanyModel } from "../models/CompanyModel.ts";
+import { StoreStatusModel } from "../models/StoreStatusModel.ts";
+import { UserModel } from "../models/UserModel.ts";
 import * as RepoUtils from "./BaseMikroormRepository.ts";
 
 const POPULATE_FIELDS = ["company"] as const;

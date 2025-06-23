@@ -1,8 +1,8 @@
 import type { EntityManager, FilterQuery } from "@mikro-orm/core";
-import type { ICheckoutThemeRepository } from "../../domain/ports/ICheckoutThemeRepository.ts";
-import type { ICheckoutTheme } from "../../domain/models/ICheckoutTheme.ts";
-import { CheckoutThemeModel } from "./models/CheckoutThemeModel.ts";
-import { StoreModel } from "./models/StoreModel.ts";
+import type { ICheckoutThemeRepository } from "../../../domain/ports/ICheckoutThemeRepository.ts";
+import type { ICheckoutTheme } from "../../../domain/models/ICheckoutTheme.ts";
+import { CheckoutThemeModel } from "../models/CheckoutThemeModel.ts";
+import { StoreModel } from "../models/StoreModel.ts";
 import * as RepoUtils from "./BaseMikroormRepository.ts";
 
 interface IMikroormCheckoutThemeRepositoryOptions {

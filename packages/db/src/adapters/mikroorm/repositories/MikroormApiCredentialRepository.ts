@@ -1,9 +1,9 @@
 import type { EntityManager, FilterQuery } from "@mikro-orm/core";
-import type { IApiCredentialRepository } from "../../domain/ports/IApiCredentialRepository.ts";
-import { ApiCredentialModel } from "./models/ApiCredentialModel.ts";
-import { StoreModel } from "./models/StoreModel.ts";
-import { UserModel } from "./models/UserModel.ts";
-import type { IApiCredential } from "../../domain/models/IApiCredential.ts";
+import type { IApiCredentialRepository } from "../../../domain/ports/IApiCredentialRepository.ts";
+import { ApiCredentialModel } from "../models/ApiCredentialModel.ts";
+import { StoreModel } from "../models/StoreModel.ts";
+import { UserModel } from "../models/UserModel.ts";
+import type { IApiCredential } from "../../../domain/models/IApiCredential.ts";
 import * as RepoUtils from "./BaseMikroormRepository.ts";
 
 interface IMikroormApiCredentialRepositoryOptions {

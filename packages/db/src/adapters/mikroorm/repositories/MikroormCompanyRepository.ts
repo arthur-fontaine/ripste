@@ -1,7 +1,7 @@
 import type { EntityManager, FilterQuery } from "@mikro-orm/core";
-import type { ICompanyRepository } from "../../domain/ports/ICompanyRepository.ts";
-import type { ICompany } from "../../domain/models/ICompany.ts";
-import { CompanyModel } from "./models/CompanyModel.ts";
+import type { ICompanyRepository } from "../../../domain/ports/ICompanyRepository.ts";
+import type { ICompany } from "../../../domain/models/ICompany.ts";
+import { CompanyModel } from "../models/CompanyModel.ts";
 import * as RepoUtils from "./BaseMikroormRepository.ts";
 
 const POPULATE_FIELDS = ["stores"] as const;

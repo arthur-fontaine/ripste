@@ -1,8 +1,8 @@
 import type { EntityManager, FilterQuery } from "@mikro-orm/core";
-import type { IUserRepository } from "../../domain/ports/IUserRepository.ts";
-import { UserModel } from "./models/UserModel.ts";
-import type { IUser } from "../../domain/models/IUser.ts";
-import { UserProfileModel } from "./models/UserProfileModel.ts";
+import type { IUserRepository } from "../../../domain/ports/IUserRepository.ts";
+import { UserModel } from "../models/UserModel.ts";
+import type { IUser } from "../../../domain/models/IUser.ts";
+import { UserProfileModel } from "../models/UserProfileModel.ts";
 import * as RepoUtils from "./BaseMikroormRepository.ts";
 
 const POPULATE_FIELDS = ["profile"] as const;
