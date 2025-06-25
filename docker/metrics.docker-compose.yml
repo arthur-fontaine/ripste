@@ -95,3 +95,12 @@ configs:
           backend: local
           local:
             path: /tmp/tempo/traces
+
+      metrics_generator:
+        storage:
+          path: /tmp/tempo-metrics-generator-wal
+        processor:
+          span_metrics:
+            dimensions:
+              - http.method
+              - http.status_code
