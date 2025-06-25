@@ -1,0 +1,26 @@
+{
+	"name": "@ripste/db",
+	"version": "1.0.0",
+	"type": "module",
+	"main": "src/index.ts",
+	"author": "",
+	"license": "ISC",
+	"description": "Database models and interfaces for Ripste",
+	"scripts": {
+		"test": "vitest run",
+		"test:watch": "vitest"
+	},
+	"dependencies": {
+		"@mikro-orm/core": "^6.4.16",
+		"@mikro-orm/postgresql": "^6.4.16",
+		"interface-faker": "^0.1.0",
+		"isutypes": "^0.1.6"
+	},
+	"devDependencies": {
+		"@mikro-orm/sqlite": "^6.4.16",
+		"@ripste/tsconfig": "workspace:*",
+		"@types/node": "^24.0.3",
+		"unplugin-swc": "^1.5.5",
+		"vite": "^6.3.5"
+	}
+}

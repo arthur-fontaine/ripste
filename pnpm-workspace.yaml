@@ -2,9 +2,11 @@ packages:
   - packages/*
   - apps/*
 
+injectWorkspacePackages: true
+
 onlyBuiltDependencies:
   - '@biomejs/biome'
+  - '@swc/core'
   - esbuild
   - protobufjs
-
-injectWorkspacePackages: true
+  - sqlite3
