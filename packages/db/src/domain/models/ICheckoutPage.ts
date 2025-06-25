@@ -8,7 +8,7 @@ export interface ICheckoutPageTable extends IBaseModel {
 	uri: string;
 	redirectSuccessUrl: string | null;
 	redirectCancelUrl: string | null;
-	displayData: CheckoutDisplayData;
+	displayData: ICheckoutDisplayData;
 	expiresAt: Date | null;
 	accessedAt: Date | null;
 	completedAt: Date | null;
@@ -23,7 +23,7 @@ export interface IInsertCheckoutPage
 export interface IUpdateCheckoutPage
 	extends ISU.Updateable<ICheckoutPageTable> {}
 
-export interface CheckoutDisplayData {
+export interface ICheckoutDisplayData {
 	title: string;
 	description: string | null;
 

@@ -6,8 +6,7 @@ import type { IsoString } from "../../types/iso-string.d.ts";
 
 export interface ITransactionEventTable extends IBaseModel {
 	eventType: string;
-	eventData: TransactionEventData | null;
-	occurredAt: Date;
+	eventData: ITransactionEventData | null;
 	transaction: ISU.SingleReference<ITransactionTable, "transactionId", "id">;
 }
 
@@ -18,7 +17,7 @@ export interface IInsertTransactionEvent
 export interface IUpdateTransactionEvent
 	extends ISU.Updateable<ITransactionEventTable> {}
 
-export type TransactionEventData =
+export type ITransactionEventData =
 	| TransactionCreatedEvent
 	| TransactionProcessingEvent
 	| TransactionCompletedEvent
