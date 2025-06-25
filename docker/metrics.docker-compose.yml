@@ -36,10 +36,13 @@ services:
     configs:
       - source: tempo_config
         target: /etc/tempo.yaml
+    volumes:
+      - tempo_data:/tmp/tempo/traces
 
 volumes:
   grafana_provisioning:
   prometheus_config:
+  tempo_data:
 
 configs:
   grafana_datasources:
