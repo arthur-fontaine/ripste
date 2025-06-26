@@ -70,7 +70,9 @@ describe("MikroOrmCompanyRepository", () => {
 		});
 
 		it("should return an empty array for no matching companies", async () => {
-			const result = await db.company.findMany({ id: { $in: ["non-existent-id"] } });
+			const result = await db.company.findMany({
+				id: { $in: ["non-existent-id"] },
+			});
 			expect(result).toBeDefined();
 			expect(result.length).toBe(0);
 		});
