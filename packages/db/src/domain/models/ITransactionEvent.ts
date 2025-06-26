@@ -36,13 +36,11 @@ export interface TransactionCreatedEvent {
 
 export interface TransactionProcessingEvent {
 	type: "transaction_processing";
-	paymentMethodId: string;
 	processingStartedAt: IsoString;
 }
 
 export interface TransactionCompletedEvent {
 	type: "transaction_completed";
-	paymentMethodId: string;
 	completedAt: IsoString;
 	paymentProcessorResponse: {
 		transactionId: string;
@@ -54,7 +52,6 @@ export interface TransactionCompletedEvent {
 export interface TransactionFailedEvent {
 	type: "transaction_failed";
 	reason: string | null;
-	paymentMethodId: string | null;
 	errorCode: string | null;
 }
 
@@ -67,7 +64,6 @@ export interface TransactionCancelledEvent {
 
 export interface PaymentAttemptEvent {
 	type: "payment_attempt";
-	paymentMethodId: string;
 	status: "started" | "completed" | "failed";
 	attemptNumber: number;
 	customerIp: string | null;

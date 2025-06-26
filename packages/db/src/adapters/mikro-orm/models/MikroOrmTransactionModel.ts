@@ -14,7 +14,6 @@ import type {
 import { MikroOrmStoreModel } from "./MikroOrmStoreModel.ts";
 import { MikroOrmApiCredentialModel } from "./MikroOrmApiCredentialModel.ts";
 import { MikroOrmTransactionEventModel } from "./MikroOrmTransactionEventModel.ts";
-import { MikroOrmPaymentMethodModel } from "./MikroOrmPaymentMethodModel.ts";
 import { MikroOrmCheckoutPageModel } from "./MikroOrmCheckoutPageModel.ts";
 import { MikroOrmPaymentAttemptModel } from "./MikroOrmPaymentAttemptModel.ts";
 import { MikroOrmRefundModel } from "./MikroOrmRefundModel.ts";
@@ -41,6 +40,9 @@ export class MikroOrmTransactionModel
 	@Property({ type: t.string })
 	status!: "created" | "processing" | "completed" | "failed" | "cancelled";
 
+	@Property({ type: t.string })
+	methodType!: "checkout_page" | "api_direct" | "link" | "qr_code";
+
 	@Property({ type: t.json, nullable: true })
 	metadata!: Record<string, string> | null;
 
@@ -65,15 +67,6 @@ export class MikroOrmTransactionModel
 	_transactionEvents = new Collection<MikroOrmTransactionEventModel>(this);
 	get transactionEvents(): MikroOrmTransactionEventModel[] {
 		return this._transactionEvents.getItems();
-	}
-
-	@OneToMany(
-		() => MikroOrmPaymentMethodModel,
-		(pm) => pm.transaction,
-	)
-	_paymentMethods = new Collection<MikroOrmPaymentMethodModel>(this);
-	get paymentMethods(): MikroOrmPaymentMethodModel[] {
-		return this._paymentMethods.getItems();
 	}
 
 	@OneToMany(

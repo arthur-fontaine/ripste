@@ -4,7 +4,6 @@ import { createFakeGenerator } from "interface-faker";
 import type { IApiCredentialTable } from "./IApiCredential.ts";
 import type { IStoreTable } from "./IStore.ts";
 import type { ITransactionEventTable } from "./ITransactionEvent.ts";
-import type { IPaymentMethodTable } from "./IPaymentMethod.ts";
 import type { ICheckoutPageTable } from "./ICheckoutPage.ts";
 import type { IPaymentAttemptTable } from "./IPaymentAttempt.ts";
 import type { IRefundTable } from "./IRefund.ts";
@@ -14,6 +13,7 @@ export interface ITransactionTable extends IBaseModel {
 	amount: number;
 	currency: string;
 	status: "created" | "processing" | "completed" | "failed" | "cancelled";
+	methodType: "checkout_page" | "api_direct" | "link" | "qr_code";
 	metadata: Record<string, string> | null;
 	apiCredential: ISU.SingleReference<
 		IApiCredentialTable | null,
@@ -22,7 +22,6 @@ export interface ITransactionTable extends IBaseModel {
 	>;
 	store: ISU.SingleReference<IStoreTable, "storeId", "id">;
 	transactionEvents: ISU.ManyReference<ITransactionEventTable>;
-	paymentMethods: ISU.ManyReference<IPaymentMethodTable>;
 	checkoutPages: ISU.ManyReference<ICheckoutPageTable>;
 	paymentAttempts: ISU.ManyReference<IPaymentAttemptTable>;
 	refunds: ISU.ManyReference<IRefundTable>;

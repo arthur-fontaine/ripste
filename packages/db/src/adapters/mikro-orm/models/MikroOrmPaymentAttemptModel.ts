@@ -5,7 +5,6 @@ import type {
 	IInsertPaymentAttempt,
 } from "../../../domain/models/IPaymentAttempt.ts";
 import { MikroOrmTransactionModel } from "./MikroOrmTransactionModel.ts";
-import { MikroOrmPaymentMethodModel } from "./MikroOrmPaymentMethodModel.ts";
 
 @Entity()
 export class MikroOrmPaymentAttemptModel
@@ -37,12 +36,5 @@ export class MikroOrmPaymentAttemptModel
 
 	get transactionId(): string {
 		return this.transaction.id;
-	}
-
-	@ManyToOne(() => MikroOrmPaymentMethodModel)
-	paymentMethod!: MikroOrmPaymentMethodModel;
-
-	get paymentMethodId(): string {
-		return this.paymentMethod.id;
 	}
 }

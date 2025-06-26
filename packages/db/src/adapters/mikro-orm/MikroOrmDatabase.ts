@@ -7,7 +7,6 @@ import type { ICompanyRepository } from "../../domain/ports/repositories/ICompan
 import type { IJwtTokenRepository } from "../../domain/ports/repositories/IJwtTokenRepository.ts";
 import type { IOAuth2ClientRepository } from "../../domain/ports/repositories/IOAuth2ClientRepository.ts";
 import type { IPaymentAttemptRepository } from "../../domain/ports/repositories/IPaymentAttemptRepository.ts";
-import type { IPaymentMethodRepository } from "../../domain/ports/repositories/IPaymentMethodRepository.ts";
 import type { IRefundRepository } from "../../domain/ports/repositories/IRefundRepository.ts";
 import type { IStoreMemberRepository } from "../../domain/ports/repositories/IStoreMemberRepository.ts";
 import type { IStoreRepository } from "../../domain/ports/repositories/IStoreRepository.ts";
@@ -23,7 +22,6 @@ import { MikroOrmCheckoutThemeRepository } from "./repositories/MikroOrmCheckout
 import { MikroOrmCompanyRepository } from "./repositories/MikroOrmCompanyRepository.ts";
 import { MikroOrmJwtTokenRepository } from "./repositories/MikroOrmJwtTokenRepository.ts";
 import { MikroOrmPaymentAttemptRepository } from "./repositories/MikroOrmPaymentAttemptRepository.ts";
-import { MikroOrmPaymentMethodRepository } from "./repositories/MikroOrmPaymentMethodRepository.ts";
 import { MikroOrmRefundRepository } from "./repositories/MikroOrmRefundRepository.ts";
 import { MikroOrmStoreMemberRepository } from "./repositories/MikroOrmStoreMemberRepository.ts";
 import { MikroOrmStoreRepository } from "./repositories/MikroOrmStoreRepository.ts";
@@ -46,7 +44,6 @@ export class MikroOrmDatabase implements IDatabase {
 		this.jwtToken = new MikroOrmJwtTokenRepository(params);
 		this.oauth2Client = new MikroOrmOauth2ClientRepository(params);
 		this.paymentAttempt = new MikroOrmPaymentAttemptRepository(params);
-		this.paymentMethod = new MikroOrmPaymentMethodRepository(params);
 		this.refund = new MikroOrmRefundRepository(params);
 		this.storeMember = new MikroOrmStoreMemberRepository(params);
 		this.store = new MikroOrmStoreRepository(params);
@@ -65,7 +62,6 @@ export class MikroOrmDatabase implements IDatabase {
 	jwtToken: IJwtTokenRepository;
 	oauth2Client: IOAuth2ClientRepository;
 	paymentAttempt: IPaymentAttemptRepository;
-	paymentMethod: IPaymentMethodRepository;
 	refund: IRefundRepository;
 	storeMember: IStoreMemberRepository;
 	store: IStoreRepository;
