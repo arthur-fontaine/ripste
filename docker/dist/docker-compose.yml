@@ -1,0 +1,209 @@
+configs:
+  grafana_datasources:
+    content: |
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          type: prometheus
+          access: proxy
+          url: http://prometheus:9090
+          isDefault: true
+        - name: Loki
+          type: loki
+          access: proxy
+          url: http://loki:3100
+        - name: Tempo
+          type: tempo
+          access: proxy
+          url: http://tempo:3200
+    name: ripste-prod_grafana_datasources
+  prometheus_config:
+    content: |
+      global:
+        scrape_interval: 15s
+
+      scrape_configs:
+        - job_name: 'prometheus'
+          static_configs:
+            - targets: ['localhost:9090']
+
+        - job_name: 'api'
+          static_configs:
+            - targets: ['api:3000']
+    name: ripste-prod_prometheus_config
+  tempo_config:
+    content: |
+      server:
+        http_listen_port: 3200
+        grpc_listen_port: 4318
+
+      distributor:
+        receivers:
+          otlp:
+            protocols:
+              grpc:
+                endpoint: 0.0.0.0:4317
+
+      storage:
+        trace:
+          backend: local
+          wal:
+            path: /var/tempo/wal
+          local:
+            path: /var/tempo/blocks
+
+      metrics_generator:
+        storage:
+          path: /tmp/tempo-metrics-generator-wal
+        processor:
+          span_metrics:
+            dimensions:
+              - http.method
+              - http.status_code
+    name: ripste-prod_tempo_config
+name: ripste-prod
+networks:
+  default:
+    name: ripste-prod_default
+services:
+  api:
+    build:
+      context: .
+      dockerfile: dockerfile
+      target: api
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      - POSTGRES_HOST=postgres
+      - REDIS_HOST=redis
+      - OTLP_URL=http://tempo:4317
+    networks:
+      default: null
+  grafana:
+    configs:
+      - source: grafana_datasources
+        target: /etc/grafana/provisioning/datasources/datasources.yml
+    container_name: grafana
+    depends_on:
+      loki:
+        condition: service_started
+        required: true
+      prometheus:
+        condition: service_started
+        required: true
+      tempo:
+        condition: service_started
+        required: true
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    image: grafana/grafana:latest
+    networks:
+      default: null
+    volumes:
+      - source: grafana_provisioning
+        target: /etc/grafana/provisioning
+        type: volume
+        volume: {}
+      - source: grafana_data
+        target: /var/lib/grafana
+        type: volume
+        volume: {}
+  loki:
+    command: -config.file=/etc/loki/local-config.yaml
+    container_name: loki
+    image: grafana/loki:latest
+    networks:
+      default: null
+    volumes:
+      - source: loki_data
+        target: /loki
+        type: volume
+        volume: {}
+  postgres:
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+    healthcheck:
+      interval: 10s
+      retries: 5
+      test:
+        - CMD-SHELL
+        - pg_isready -U ${POSTGRES_USER:-ripste} -d ${POSTGRES_DB:-ripste}
+      timeout: 5s
+    image: postgres:17-alpine
+    networks:
+      default: null
+    restart: unless-stopped
+    volumes:
+      - source: postgres_data
+        target: /var/lib/postgresql/data
+        type: volume
+        volume: {}
+  prometheus:
+    configs:
+      - source: prometheus_config
+        target: /etc/prometheus/prometheus.yml
+    container_name: prometheus
+    image: prom/prometheus:latest
+    networks:
+      default: null
+    volumes:
+      - source: prometheus_data
+        target: /prometheus
+        type: volume
+        volume: {}
+  redis:
+    env_file:
+      - path: .env
+        required: false
+    healthcheck:
+      interval: 10s
+      retries: 5
+      test:
+        - CMD
+        - redis-cli
+        - ping
+      timeout: 5s
+    image: bitnami/redis:8.0
+    networks:
+      default: null
+    restart: unless-stopped
+    volumes:
+      - source: redis_data
+        target: /bitnami/redis
+        type: volume
+        volume: {}
+  tempo:
+    command:
+      - -config.file=/etc/tempo.yaml
+    configs:
+      - source: tempo_config
+        target: /etc/tempo.yaml
+    container_name: tempo
+    image: grafana/tempo:latest
+    networks:
+      default: null
+    volumes:
+      - source: tempo_data
+        target: /var/tempo
+        type: volume
+        volume: {}
+volumes:
+  grafana_data:
+    name: ripste-prod_grafana_data
+  grafana_provisioning:
+    name: ripste-prod_grafana_provisioning
+  loki_data:
+    name: ripste-prod_loki_data
+  postgres_data:
+    name: ripste-prod_postgres_data
+  prometheus_data:
+    name: ripste-prod_prometheus_data
+  redis_data:
+    name: ripste-prod_redis_data
+  tempo_data:
+    name: ripste-prod_tempo_data

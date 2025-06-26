@@ -342,3 +342,5 @@ fabric.properties
 !.idea/runConfigurations
 
 # End of https://www.toptal.com/developers/gitignore/api/turbo,node,visualstudiocode,macos,windows,linux,git
+
+!docker/dist

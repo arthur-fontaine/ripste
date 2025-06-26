@@ -1,0 +1,12 @@
+#!/bin/bash
+
+mkdir -p docker/dist
+
+package_json_dirpath=$(pnpm prefix)
+docker-compose \
+  --project-directory "$package_json_dirpath" \
+  $(for f in "$@"; do echo "-f docker/$f.docker-compose.yml"; done) \
+  config --no-interpolate --no-path-resolution \
+  > docker/dist/docker-compose.yml
+
+# Usage example: `scripts/start-docker dependencies dev`
