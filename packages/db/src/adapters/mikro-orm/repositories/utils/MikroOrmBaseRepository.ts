@@ -28,8 +28,12 @@ export function MikroOrmBaseRepository<
 			return entity || null;
 		};
 
-		findAll: I["findAll"] = async () => {
-			throw new Error("Method not implemented.");
+		findMany: I["findMany"] = async (query) => {
+			const entities = await this.#em.find(model, {
+				...query,
+				deletedAt: null,
+			});
+			return entities;
 		};
 
 		insert: I["insert"] = async (entity) => {

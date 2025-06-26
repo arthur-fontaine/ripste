@@ -55,6 +55,47 @@ describe("MikroOrmCompanyRepository", () => {
 		});
 	});
 
+	describe("findMany", () => {
+		it("should find multiple companies", async () => {
+			const companyId1 = await generateCompanyId();
+			const companyId2 = await generateCompanyId();
+
+			const result = await db.company.findMany({
+				id: { $in: [companyId1, companyId2] },
+			});
+			expect(result).toBeDefined();
+			expect(result.length).toBeGreaterThanOrEqual(2);
+			expect(result.some((c) => c.id === companyId1)).toBeTruthy();
+			expect(result.some((c) => c.id === companyId2)).toBeTruthy();
+		});
+
+		it("should return an empty array for no matching companies", async () => {
+			const result = await db.company.findMany({ id: { $in: ["non-existent-id"] } });
+			expect(result).toBeDefined();
+			expect(result.length).toBe(0);
+		});
+
+		it("should return an empty array for companies with deletedAt timestamp", async () => {
+			const companyId = await generateCompanyId({
+				deletedAt: new Date(),
+			});
+			if (!companyId) throw new Error("Failed to generate company ID");
+			const result = await db.company.findMany({ id: { $in: [companyId] } });
+			expect(result).toBeDefined();
+			expect(result.length).toBe(0);
+		});
+
+		it("should return all companies when no query is provided", async () => {
+			const companyId1 = await generateCompanyId();
+			const companyId2 = await generateCompanyId();
+			const result = await db.company.findMany();
+			expect(result).toBeDefined();
+			expect(result.length).toBeGreaterThanOrEqual(2);
+			expect(result.some((c) => c.id === companyId1)).toBeTruthy();
+			expect(result.some((c) => c.id === companyId2)).toBeTruthy();
+		});
+	});
+
 	describe("update", () => {
 		it("should update an existing company", async () => {
 			const companyId = await generateCompanyId();
