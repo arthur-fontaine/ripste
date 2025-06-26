@@ -4,23 +4,23 @@ import { NodeSDK } from "@opentelemetry/sdk-node";
 import packageJson from "../package.json" with { type: "json" };
 
 export function initTraces(otlpUrl: string | undefined) {
-  if (!otlpUrl)
-    throw new Error("OTLP URL is required for OpenTelemetry tracing");
+	if (!otlpUrl)
+		throw new Error("OTLP URL is required for OpenTelemetry tracing");
 
-  const traceExporter = new OTLPTraceExporter({ url: otlpUrl });
+	const traceExporter = new OTLPTraceExporter({ url: otlpUrl });
 
-  const otelSdk = new NodeSDK({
-    serviceName: packageJson.name,
-    traceExporter,
-    instrumentations: [
-      getNodeAutoInstrumentations({
-        // Disable HTTP instrumentation to avoid conflicts with Hono middleware
-        "@opentelemetry/instrumentation-http": { enabled: false },
-      }),
-    ],
-  });
+	const otelSdk = new NodeSDK({
+		serviceName: packageJson.name,
+		traceExporter,
+		instrumentations: [
+			getNodeAutoInstrumentations({
+				// Disable HTTP instrumentation to avoid conflicts with Hono middleware
+				"@opentelemetry/instrumentation-http": { enabled: false },
+			}),
+		],
+	});
 
-  otelSdk.start();
+	otelSdk.start();
 
-  return async () => await otelSdk.shutdown()
+	return async () => await otelSdk.shutdown();
 }

@@ -1,9 +1,3 @@
 {
-	"conventionalCommits.scopes": [
-		"api",
-		"specs",
-		"docker",
-		"db",
-		"metrics"
-	]
+	"conventionalCommits.scopes": ["api", "specs", "docker", "db", "telemetry"]
 }
