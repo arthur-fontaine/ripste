@@ -1,17 +1,8 @@
 import { serve } from "@hono/node-server";
 import { app } from "./app.ts";
-import { otel } from "@hono/otel";
-import { NodeSDK } from "@opentelemetry/sdk-node";
-import { ConsoleSpanExporter } from "@opentelemetry/sdk-trace-node";
+import { initTraces } from "./traces.ts";
 
-const otelSdk = new NodeSDK({
-	serviceName: "api",
-	traceExporter: new ConsoleSpanExporter(),
-});
-
-otelSdk.start();
-
-app.use("*", otel());
+const cleanupTraces = initTraces(process.env["OTLP_URL"]);
 
 const server = serve({
 	fetch: app.fetch,
@@ -19,11 +10,13 @@ const server = serve({
 });
 
 // graceful shutdown
-process.on("SIGINT", () => {
+process.on("SIGINT", async () => {
+	await cleanupTraces();
 	server.close();
 	process.exit(0);
 });
-process.on("SIGTERM", () => {
+process.on("SIGTERM", async () => {
+	await cleanupTraces();
 	server.close((err) => {
 		if (err) {
 			console.error(err);
