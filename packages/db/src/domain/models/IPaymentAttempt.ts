@@ -1,7 +1,6 @@
 import type { ISU } from "isutypes";
 import type { IBaseModel } from "./IBaseModel.ts";
 import { createFakeGenerator } from "interface-faker";
-import type { IPaymentMethodTable } from "./IPaymentMethod.ts";
 import type { ITransactionTable } from "./ITransaction.ts";
 
 export interface IPaymentAttemptTable extends IBaseModel {
@@ -12,11 +11,6 @@ export interface IPaymentAttemptTable extends IBaseModel {
 	attemptedAt: Date;
 
 	transaction: ISU.SingleReference<ITransactionTable, "transactionId", "id">;
-	paymentMethod: ISU.SingleReference<
-		IPaymentMethodTable,
-		"paymentMethodId",
-		"id"
-	>;
 }
 
 export interface IPaymentAttempt extends ISU.Selectable<IPaymentAttemptTable> {}

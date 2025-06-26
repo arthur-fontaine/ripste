@@ -5,7 +5,6 @@ import type { ICompanyRepository } from "./repositories/ICompanyRepository.ts";
 import type { IJwtTokenRepository } from "./repositories/IJwtTokenRepository.ts";
 import type { IOAuth2ClientRepository } from "./repositories/IOAuth2ClientRepository.ts";
 import type { IPaymentAttemptRepository } from "./repositories/IPaymentAttemptRepository.ts";
-import type { IPaymentMethodRepository } from "./repositories/IPaymentMethodRepository.ts";
 import type { IRefundRepository } from "./repositories/IRefundRepository.ts";
 import type { IStoreMemberRepository } from "./repositories/IStoreMemberRepository.ts";
 import type { IStoreRepository } from "./repositories/IStoreRepository.ts";
@@ -24,7 +23,6 @@ export interface IDatabase {
 	jwtToken: IJwtTokenRepository;
 	oauth2Client: IOAuth2ClientRepository;
 	paymentAttempt: IPaymentAttemptRepository;
-	paymentMethod: IPaymentMethodRepository;
 	refund: IRefundRepository;
 	storeMember: IStoreMemberRepository;
 	store: IStoreRepository;
