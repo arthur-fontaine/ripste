@@ -14,4 +14,12 @@ services:
       - path: .env
         required: false
 
+  # Reference services from dependencies and metrics
+  # Making services available in all other services
+  # Making services available to reference in Coolify
   grafana:
+  prometheus:
+  tempo:
+  loki:
+  postgres:
+  redis:
