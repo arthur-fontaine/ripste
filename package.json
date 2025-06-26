@@ -14,9 +14,7 @@
 		"format:fix": "biome format --write",
 		"prepare": "husky",
 		"start-docker": "bash ./scripts/start-docker",
-		"start-docker:dev": "pnpm run start-docker dependencies dev",
-		"build-docker": "bash ./scripts/build-docker",
-		"build-docker:prod": "pnpm run build-docker dependencies metrics prod"
+		"start-docker:dev": "pnpm run start-docker dependencies dev"
 	},
 	"keywords": [],
 	"author": "",
