@@ -28,5 +28,8 @@ WORKDIR /app
 
 COPY --from=build /prod/api .
 
+ENV API_PORT=3000
+EXPOSE $API_PORT
+
 ENTRYPOINT ["pnpm", "run"]
 CMD ["start"]
