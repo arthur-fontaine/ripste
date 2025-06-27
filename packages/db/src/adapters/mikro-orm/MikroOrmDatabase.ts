@@ -16,6 +16,9 @@ import type { ITransactionEventRepository } from "../../domain/ports/repositorie
 import type { ITransactionRepository } from "../../domain/ports/repositories/ITransactionRepository.ts";
 import type { IUserProfileRepository } from "../../domain/ports/repositories/IUserProfileRepository.ts";
 import type { IUserRepository } from "../../domain/ports/repositories/IUserRepository.ts";
+import type { ISessionRepository } from "../../domain/ports/repositories/ISessionRepository.ts";
+import type { IAccountRepository } from "../../domain/ports/repositories/IAccountRepository.ts";
+import type { IVerificationRepository } from "../../domain/ports/repositories/IVerificationRepository.ts";
 import { MikroOrmApiCredentialRepository } from "./repositories/MikroOrmApiCredentialRepository.ts";
 import { MikroOrmCheckoutPageRepository } from "./repositories/MikroOrmCheckoutPageRepository.ts";
 import { MikroOrmCheckoutThemeRepository } from "./repositories/MikroOrmCheckoutThemeRepository.ts";
@@ -32,6 +35,9 @@ import { MikroOrmTransactionRepository } from "./repositories/MikroOrmTransactio
 import { MikroOrmUserProfileRepository } from "./repositories/MikroOrmUserProfileRepository.ts";
 import { MikroOrmOauth2ClientRepository } from "./repositories/MikroOrmOauth2ClientRepository.ts";
 import { MikroOrmUserRepository } from "./repositories/MikroOrmUserRepository.ts";
+import { MikroOrmSessionRepository } from "./repositories/MikroOrmSessionRepository.ts";
+import { MikroOrmAccountRepository } from "./repositories/MikroOrmAccountRepository.ts";
+import { MikroOrmVerificationRepository } from "./repositories/MikroOrmVerificationRepository.ts";
 
 export class MikroOrmDatabase implements IDatabase {
 	constructor(em: EntityManager) {
@@ -53,6 +59,9 @@ export class MikroOrmDatabase implements IDatabase {
 		this.transaction = new MikroOrmTransactionRepository(params);
 		this.userProfile = new MikroOrmUserProfileRepository(params);
 		this.user = new MikroOrmUserRepository(params);
+		this.session = new MikroOrmSessionRepository(params);
+		this.account = new MikroOrmAccountRepository(params);
+		this.verification = new MikroOrmVerificationRepository(params);
 	}
 
 	apiCredential: IApiCredentialRepository;
@@ -71,4 +80,7 @@ export class MikroOrmDatabase implements IDatabase {
 	transaction: ITransactionRepository;
 	userProfile: IUserProfileRepository;
 	user: IUserRepository;
+	session: ISessionRepository;
+	account: IAccountRepository;
+	verification: IVerificationRepository;
 }
