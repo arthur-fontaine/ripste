@@ -18,9 +18,6 @@ services:
     networks:
       default: null
   grafana:
-    build:
-      context: .
-      dockerfile: docker/dockerfiles/grafana.dockerfile
     container_name: grafana
     depends_on:
       loki:
@@ -35,6 +32,7 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
+    image: grafana/grafana:12.0.2
     networks:
       default: null
     volumes:
@@ -46,12 +44,15 @@ services:
         target: /var/lib/grafana
         type: volume
         volume: {}
+      - bind:
+          create_host_path: true
+        source: ./docker/service-configs/grafana.yml
+        target: /etc/grafana/provisioning/datasources/datasources.yml
+        type: bind
   loki:
-    build:
-      context: .
-      dockerfile: docker/dockerfiles/loki.dockerfile
     command: -config.file=/etc/loki/local-config.yaml
     container_name: loki
+    image: grafana/loki:3.5
     networks:
       default: null
     volumes:
@@ -82,10 +83,8 @@ services:
         type: volume
         volume: {}
   prometheus:
-    build:
-      context: .
-      dockerfile: docker/dockerfiles/prometheus.dockerfile
     container_name: prometheus
+    image: prom/prometheus:v3.4.2
     networks:
       default: null
     volumes:
@@ -93,6 +92,11 @@ services:
         target: /prometheus
         type: volume
         volume: {}
+      - bind:
+          create_host_path: true
+        source: ./docker/service-configs/prometheus.yml
+        target: /etc/prometheus/prometheus.yml
+        type: bind
   redis:
     env_file:
       - path: .env
@@ -115,12 +119,10 @@ services:
         type: volume
         volume: {}
   tempo:
-    build:
-      context: .
-      dockerfile: docker/dockerfiles/tempo.dockerfile
     command:
       - -config.file=/etc/tempo.yaml
     container_name: tempo
+    image: grafana/tempo:2.8.1
     networks:
       default: null
     volumes:
@@ -128,6 +130,11 @@ services:
         target: /var/tempo
         type: volume
         volume: {}
+      - bind:
+          create_host_path: true
+        source: ./docker/service-configs/tempo.yml
+        target: /etc/tempo.yaml
+        type: bind
 volumes:
   grafana_data:
     name: ripste-prod_grafana_data
