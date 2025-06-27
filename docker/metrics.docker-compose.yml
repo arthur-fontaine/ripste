@@ -1,8 +1,6 @@
 services:
   grafana:
-    build:
-      context: .
-      dockerfile: docker/dockerfiles/grafana.dockerfile
+    image: grafana/grafana:latest
     container_name: grafana
     volumes:
       - grafana_provisioning:/etc/grafana/provisioning
@@ -14,30 +12,33 @@ services:
       - prometheus
       - loki
       - tempo
+    configs:
+      - source: grafana_datasources
+        target: /etc/grafana/provisioning/datasources/datasources.yml
 
   prometheus:
-    build:
-      context: .
-      dockerfile: docker/dockerfiles/prometheus.dockerfile
+    image: prom/prometheus:latest
     container_name: prometheus
+    configs:
+      - source: prometheus_config
+        target: /etc/prometheus/prometheus.yml
     volumes:
       - prometheus_data:/prometheus
 
   loki:
-    build:
-      context: .
-      dockerfile: docker/dockerfiles/loki.dockerfile
+    image: grafana/loki:latest
     container_name: loki
     command: -config.file=/etc/loki/local-config.yaml
     volumes:
       - loki_data:/loki
 
   tempo:
-    build:
-      context: .
-      dockerfile: docker/dockerfiles/tempo.dockerfile
+    image: grafana/tempo:latest
     container_name: tempo
     command: ["-config.file=/etc/tempo.yaml"]
+    configs:
+      - source: tempo_config
+        target: /etc/tempo.yaml
     volumes:
       - tempo_data:/var/tempo
 
@@ -47,3 +48,66 @@ volumes:
   tempo_data:
   prometheus_data:
   loki_data:
+
+configs:
+  grafana_datasources:
+    content: |
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          type: prometheus
+          access: proxy
+          url: http://prometheus:9090
+          isDefault: true
+        - name: Loki
+          type: loki
+          access: proxy
+          url: http://loki:3100
+        - name: Tempo
+          type: tempo
+          access: proxy
+          url: http://tempo:3200
+
+  prometheus_config:
+    content: |
+      global:
+        scrape_interval: 15s
+
+      scrape_configs:
+        - job_name: 'prometheus'
+          static_configs:
+            - targets: ['localhost:9090']
+
+        - job_name: 'api'
+          static_configs:
+            - targets: ['api:3000']
+
+  tempo_config:
+    content: |
+      server:
+        http_listen_port: 3200
+        grpc_listen_port: 4318
+
+      distributor:
+        receivers:
+          otlp:
+            protocols:
+              grpc:
+                endpoint: 0.0.0.0:4317
+
+      storage:
+        trace:
+          backend: local
+          wal:
+            path: /var/tempo/wal
+          local:
+            path: /var/tempo/blocks
+
+      metrics_generator:
+        storage:
+          path: /tmp/tempo-metrics-generator-wal
+        processor:
+          span_metrics:
+            dimensions:
+              - http.method
+              - http.status_code
