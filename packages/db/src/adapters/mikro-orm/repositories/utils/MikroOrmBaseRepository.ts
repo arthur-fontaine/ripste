@@ -20,6 +20,10 @@ export function MikroOrmBaseRepository<
 			this.#em = options.em;
 		}
 
+		protected get em(): EntityManager {
+			return this.#em;
+		}
+
 		findOne: I["findOne"] = async (id) => {
 			const entity = await this.#em.findOne(model, {
 				id,

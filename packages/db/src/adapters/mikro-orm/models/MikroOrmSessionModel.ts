@@ -7,7 +7,8 @@ import { MikroOrmUserModel } from "./MikroOrmUserModel.ts";
 export class MikroOrmSessionModel extends BaseModel {
 	constructor(params: IInsertSession) {
 		super();
-		Object.assign(this, params);
+		const { userId, ...otherParams } = params;
+		Object.assign(this, otherParams);
 	}
 
 	@Property({ type: t.string, unique: true })
