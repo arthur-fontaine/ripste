@@ -4,8 +4,10 @@ import { NodeSDK } from "@opentelemetry/sdk-node";
 import packageJson from "../package.json" with { type: "json" };
 
 export function initTraces(otlpUrl: string | undefined) {
-	if (!otlpUrl)
-		throw new Error("OTLP URL is required for OpenTelemetry tracing");
+	if (!otlpUrl) {
+		console.warn("OTLP URL is required for OpenTelemetry tracing");
+		return async () => {};
+	}
 
 	const traceExporter = new OTLPTraceExporter({ url: otlpUrl });
 

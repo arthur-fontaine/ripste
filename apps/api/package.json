@@ -21,6 +21,7 @@
 		"@opentelemetry/auto-instrumentations-node": "^0.60.1",
 		"@opentelemetry/exporter-trace-otlp-grpc": "^0.202.0",
 		"@opentelemetry/sdk-node": "^0.202.0",
+		"better-auth": "^1.2.10",
 		"hono": "^4.7.11",
 		"pino": "^9.7.0",
 		"pino-loki": "^2.6.0",
