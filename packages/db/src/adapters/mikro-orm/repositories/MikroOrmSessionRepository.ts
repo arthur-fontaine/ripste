@@ -19,11 +19,11 @@ export class MikroOrmSessionRepository
 		super(options);
 		this.insert = async (entity: IInsertSession): Promise<ISession> => {
 			const { userId, ...sessionData } = entity;
-			const newSession = this.em.create(MikroOrmSessionModel, sessionData as never);
-			const userRef = this.em.getReference(MikroOrmUserModel, userId);
+			const newSession = this._em.create(MikroOrmSessionModel, sessionData as never);
+			const userRef = this._em.getReference(MikroOrmUserModel, userId);
 			newSession.user = userRef as any;
 
-			await this.em.persistAndFlush(newSession);
+			await this._em.persistAndFlush(newSession);
 			return newSession;
 		};
 	}

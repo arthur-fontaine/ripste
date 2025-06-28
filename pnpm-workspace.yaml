@@ -7,6 +7,8 @@ injectWorkspacePackages: true
 onlyBuiltDependencies:
   - '@biomejs/biome'
   - '@swc/core'
+  - better-sqlite3
+  - core-js
   - esbuild
   - protobufjs
   - sqlite3

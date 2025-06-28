@@ -19,11 +19,11 @@ export class MikroOrmAccountRepository
 		super(options);
 		this.insert = async (entity: IInsertAccount): Promise<IAccount> => {
 			const { userId, ...accountData } = entity;
-			const newAccount = this.em.create(MikroOrmAccountModel, accountData as never);
-			const userRef = this.em.getReference(MikroOrmUserModel, userId);
+			const newAccount = this._em.create(MikroOrmAccountModel, accountData as never);
+			const userRef = this._em.getReference(MikroOrmUserModel, userId);
 			newAccount.user = userRef as any;
 			
-			await this.em.persistAndFlush(newAccount);
+			await this._em.persistAndFlush(newAccount);
 			return newAccount;
 		};
 	}
