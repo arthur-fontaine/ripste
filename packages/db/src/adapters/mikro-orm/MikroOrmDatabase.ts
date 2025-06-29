@@ -1,4 +1,10 @@
-import type { EntityManager } from "@mikro-orm/core";
+import {
+	MikroORM,
+	UnderscoreNamingStrategy,
+	type EntityManager,
+	type MikroORMOptions,
+	type NamingStrategy,
+} from "@mikro-orm/core";
 import type { IDatabase } from "../../domain/ports/IDatabase.ts";
 import type { IApiCredentialRepository } from "../../domain/ports/repositories/IApiCredentialRepository.ts";
 import type { ICheckoutPageRepository } from "../../domain/ports/repositories/ICheckoutPageRepository.ts";
@@ -16,6 +22,9 @@ import type { ITransactionEventRepository } from "../../domain/ports/repositorie
 import type { ITransactionRepository } from "../../domain/ports/repositories/ITransactionRepository.ts";
 import type { IUserProfileRepository } from "../../domain/ports/repositories/IUserProfileRepository.ts";
 import type { IUserRepository } from "../../domain/ports/repositories/IUserRepository.ts";
+import type { ISessionRepository } from "../../domain/ports/repositories/ISessionRepository.ts";
+import type { IAccountRepository } from "../../domain/ports/repositories/IAccountRepository.ts";
+import type { IVerificationRepository } from "../../domain/ports/repositories/IVerificationRepository.ts";
 import { MikroOrmApiCredentialRepository } from "./repositories/MikroOrmApiCredentialRepository.ts";
 import { MikroOrmCheckoutPageRepository } from "./repositories/MikroOrmCheckoutPageRepository.ts";
 import { MikroOrmCheckoutThemeRepository } from "./repositories/MikroOrmCheckoutThemeRepository.ts";
@@ -32,6 +41,10 @@ import { MikroOrmTransactionRepository } from "./repositories/MikroOrmTransactio
 import { MikroOrmUserProfileRepository } from "./repositories/MikroOrmUserProfileRepository.ts";
 import { MikroOrmOauth2ClientRepository } from "./repositories/MikroOrmOauth2ClientRepository.ts";
 import { MikroOrmUserRepository } from "./repositories/MikroOrmUserRepository.ts";
+import { MikroOrmSessionRepository } from "./repositories/MikroOrmSessionRepository.ts";
+import { MikroOrmAccountRepository } from "./repositories/MikroOrmAccountRepository.ts";
+import { MikroOrmVerificationRepository } from "./repositories/MikroOrmVerificationRepository.ts";
+import { loadModels } from "./index.ts";
 
 export class MikroOrmDatabase implements IDatabase {
 	constructor(em: EntityManager) {
@@ -53,6 +66,9 @@ export class MikroOrmDatabase implements IDatabase {
 		this.transaction = new MikroOrmTransactionRepository(params);
 		this.userProfile = new MikroOrmUserProfileRepository(params);
 		this.user = new MikroOrmUserRepository(params);
+		this.session = new MikroOrmSessionRepository(params);
+		this.account = new MikroOrmAccountRepository(params);
+		this.verification = new MikroOrmVerificationRepository(params);
 	}
 
 	apiCredential: IApiCredentialRepository;
@@ -71,4 +87,36 @@ export class MikroOrmDatabase implements IDatabase {
 	transaction: ITransactionRepository;
 	userProfile: IUserProfileRepository;
 	user: IUserRepository;
+	session: ISessionRepository;
+	account: IAccountRepository;
+	verification: IVerificationRepository;
+
+	static async create(
+		driver: NonNullable<MikroORMOptions["driver"]>,
+		dbName: string,
+		options: Partial<MikroORMOptions> = {},
+	) {
+		const orm = await MikroORM.init({
+			...options,
+			driver,
+			dbName,
+			entities: Object.values(loadModels()),
+			namingStrategy: class
+				extends UnderscoreNamingStrategy
+				implements NamingStrategy
+			{
+				override classToTableName(entityName: string): string {
+					return super.classToTableName(entityName.replace(/^MikroOrm/, ""));
+				}
+			},
+		});
+
+		await orm.schema.refreshDatabase();
+
+		const em = orm.em.fork();
+
+		const db = new MikroOrmDatabase(em);
+
+		return db;
+	}
 }

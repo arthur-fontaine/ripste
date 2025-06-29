@@ -4,6 +4,7 @@
 	"description": "",
 	"type": "module",
 	"scripts": {
+		"build": "turbo run build",
 		"test": "turbo run test",
 		"test:watch": "turbo run test:watch",
 		"dev": "turbo run dev",
@@ -27,6 +28,7 @@
 		"@commitlint/config-conventional": "^19.8.1",
 		"husky": "^9.1.7",
 		"turbo": "^2.5.4",
+		"typescript": "^5.8.3",
 		"vitest": "^3.2.1"
 	},
 	"packageManager": "pnpm@10.12.1"
