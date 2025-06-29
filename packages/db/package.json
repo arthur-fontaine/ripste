@@ -4,8 +4,8 @@
 	"type": "module",
 	"exports": {
 		"./*": {
-			"default": "./dist/*.js",
-			"types": "./dist/*.d.ts"
+			"types": "./dist/*.d.ts",
+			"default": "./dist/*.js"
 		}
 	},
 	"author": "",
