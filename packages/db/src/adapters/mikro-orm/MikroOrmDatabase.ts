@@ -1,4 +1,4 @@
-import type { EntityManager } from "@mikro-orm/core";
+import { MikroORM, UnderscoreNamingStrategy, type EntityManager, type MikroORMOptions, type NamingStrategy } from "@mikro-orm/core";
 import type { IDatabase } from "../../domain/ports/IDatabase.ts";
 import type { IApiCredentialRepository } from "../../domain/ports/repositories/IApiCredentialRepository.ts";
 import type { ICheckoutPageRepository } from "../../domain/ports/repositories/ICheckoutPageRepository.ts";
@@ -38,6 +38,7 @@ import { MikroOrmUserRepository } from "./repositories/MikroOrmUserRepository.ts
 import { MikroOrmSessionRepository } from "./repositories/MikroOrmSessionRepository.ts";
 import { MikroOrmAccountRepository } from "./repositories/MikroOrmAccountRepository.ts";
 import { MikroOrmVerificationRepository } from "./repositories/MikroOrmVerificationRepository.ts";
+import { models } from "./index.ts";
 
 export class MikroOrmDatabase implements IDatabase {
 	constructor(em: EntityManager) {
@@ -83,4 +84,26 @@ export class MikroOrmDatabase implements IDatabase {
 	session: ISessionRepository;
 	account: IAccountRepository;
 	verification: IVerificationRepository;
+
+	static async create(driver: NonNullable<MikroORMOptions['driver']>, dbName: string, options: Partial<MikroORMOptions> = {}) {
+		const orm = await MikroORM.init({
+			...options,
+			driver,
+			dbName,
+			entities: Object.values(models),
+			namingStrategy: class extends UnderscoreNamingStrategy implements NamingStrategy {
+				override classToTableName(entityName: string): string {
+					return super.classToTableName(entityName.replace(/^MikroOrm/, ''));
+				}
+			},
+		});
+
+		await orm.schema.refreshDatabase();
+
+		const em = orm.em.fork();
+
+		const db = new MikroOrmDatabase(em);
+
+		return db;
+	}
 }
