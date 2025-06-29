@@ -38,7 +38,7 @@ import { MikroOrmUserRepository } from "./repositories/MikroOrmUserRepository.ts
 import { MikroOrmSessionRepository } from "./repositories/MikroOrmSessionRepository.ts";
 import { MikroOrmAccountRepository } from "./repositories/MikroOrmAccountRepository.ts";
 import { MikroOrmVerificationRepository } from "./repositories/MikroOrmVerificationRepository.ts";
-import { models } from "./index.ts";
+import { loadModels } from "./index.ts";
 
 export class MikroOrmDatabase implements IDatabase {
 	constructor(em: EntityManager) {
@@ -90,7 +90,7 @@ export class MikroOrmDatabase implements IDatabase {
 			...options,
 			driver,
 			dbName,
-			entities: Object.values(models),
+			entities: Object.values(loadModels()),
 			namingStrategy: class extends UnderscoreNamingStrategy implements NamingStrategy {
 				override classToTableName(entityName: string): string {
 					return super.classToTableName(entityName.replace(/^MikroOrm/, ''));
