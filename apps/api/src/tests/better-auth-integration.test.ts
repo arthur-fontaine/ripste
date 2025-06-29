@@ -1,7 +1,10 @@
 import { describe, expect, it, beforeEach, beforeAll, afterAll } from "vitest";
 import { customDatabaseAdapter } from "../better-auth-adapter.ts";
-import { initializeDevelopmentDatabase, closeDevelopmentDatabase } from "../database-dev.ts";
-import type { IDatabase } from "../../../../packages/db/src/domain/ports/IDatabase.ts";
+import {
+	initializeDevelopmentDatabase,
+	closeDevelopmentDatabase,
+} from "../database-dev.ts";
+import type { IDatabase, IUser } from "@ripste/db/mikro-orm";
 
 let db: IDatabase;
 let adapterFactory: ReturnType<typeof customDatabaseAdapter>;
@@ -64,14 +67,14 @@ describe("Better Auth Custom Database Adapter", () => {
 			emailVerified: false,
 		};
 
-		const user = await adapterInstance.create({
+		const user = (await adapterInstance.create({
 			model: "user",
 			data: userData,
-		});
+		})) as unknown as IUser;
 
 		const sessionData = {
 			token: "session-token-123",
-			userId: (user as any).id as string,
+			userId: user.id,
 			expiresAt: new Date(Date.now() + 3600000),
 		};
 
@@ -94,13 +97,13 @@ describe("Better Auth Custom Database Adapter", () => {
 			emailVerified: false,
 		};
 
-		const user = await adapterInstance.create({
+		const user = (await adapterInstance.create({
 			model: "user",
 			data: userData,
-		});
+		})) as unknown as IUser;
 
 		const accountData = {
-			userId: (user as any).id as string,
+			userId: user.id,
 			accountId: "google-123456789",
 			providerId: "google",
 			accessToken: "access-token-123",

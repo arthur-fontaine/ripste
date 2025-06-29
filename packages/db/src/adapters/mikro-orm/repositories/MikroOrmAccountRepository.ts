@@ -13,16 +13,19 @@ export class MikroOrmAccountRepository
 	extends MikroOrmBaseRepository<IAccount, IInsertAccount, IUpdateAccount>(
 		MikroOrmAccountModel,
 	)
-	implements IAccountRepository {
-	
+	implements IAccountRepository
+{
 	constructor(options: { em: EntityManager }) {
 		super(options);
 		this.insert = async (entity: IInsertAccount): Promise<IAccount> => {
 			const { userId, ...accountData } = entity;
-			const newAccount = this._em.create(MikroOrmAccountModel, accountData as never);
+			const newAccount = this._em.create(
+				MikroOrmAccountModel,
+				accountData as never,
+			);
 			const userRef = this._em.getReference(MikroOrmUserModel, userId);
 			newAccount.user = userRef as any;
-			
+
 			await this._em.persistAndFlush(newAccount);
 			return newAccount;
 		};

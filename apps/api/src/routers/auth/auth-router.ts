@@ -1,9 +1,9 @@
 import { Hono } from "hono";
-import { auth } from "../../auth.ts";
+import { getAuth } from "../../auth.ts";
 
 export const authRouter = new Hono()
 	.use("*", async (c, next) => {
-		const response = await auth.handler(c.req.raw);
+		const response = (await getAuth()).handler(c.req.raw);
 		if (response) {
 			return response;
 		}
