@@ -1,4 +1,5 @@
 import { Decimal } from "decimal.js";
+import { Cache } from "./cache.ts";
 
 interface CurrencyProvider {
 	getRates(base: string): Promise<Record<string, number>>;
@@ -8,19 +9,31 @@ interface CurrencyProvider {
 	}>;
 }
 
+interface DinarOptions {
+	cacheTtl?: number;
+}
+
 export class Dinar {
 	#currencyProvider: CurrencyProvider;
+	#cache: Cache;
 
-	constructor(currencyProvider: CurrencyProvider) {
+	constructor(currencyProvider: CurrencyProvider, options?: DinarOptions) {
 		this.#currencyProvider = currencyProvider;
+		this.#cache = new Cache({ ttl: options?.cacheTtl ?? 60_000 });
 	}
 
 	async getCurrencies(): Promise<string[]> {
-		return this.#currencyProvider.getSupportedCurrencies();
+		return this.#cache.callWithCache(
+			"supportedCurrencies",
+			() => this.#currencyProvider.getSupportedCurrencies(),
+		);
 	}
 
 	async convert(amount: number, from: string, to: string): Promise<number> {
-		const rates = await this.#currencyProvider.getRates(from);
+		const rates = await this.#cache.callWithCache(
+			`rates-${from}`,
+			() => this.#currencyProvider.getRates(from),
+		);
 		const rateTo = rates[to];
 		if (!rateTo) {
 			throw new Error(`Unsupported currency: ${to}`);
@@ -34,14 +47,18 @@ export class Dinar {
 	}
 
 	async isSupportedCurrency(currency: string): Promise<boolean> {
-		const supportedCurrencies =
-			await this.#currencyProvider.getSupportedCurrencies();
+		const supportedCurrencies = await this.#cache.callWithCache(
+			"supportedCurrencies",
+			() => this.#currencyProvider.getSupportedCurrencies(),
+		);
 		return supportedCurrencies.includes(currency);
 	}
 
 	async assertValidAmount(amount: number, currency: string): Promise<true> {
-		const currencyDetails =
-			await this.#currencyProvider.getCurrencyDetails(currency);
+		const currencyDetails = await this.#cache.callWithCache(
+			`currencyDetails-${currency}`,
+			() => this.#currencyProvider.getCurrencyDetails(currency),
+		);
 
 		const amountDecimal = new Decimal(amount);
 		if (
