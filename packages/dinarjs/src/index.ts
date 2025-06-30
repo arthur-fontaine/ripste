@@ -44,11 +44,13 @@ export class Dinar {
 			await this.#currencyProvider.getCurrencyDetails(currency);
 
 		const amountDecimal = new Decimal(amount);
-		if (!(
-			amountDecimal.isFinite() &&
-			amountDecimal.gte(0) &&
-			amountDecimal.decimalPlaces() <= currencyDetails.maxDecimalPlaces
-		)) {
+		if (
+			!(
+				amountDecimal.isFinite() &&
+				amountDecimal.gte(0) &&
+				amountDecimal.decimalPlaces() <= currencyDetails.maxDecimalPlaces
+			)
+		) {
 			throw new Dinar.InvalidAmountError(
 				amount,
 				currency,
@@ -64,7 +66,11 @@ export class Dinar {
 		currency: string;
 		expectedDecimalPlaces: number;
 
-		constructor(amount: number, currency: string, expectedDecimalPlaces: number) {
+		constructor(
+			amount: number,
+			currency: string,
+			expectedDecimalPlaces: number,
+		) {
 			super(
 				`Invalid amount for ${currency}: ${amount}. Must have at most ${expectedDecimalPlaces} decimal places.`,
 			);
@@ -73,5 +79,5 @@ export class Dinar {
 			this.currency = currency;
 			this.expectedDecimalPlaces = expectedDecimalPlaces;
 		}
-	}
+	};
 }
