@@ -205,7 +205,9 @@ describe("Payments Router", () => {
 			expect(res.status).toBe(400);
 			const body = await res.json();
 			expect(body).toHaveProperty("error");
-			expect(body.error).toBe("Amount must have at most 0 decimal places for JPY.");
+			expect(body.error).toBe(
+				"Amount must have at most 0 decimal places for JPY.",
+			);
 		});
 
 		it("should return 400 if the amount decimal places exceed 3 for KWD", async () => {
@@ -224,16 +226,16 @@ describe("Payments Router", () => {
 			);
 		});
 
-    it("should pass if the amount decimal places are valid for KWD", async () => {
-      const res = await client.payments.transactions.$post({
-        json: {
-          amount: 100.123,
-          currency: "KWD",
-        },
-      });
+		it("should pass if the amount decimal places are valid for KWD", async () => {
+			const res = await client.payments.transactions.$post({
+				json: {
+					amount: 100.123,
+					currency: "KWD",
+				},
+			});
 
-      expect(res.status).toBe(200);
-    });
+			expect(res.status).toBe(200);
+		});
 
 		it("should return 400 if the currency is BTC", async () => {
 			const res = await client.payments.transactions.$post({
