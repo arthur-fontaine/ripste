@@ -1,6 +1,9 @@
 {
 	"$schema": "https://turborepo.com/schema.json",
 	"tasks": {
+		"build": {
+			"cache": true
+		},
 		"dev": {
 			"persistent": true,
 			"cache": false
