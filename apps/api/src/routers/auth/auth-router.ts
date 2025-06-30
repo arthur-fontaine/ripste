@@ -3,8 +3,8 @@ import { getAuth } from "../../auth.ts";
 
 export const authRouter = new Hono()
 	.use("*", async (c, next) => {
-		const response = (await getAuth()).handler(c.req.raw);
-		if (response) {
+		const response = await (await getAuth()).handler(c.req.raw);
+		if (response && response.status !== 404) {
 			return response;
 		}
 		return next();
