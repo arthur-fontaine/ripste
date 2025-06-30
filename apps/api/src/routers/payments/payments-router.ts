@@ -72,22 +72,20 @@ export const paymentsRouter = new Hono().post(
 					);
 					return euroEquivalent <= 1000000;
 				}, "Amount must not exceed 1,000,000€ or its equivalent in other currencies. Please contact support for larger transactions."),
-				v.rawCheckAsync(
-					async ({ dataset, addIssue }) => {
-            const data = dataset.value as { amount: number; currency: string };
-            try {
-              await dinar.assertValidAmount(data.amount, data.currency);
-            } catch (error) {
-              if (error instanceof Dinar.InvalidAmountError) {
-                addIssue({
-                  message: `Amount must have at most ${error.expectedDecimalPlaces} decimal places for ${error.currency}.`,
-                });
-              } else {
-                throw error; // Re-throw unexpected errors
-              }
-            }
-          },
-				),
+				v.rawCheckAsync(async ({ dataset, addIssue }) => {
+					const data = dataset.value as { amount: number; currency: string };
+					try {
+						await dinar.assertValidAmount(data.amount, data.currency);
+					} catch (error) {
+						if (error instanceof Dinar.InvalidAmountError) {
+							addIssue({
+								message: `Amount must have at most ${error.expectedDecimalPlaces} decimal places for ${error.currency}.`,
+							});
+						} else {
+							throw error; // Re-throw unexpected errors
+						}
+					}
+				}),
 			),
 			{ abortEarly: true },
 		),
