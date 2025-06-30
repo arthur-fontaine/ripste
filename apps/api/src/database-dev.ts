@@ -1,5 +1,5 @@
 import { MikroOrmDatabase, type IDatabase } from "@ripste/db/mikro-orm";
-import { PostgreSqlDriver } from "@mikro-orm/postgresql";
+import { SqliteDriver } from "@mikro-orm/sqlite";
 
 let database: IDatabase | null = null;
 
@@ -17,7 +17,7 @@ export async function initializeDevelopmentDatabase(): Promise<IDatabase> {
 
 	try {
 		database = await MikroOrmDatabase.create(
-			PostgreSqlDriver,
+			SqliteDriver,
 			":memory:",
 			options,
 		);
