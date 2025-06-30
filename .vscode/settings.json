@@ -5,6 +5,7 @@
 		"docker",
 		"db",
 		"telemetry",
-		"api/payment"
+		"api/payment",
+		"dinarjs"
 	]
 }
