@@ -6,6 +6,7 @@
 		"db",
 		"telemetry",
 		"api/payment",
-		"dinarjs"
+		"dinarjs",
+		"admin"
 	]
 }
