@@ -1,0 +1,17 @@
+{
+	"name": "@ripste/dinar.js",
+	"type": "module",
+	"version": "1.0.0",
+	"main": "src/index.ts",
+	"files": ["src/**/*"],
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"devDependencies": {
+		"@ripste/tsconfig": "workspace:*"
+	},
+	"packageManager": "pnpm@10.12.1",
+	"dependencies": {
+		"decimal.js": "^10.5.0"
+	}
+}
