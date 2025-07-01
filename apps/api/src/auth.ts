@@ -11,7 +11,7 @@ export async function getAuth() {
 			database: customDatabaseAdapter(db).createAdapter(),
 			emailAndPassword: {
 				enabled: true,
-				requireEmailVerification: false,
+				requireEmailVerification: true,
 			},
 			session: {
 				expiresIn: 60 * 60 * 24 * 7,
@@ -34,7 +34,7 @@ export const auth = betterAuth({
 	database: customDatabaseAdapter(db).createAdapter(),
 	emailAndPassword: {
 		enabled: true,
-		requireEmailVerification: false,
+		requireEmailVerification: true,
 	},
 	session: {
 		expiresIn: 60 * 60 * 24 * 7,
