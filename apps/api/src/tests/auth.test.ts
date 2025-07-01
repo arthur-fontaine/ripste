@@ -49,8 +49,6 @@ describe("Auth Router", () => {
 
 			const res = await authClient.signUp.email(signUpData);
 
-			console.log("Sign Up Response:", res);
-
 			expect(res.data).toBeTruthy();
 			expect(res.data?.user).toHaveProperty("email", signUpData.email);
 			expect(res.data?.user).toHaveProperty("name", signUpData.name);
@@ -107,8 +105,6 @@ describe("Auth Router", () => {
 			};
 
 			const res = await authClient.signUp.email(duplicateUserData);
-
-			console.log("Duplicate Sign Up Response:", res);
 
 			expect(res.error).toBeTruthy();
 		});
@@ -234,8 +230,6 @@ describe("Auth Router", () => {
 				password: userData.password,
 			});
 
-			console.log("Sign In Response:", signInRes);
-
 			expect(signInRes.error).toBeTruthy();
 			expect(signInRes.error?.status).toBe(403);
 		});
@@ -349,8 +343,6 @@ describe("Auth Router", () => {
 			};
 
 			const res = await authClient.signUp.email(userData);
-
-			console.log("Sign Up Response:", res);
 
 			expect(res.data).toBeTruthy();
 			expect(res.data?.user).not.toHaveProperty("password");
