@@ -14,6 +14,9 @@ import type { ITransactionEventRepository } from "./repositories/ITransactionEve
 import type { ITransactionRepository } from "./repositories/ITransactionRepository.ts";
 import type { IUserProfileRepository } from "./repositories/IUserProfileRepository.ts";
 import type { IUserRepository } from "./repositories/IUserRepository.ts";
+import type { ISessionRepository } from "./repositories/ISessionRepository.ts";
+import type { IAccountRepository } from "./repositories/IAccountRepository.ts";
+import type { IVerificationRepository } from "./repositories/IVerificationRepository.ts";
 
 export interface IDatabase {
 	apiCredential: IApiCredentialRepository;
@@ -32,4 +35,7 @@ export interface IDatabase {
 	transaction: ITransactionRepository;
 	userProfile: IUserProfileRepository;
 	user: IUserRepository;
+	session: ISessionRepository;
+	account: IAccountRepository;
+	verification: IVerificationRepository;
 }
