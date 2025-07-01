@@ -16,11 +16,7 @@ export async function initializeDevelopmentDatabase(): Promise<IDatabase> {
 	};
 
 	try {
-		database = await MikroOrmDatabase.create(
-			SqliteDriver,
-			":memory:",
-			options,
-		);
+		database = await MikroOrmDatabase.create(SqliteDriver, ":memory:", options);
 		return database;
 	} catch (error) {
 		console.error("Failed to initialize development database:", error);

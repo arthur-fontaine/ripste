@@ -17,6 +17,9 @@ export class MikroOrmAccountModel extends BaseModel {
 	@Property({ type: t.string })
 	providerId!: string;
 
+	@Property({ type: t.string, nullable: true })
+	password?: string | null;
+
 	@ManyToOne(() => MikroOrmUserModel, { ref: true })
 	user!: Ref<MikroOrmUserModel>;
 

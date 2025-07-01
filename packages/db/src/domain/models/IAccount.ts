@@ -11,6 +11,7 @@ export interface IAccountTable extends IBaseModel {
 	accessTokenExpiresAt?: Date | null;
 	refreshTokenExpiresAt?: Date | null;
 	scope?: string | null;
+	password?: string | null;
 }
 
 export interface IAccount extends ISU.Selectable<IAccountTable> {}

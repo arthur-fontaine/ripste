@@ -50,6 +50,7 @@ interface BetterAuthAccount {
 	accessTokenExpiresAt?: Date | null;
 	refreshTokenExpiresAt?: Date | null;
 	scope?: string | null;
+	password?: string | null;
 	createdAt?: Date;
 	updatedAt?: Date;
 }
@@ -180,8 +181,14 @@ export const customDatabaseAdapter = (
 					return await db.user.findMany(query);
 				case "session":
 					return await db.session.findMany(query);
-				case "account":
-					return await db.account.findMany(query);
+				case "account": {
+					const transformedQuery = { ...query };
+					if (transformedQuery["userId"]) {
+						transformedQuery["user"] = transformedQuery["userId"];
+						delete transformedQuery["userId"];
+					}
+					return await db.account.findMany(transformedQuery);
+				}
 				case "verification":
 					return await db.verification.findMany(query);
 				default:
@@ -256,6 +263,7 @@ export const customDatabaseAdapter = (
 						accessTokenExpiresAt: accountEntity.accessTokenExpiresAt,
 						refreshTokenExpiresAt: accountEntity.refreshTokenExpiresAt,
 						scope: accountEntity.scope,
+						password: accountEntity.password,
 						createdAt: accountEntity.createdAt,
 						updatedAt: accountEntity.updatedAt,
 					} as BetterAuthAccount;
@@ -300,7 +308,7 @@ export const customDatabaseAdapter = (
 					} as IInsertSession;
 				}
 				case "account": {
-					return {
+					const accountData = {
 						userId: data["userId"] as string,
 						accountId: data["accountId"] as string,
 						providerId: data["providerId"] as string,
@@ -310,7 +318,9 @@ export const customDatabaseAdapter = (
 						accessTokenExpiresAt: data["accessTokenExpiresAt"] as Date | null,
 						refreshTokenExpiresAt: data["refreshTokenExpiresAt"] as Date | null,
 						scope: data["scope"] as string | null,
+						password: data["password"] as string | null,
 					} as IInsertAccount;
+					return accountData;
 				}
 				case "verification": {
 					return {
@@ -420,9 +430,70 @@ export const customDatabaseAdapter = (
 					return user ? (mapEntityToBetterAuth(user, model) as T) : null;
 				}
 
-				throw new Error(
-					`findOne with conditions ${JSON.stringify(where)} not implemented yet`,
+				if (model === "account") {
+					const userIdCondition = where.find(
+						(w: WhereCondition) => w.field === "userId",
+					);
+					const providerIdCondition = where.find(
+						(w: WhereCondition) => w.field === "providerId",
+					);
+
+					if (userIdCondition && providerIdCondition) {
+						const accounts = await findManyEntities(model, {
+							userId: userIdCondition.value as string,
+							providerId: providerIdCondition.value as string,
+						});
+						const account = accounts[0];
+						return account
+							? (mapEntityToBetterAuth(account, model) as T)
+							: null;
+					}
+
+					if (userIdCondition) {
+						const accounts = await findManyEntities(model, {
+							userId: userIdCondition.value as string,
+						});
+						const account = accounts[0];
+						return account
+							? (mapEntityToBetterAuth(account, model) as T)
+							: null;
+					}
+				}
+
+				if (model === "session") {
+					const tokenCondition = where.find(
+						(w: WhereCondition) => w.field === "token",
+					);
+					const userIdCondition = where.find(
+						(w: WhereCondition) => w.field === "userId",
+					);
+
+					if (tokenCondition) {
+						const sessions = await findManyEntities(model, {
+							token: tokenCondition.value as string,
+						});
+						const session = sessions[0];
+						return session
+							? (mapEntityToBetterAuth(session, model) as T)
+							: null;
+					}
+
+					if (userIdCondition) {
+						const sessions = await findManyEntities(model, {
+							userId: userIdCondition.value as string,
+						});
+						const session = sessions[0];
+						return session
+							? (mapEntityToBetterAuth(session, model) as T)
+							: null;
+					}
+				}
+
+				console.log(
+					`[Better Auth Adapter] Unhandled findOne conditions for model ${model}:`,
+					where,
 				);
+				return null;
 			},
 
 			findMany: async <T>({
@@ -440,12 +511,14 @@ export const customDatabaseAdapter = (
 			}): Promise<T[]> => {
 				debugLog("findMany", { model, where, limit, sortBy, offset });
 
-				const results = await findManyEntities(model, {
-					where,
-					limit,
-					sortBy,
-					offset,
-				});
+				const query: Record<string, unknown> = {};
+				if (where && where.length > 0) {
+					for (const condition of where) {
+						query[condition.field] = condition.value;
+					}
+				}
+
+				const results = await findManyEntities(model, query);
 
 				return results.map(
 					(result: DatabaseEntity) => mapEntityToBetterAuth(result, model) as T,

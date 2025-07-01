@@ -11,7 +11,7 @@ export async function getAuth() {
 			database: customDatabaseAdapter(db).createAdapter(),
 			emailAndPassword: {
 				enabled: true,
-				requireEmailVerification: false, // remove after testing
+				requireEmailVerification: false,
 			},
 			session: {
 				expiresIn: 60 * 60 * 24 * 7,
@@ -28,8 +28,24 @@ export async function getAuth() {
 	return authInstance;
 }
 
-export const auth = {
-	get handler() {
-		return getAuth().then((auth) => auth.handler);
+const db = await getDatabaseConnection();
+export const auth = betterAuth({
+	basePath: "/auth",
+	database: customDatabaseAdapter(db).createAdapter(),
+	emailAndPassword: {
+		enabled: true,
+		requireEmailVerification: false,
 	},
-};
+	session: {
+		expiresIn: 60 * 60 * 24 * 7,
+		updateAge: 60 * 60 * 24,
+	},
+	advanced: {
+		defaultCookieAttributes: {
+			sameSite: "lax",
+			secure: process.env["NODE_ENV"] === "production",
+		},
+	},
+});
+
+export default auth;
