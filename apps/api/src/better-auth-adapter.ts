@@ -182,10 +182,10 @@ export const customDatabaseAdapter = (
 				case "session":
 					return await db.session.findMany(query);
 				case "account": {
-					const transformedQuery = { ...query };
+					let transformedQuery = { ...query };
 					if (transformedQuery["userId"]) {
-						transformedQuery["user"] = transformedQuery["userId"];
-						delete transformedQuery["userId"];
+						const { userId, ...rest } = transformedQuery;
+						transformedQuery = { ...rest, user: userId };
 					}
 					return await db.account.findMany(transformedQuery);
 				}

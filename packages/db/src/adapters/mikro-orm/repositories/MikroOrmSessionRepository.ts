@@ -7,7 +7,7 @@ import type { ISessionRepository } from "../../../domain/ports/repositories/ISes
 import { MikroOrmSessionModel } from "../models/MikroOrmSessionModel.ts";
 import { MikroOrmUserModel } from "../models/MikroOrmUserModel.ts";
 import { MikroOrmBaseRepository } from "./utils/MikroOrmBaseRepository.ts";
-import type { EntityManager } from "@mikro-orm/core";
+import { Reference, type EntityManager } from "@mikro-orm/core";
 
 export class MikroOrmSessionRepository
 	extends MikroOrmBaseRepository<ISession, IInsertSession, IUpdateSession>(
@@ -24,7 +24,7 @@ export class MikroOrmSessionRepository
 				sessionData as never,
 			);
 			const userRef = this._em.getReference(MikroOrmUserModel, userId);
-			newSession.user = userRef as any;
+			newSession.user = Reference.create(userRef);
 
 			await this._em.persistAndFlush(newSession);
 			return newSession;

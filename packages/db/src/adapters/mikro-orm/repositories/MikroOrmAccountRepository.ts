@@ -7,7 +7,7 @@ import type { IAccountRepository } from "../../../domain/ports/repositories/IAcc
 import { MikroOrmAccountModel } from "../models/MikroOrmAccountModel.ts";
 import { MikroOrmUserModel } from "../models/MikroOrmUserModel.ts";
 import { MikroOrmBaseRepository } from "./utils/MikroOrmBaseRepository.ts";
-import type { EntityManager } from "@mikro-orm/core";
+import { Reference, type EntityManager } from "@mikro-orm/core";
 
 export class MikroOrmAccountRepository
 	extends MikroOrmBaseRepository<IAccount, IInsertAccount, IUpdateAccount>(
@@ -24,7 +24,7 @@ export class MikroOrmAccountRepository
 				accountData as never,
 			);
 			const userRef = this._em.getReference(MikroOrmUserModel, userId);
-			newAccount.user = userRef as any;
+			newAccount.user = Reference.create(userRef);
 
 			await this._em.persistAndFlush(newAccount);
 			return newAccount;

@@ -60,7 +60,10 @@ describe("Auth Router", () => {
 				password: "password123",
 			};
 
-			const res = await authClient.signUp.email(incompleteData as any);
+			const res = await authClient.signUp.email(
+				// @ts-expect-error - Testing incomplete data
+				incompleteData,
+			);
 
 			expect(res.error).toBeTruthy();
 		});
@@ -71,7 +74,10 @@ describe("Auth Router", () => {
 				email: "test@example.com",
 			};
 
-			const res = await authClient.signUp.email(incompleteData as any);
+			const res = await authClient.signUp.email(
+				// @ts-expect-error - Testing incomplete data
+				incompleteData,
+			);
 
 			expect(res.error).toBeTruthy();
 		});
@@ -155,7 +161,10 @@ describe("Auth Router", () => {
 				password: "password123",
 			};
 
-			const res = await authClient.signIn.email(incompleteData as any);
+			const res = await authClient.signIn.email(
+				// @ts-expect-error - Testing incomplete data
+				incompleteData,
+			);
 
 			expect(res.error).toBeTruthy();
 		});
@@ -165,7 +174,10 @@ describe("Auth Router", () => {
 				email: "test@example.com",
 			};
 
-			const res = await authClient.signIn.email(incompleteData as any);
+			const res = await authClient.signIn.email(
+				// @ts-expect-error - Testing incomplete data
+				incompleteData,
+			);
 
 			expect(res.error).toBeTruthy();
 		});
