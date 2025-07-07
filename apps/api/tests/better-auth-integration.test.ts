@@ -1,20 +1,20 @@
 import { describe, expect, it, beforeEach, beforeAll, afterAll } from "vitest";
-import { customDatabaseAdapter } from "../better-auth-adapter.ts";
+import { customDatabaseAdapter } from "../src/better-auth-adapter.ts";
 import {
-	initializeDevelopmentDatabase,
-	closeDevelopmentDatabase,
-} from "../database-dev.ts";
+	initializeTestDatabase,
+	closeTestDatabase,
+} from "./database-utils.ts";
 import type { IDatabase, IUser } from "@ripste/db/mikro-orm";
 
 let db: IDatabase;
 let adapterFactory: ReturnType<typeof customDatabaseAdapter>;
 
 beforeAll(async () => {
-	db = await initializeDevelopmentDatabase();
+	db = await initializeTestDatabase();
 });
 
 afterAll(async () => {
-	await closeDevelopmentDatabase();
+	await closeTestDatabase();
 });
 
 beforeEach(() => {

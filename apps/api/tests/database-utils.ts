@@ -3,7 +3,7 @@ import { SqliteDriver } from "@mikro-orm/sqlite";
 
 let database: IDatabase | null = null;
 
-export async function initializeDevelopmentDatabase(): Promise<IDatabase> {
+export async function initializeTestDatabase(): Promise<IDatabase> {
 	if (database) {
 		return database;
 	}
@@ -19,19 +19,19 @@ export async function initializeDevelopmentDatabase(): Promise<IDatabase> {
 		database = await MikroOrmDatabase.create(SqliteDriver, ":memory:", options);
 		return database;
 	} catch (error) {
-		console.error("Failed to initialize development database:", error);
+		console.error("Failed to initialize test database:", error);
 		throw error;
 	}
 }
 
-export async function closeDevelopmentDatabase(): Promise<void> {
+export async function closeTestDatabase(): Promise<void> {
 	database = null;
 }
 
-export function createDevelopmentDatabaseInstance(): IDatabase {
+export function getTestDatabaseInstance(): IDatabase {
 	if (!database) {
 		throw new Error(
-			"Development database not initialized. Call initializeDevelopmentDatabase() first.",
+			"Test database not initialized. Call initializeTestDatabase() first.",
 		);
 	}
 	return database;

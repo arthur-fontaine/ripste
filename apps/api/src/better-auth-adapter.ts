@@ -1,21 +1,15 @@
 import { createAdapter, type AdapterDebugLogs } from "better-auth/adapters";
-import type { IDatabase } from "../../../packages/db/src/domain/ports/IDatabase.ts";
+import type { IDatabase } from "@ripste/db/mikro-orm";
 import type {
 	IInsertUser,
 	IUser,
-} from "../../../packages/db/src/domain/models/IUser.ts";
-import type {
 	IInsertSession,
 	ISession,
-} from "../../../packages/db/src/domain/models/ISession.ts";
-import type {
 	IInsertAccount,
 	IAccount,
-} from "../../../packages/db/src/domain/models/IAccount.ts";
-import type {
 	IInsertVerification,
 	IVerification,
-} from "../../../packages/db/src/domain/models/IVerification.ts";
+} from "@ripste/db/mikro-orm";
 
 interface BetterAuthUser {
 	id?: string;
@@ -489,10 +483,10 @@ export const customDatabaseAdapter = (
 					}
 				}
 
-				console.log(
-					`[Better Auth Adapter] Unhandled findOne conditions for model ${model}:`,
+				debugLog("Unhandled findOne conditions", {
+					model,
 					where,
-				);
+				});
 				return null;
 			},
 
@@ -556,7 +550,14 @@ export const customDatabaseAdapter = (
 			}: { model: string; where?: WhereCondition[] }): Promise<number> => {
 				debugLog("count", { model, where });
 
-				const results = await findManyEntities(model, {});
+				const query: Record<string, unknown> = {};
+				if (where && where.length > 0) {
+					for (const condition of where) {
+						query[condition.field] = condition.value;
+					}
+				}
+
+				const results = await findManyEntities(model, query);
 				return results.length;
 			},
 		};

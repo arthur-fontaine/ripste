@@ -1,6 +1,11 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { createAuthClient } from "better-auth/client";
-import { app } from "../app.ts";
+import { SqliteDriver } from "@mikro-orm/sqlite";
+import { MikroOrmDatabase } from "@ripste/db/mikro-orm";
+
+vi.mock("../src/database.ts", async () => ({
+  database: await MikroOrmDatabase.create(SqliteDriver, ':memory:'),
+}));
 
 interface UserSignUpData {
 	name: string;
@@ -22,6 +27,7 @@ const authClient = createAuthClient({
 		) => {
 			const request =
 				input instanceof Request ? input : new Request(input, init);
+      const { app } = await import("../src/app.ts");
 			return await app.fetch(request);
 		},
 	},
