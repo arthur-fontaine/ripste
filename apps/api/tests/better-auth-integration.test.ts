@@ -1,6 +1,6 @@
 import { describe, afterAll } from "vitest";
 import { runAdapterTest } from "better-auth/adapters/test";
-import { customDatabaseAdapter } from "../src/better-auth-adapter.ts";
+import { createCustomDatabaseAdapterWithMappings } from "../src/better-auth-adapter.ts";
 import { initializeTestDatabase, closeTestDatabase } from "./database-utils.ts";
 import type { IDatabase } from "@ripste/db/mikro-orm";
 
@@ -11,17 +11,15 @@ describe("Better Auth Custom Database Adapter", async () => {
 		await closeTestDatabase();
 	});
 
-	// Initialize the database before running tests
 	db = await initializeTestDatabase();
-
-	const adapterFactory = customDatabaseAdapter(db, {
-		debugLogs: {
-			isRunningAdapterTests: true, // Super secret flag for better-auth test suite
-		},
-	});
 
 	await runAdapterTest({
 		getAdapter: async (betterAuthOptions = {}) => {
+			const adapterFactory = createCustomDatabaseAdapterWithMappings(db, betterAuthOptions, {
+				debugLogs: {
+					isRunningAdapterTests: true,
+				},
+			});
 			return adapterFactory.createAdapter()(betterAuthOptions);
 		},
 	});

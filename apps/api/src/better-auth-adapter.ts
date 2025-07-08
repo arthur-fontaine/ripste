@@ -89,6 +89,15 @@ export interface CustomDatabaseAdapterConfig {
 	 * @default false
 	 */
 	debugLogs?: AdapterDebugLogs;
+	/**
+	 * Field mappings for different models
+	 */
+	fieldMappings?: {
+		user?: Record<string, string>;
+		session?: Record<string, string>;
+		account?: Record<string, string>;
+		verification?: Record<string, string>;
+	};
 }
 
 export const customDatabaseAdapter = (
@@ -107,14 +116,46 @@ export const customDatabaseAdapter = (
 		disableIdGeneration: false,
 	};
 
+	// Helper function to get field mappings
+	const getFieldMappings = (model: string): Record<string, string> => {
+		return config.fieldMappings?.[model as keyof typeof config.fieldMappings] || {};
+	};
+
+	// Helper function to map field names from Better Auth to database
+	const mapFieldName = (fieldName: string, model: string): string => {
+		const mappings = getFieldMappings(model);
+		return mappings[fieldName] || fieldName;
+	};
+
 	const adapterFunction = ({ debugLog }: { debugLog: DebugLogFunction }) => {
 		async function insertEntity(
 			model: string,
 			data: InsertData,
 		): Promise<DatabaseEntity> {
 			switch (model) {
-				case "user":
-					return await db.user.insert(data as IInsertUser);
+				case "user": {
+					const userData = data as IInsertUser;
+					// @ts-ignore - temporary storage for name
+					const name = userData._tempName as string | undefined;
+					
+					const user = await db.user.insert(userData);
+					
+					if (name) {
+						const nameParts = name.split(' ');
+						const firstName = nameParts[0] || '';
+						const lastName = nameParts.slice(1).join(' ') || '';
+						
+						await db.userProfile.insert({
+							firstName,
+							lastName,
+							fullName: name,
+							phone: null,
+							user: user.id,
+						} as any);
+					}
+					
+					return user;
+				}
 				case "session":
 					return await db.session.insert(data as IInsertSession);
 				case "account":
@@ -132,8 +173,38 @@ export const customDatabaseAdapter = (
 			data: Partial<InsertData>,
 		): Promise<DatabaseEntity | null> {
 			switch (model) {
-				case "user":
-					return await db.user.update(id, data as Partial<IInsertUser>);
+				case "user": {
+					const userData = data as Partial<IInsertUser>;
+					// @ts-ignore - temporary storage for name
+					const name = userData._tempName as string | undefined;
+					
+					const user = await db.user.update(id, userData);
+					
+					if (name && user) {
+						const nameParts = name.split(' ');
+						const firstName = nameParts[0] || '';
+						const lastName = nameParts.slice(1).join(' ') || '';
+						
+						const existingProfile = user.profile;
+						if (existingProfile) {
+							await db.userProfile.update(existingProfile.id, {
+								firstName,
+								lastName,
+								fullName: name,
+							} as any);
+						} else {
+							await db.userProfile.insert({
+								firstName,
+								lastName,
+								fullName: name,
+								phone: null,
+								user: user.id,
+							} as any);
+						}
+					}
+					
+					return user;
+				}
 				case "session":
 					return await db.session.update(id, data as Partial<IInsertSession>);
 				case "account":
@@ -172,15 +243,12 @@ export const customDatabaseAdapter = (
 		): Promise<DatabaseEntity[]> {
 			switch (model) {
 				case "user": {
-					// Handle special case for 'name' field queries
 					if (query["name"]) {
 						const nameValue = query["name"] as string;
 						const { name, ...restQuery } = query;
 
-						// Get all users that match the other criteria
 						const users = await db.user.findMany(restQuery);
 
-						// Filter by name in-memory
 						return users.filter((user: IUser) => {
 							const fullName = user.profile?.fullName;
 							const firstName = user.profile?.firstName;
@@ -238,8 +306,6 @@ export const customDatabaseAdapter = (
 						throw new Error(`Unknown model: ${model}`);
 				}
 			} catch (error) {
-				// If the entity doesn't exist, we don't need to throw an error
-				// This is expected behavior for delete operations
 				if (
 					error instanceof Error &&
 					error.message.includes("Entity not found")
@@ -259,7 +325,7 @@ export const customDatabaseAdapter = (
 			switch (model) {
 				case "user": {
 					const userEntity = entity as IUser;
-					return {
+					const result: BetterAuthUser = {
 						id: userEntity.id,
 						name:
 							userEntity.profile?.fullName ||
@@ -269,8 +335,25 @@ export const customDatabaseAdapter = (
 						emailVerified: userEntity.emailVerified,
 						image: null,
 						createdAt: userEntity.createdAt,
-						updatedAt: userEntity.updatedAt,
-					} as BetterAuthUser;
+						updatedAt: userEntity.updatedAt || userEntity.createdAt,
+					};
+
+					const mappings = getFieldMappings(model);
+					const mappedResult: Record<string, unknown> = {};
+					
+					for (const [key, value] of Object.entries(result)) {
+						const mappedFieldName = Object.entries(mappings).find(
+							([betterAuthField]) => betterAuthField === key
+						)?.[1];
+						
+						if (mappedFieldName) {
+							mappedResult[mappedFieldName] = value;
+						} else {
+							mappedResult[key] = value;
+						}
+					}
+
+					return mappedResult as unknown as BetterAuthUser;
 				}
 				case "session": {
 					const sessionEntity = entity as ISession;
@@ -325,22 +408,35 @@ export const customDatabaseAdapter = (
 			model: string,
 			isUpdate = false,
 		): InsertData {
+			const mappings = getFieldMappings(model);
+			
 			switch (model) {
 				case "user": {
 					const userData: Partial<IInsertUser> = {};
 
-					// Only set fields that are provided
 					if (data["email"] !== undefined) {
 						userData.email = data["email"] as string;
+					} else {
+						for (const [betterAuthField, dbField] of Object.entries(mappings)) {
+							if (betterAuthField === "email" && data[dbField] !== undefined) {
+								userData.email = data[dbField] as string;
+								break;
+							}
+						}
 					}
+
 					if (data["password"] !== undefined) {
 						userData.passwordHash = data["password"] as string;
 					}
 					if (data["emailVerified"] !== undefined) {
 						userData.emailVerified = data["emailVerified"] as boolean;
 					}
+					
+					if (data["name"] !== undefined) {
+						// @ts-ignore - temporary storage for name
+						userData._tempName = data["name"] as string;
+					}
 
-					// For creation, provide defaults for required fields
 					if (!isUpdate) {
 						userData.email = userData.email || "";
 						userData.passwordHash = userData.passwordHash || "";
@@ -500,8 +596,20 @@ export const customDatabaseAdapter = (
 						: null;
 				}
 
-				const emailCondition = where.find(
-					(w: WhereCondition) => w.field === "email",
+				const mappings = getFieldMappings(model);
+				const transformedWhere = where.map(condition => {
+					const mappedField = Object.entries(mappings).find(
+						([betterAuthField]) => betterAuthField === condition.field
+					)?.[1];
+					
+					if (mappedField) {
+						return { ...condition, field: mappedField };
+					}
+					return condition;
+				});
+
+				const emailCondition = transformedWhere.find(
+					(w: WhereCondition) => w.field === "email" || w.field === mapFieldName("email", model),
 				);
 				if (emailCondition && model === "user") {
 					const users = await findManyEntities(model, {
@@ -513,7 +621,7 @@ export const customDatabaseAdapter = (
 						: null;
 				}
 
-				const nameCondition = where.find(
+				const nameCondition = transformedWhere.find(
 					(w: WhereCondition) => w.field === "name",
 				);
 				if (nameCondition && model === "user") {
@@ -527,10 +635,10 @@ export const customDatabaseAdapter = (
 				}
 
 				if (model === "account") {
-					const userIdCondition = where.find(
+					const userIdCondition = transformedWhere.find(
 						(w: WhereCondition) => w.field === "userId",
 					);
-					const providerIdCondition = where.find(
+					const providerIdCondition = transformedWhere.find(
 						(w: WhereCondition) => w.field === "providerId",
 					);
 
@@ -557,10 +665,10 @@ export const customDatabaseAdapter = (
 				}
 
 				if (model === "session") {
-					const tokenCondition = where.find(
+					const tokenCondition = transformedWhere.find(
 						(w: WhereCondition) => w.field === "token",
 					);
-					const userIdCondition = where.find(
+					const userIdCondition = transformedWhere.find(
 						(w: WhereCondition) => w.field === "userId",
 					);
 
@@ -588,6 +696,7 @@ export const customDatabaseAdapter = (
 				debugLog("Unhandled findOne conditions", {
 					model,
 					where,
+					transformedWhere,
 				});
 				return null;
 			},
@@ -698,4 +807,34 @@ export const customDatabaseAdapter = (
 				adapter: adapterFunction,
 			}),
 	};
+};
+
+/**
+ * Helper function to create an adapter with field mappings
+ * This is useful when Better Auth is configured with custom field names
+ */
+export const createCustomDatabaseAdapterWithMappings = (
+	db: IDatabase,
+	betterAuthConfig: any,
+	config: Omit<CustomDatabaseAdapterConfig, 'fieldMappings'> = {}
+) => {
+	const fieldMappings: CustomDatabaseAdapterConfig['fieldMappings'] = {};
+	
+	if (betterAuthConfig?.user?.fields) {
+		fieldMappings.user = betterAuthConfig.user.fields;
+	}
+	if (betterAuthConfig?.session?.fields) {
+		fieldMappings.session = betterAuthConfig.session.fields;
+	}
+	if (betterAuthConfig?.account?.fields) {
+		fieldMappings.account = betterAuthConfig.account.fields;
+	}
+	if (betterAuthConfig?.verification?.fields) {
+		fieldMappings.verification = betterAuthConfig.verification.fields;
+	}
+
+	return customDatabaseAdapter(db, {
+		...config,
+		fieldMappings,
+	});
 };
