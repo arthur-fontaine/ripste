@@ -1,21 +1,15 @@
 import { createAdapter, type AdapterDebugLogs } from "better-auth/adapters";
-import type { IDatabase } from "../../../packages/db/src/domain/ports/IDatabase.ts";
+import type { IDatabase } from "@ripste/db/mikro-orm";
 import type {
 	IInsertUser,
 	IUser,
-} from "../../../packages/db/src/domain/models/IUser.ts";
-import type {
 	IInsertSession,
 	ISession,
-} from "../../../packages/db/src/domain/models/ISession.ts";
-import type {
 	IInsertAccount,
 	IAccount,
-} from "../../../packages/db/src/domain/models/IAccount.ts";
-import type {
 	IInsertVerification,
 	IVerification,
-} from "../../../packages/db/src/domain/models/IVerification.ts";
+} from "@ripste/db/mikro-orm";
 
 interface BetterAuthUser {
 	id?: string;
@@ -177,10 +171,39 @@ export const customDatabaseAdapter = (
 			query: Record<string, unknown> = {},
 		): Promise<DatabaseEntity[]> {
 			switch (model) {
-				case "user":
+				case "user": {
+					// Handle special case for 'name' field queries
+					if (query["name"]) {
+						const nameValue = query["name"] as string;
+						const { name, ...restQuery } = query;
+
+						// Get all users that match the other criteria
+						const users = await db.user.findMany(restQuery);
+
+						// Filter by name in-memory
+						return users.filter((user: IUser) => {
+							const fullName = user.profile?.fullName;
+							const firstName = user.profile?.firstName;
+							const lastName = user.profile?.lastName;
+							const computedName =
+								fullName ||
+								`${firstName || ""} ${lastName || ""}`.trim() ||
+								null;
+
+							return computedName === nameValue;
+						});
+					}
+
 					return await db.user.findMany(query);
-				case "session":
-					return await db.session.findMany(query);
+				}
+				case "session": {
+					let transformedQuery = { ...query };
+					if (transformedQuery["userId"]) {
+						const { userId, ...rest } = transformedQuery;
+						transformedQuery = { ...rest, user: userId };
+					}
+					return await db.session.findMany(transformedQuery);
+				}
 				case "account": {
 					let transformedQuery = { ...query };
 					if (transformedQuery["userId"]) {
@@ -197,21 +220,33 @@ export const customDatabaseAdapter = (
 		}
 
 		async function deleteEntity(model: string, id: string): Promise<void> {
-			switch (model) {
-				case "user":
-					await db.user.delete(id);
-					break;
-				case "session":
-					await db.session.delete(id);
-					break;
-				case "account":
-					await db.account.delete(id);
-					break;
-				case "verification":
-					await db.verification.delete(id);
-					break;
-				default:
-					throw new Error(`Unknown model: ${model}`);
+			try {
+				switch (model) {
+					case "user":
+						await db.user.delete(id);
+						break;
+					case "session":
+						await db.session.delete(id);
+						break;
+					case "account":
+						await db.account.delete(id);
+						break;
+					case "verification":
+						await db.verification.delete(id);
+						break;
+					default:
+						throw new Error(`Unknown model: ${model}`);
+				}
+			} catch (error) {
+				// If the entity doesn't exist, we don't need to throw an error
+				// This is expected behavior for delete operations
+				if (
+					error instanceof Error &&
+					error.message.includes("Entity not found")
+				) {
+					return;
+				}
+				throw error;
 			}
 		}
 
@@ -288,15 +323,32 @@ export const customDatabaseAdapter = (
 		function mapBetterAuthToEntity(
 			data: Record<string, unknown>,
 			model: string,
+			isUpdate = false,
 		): InsertData {
 			switch (model) {
 				case "user": {
-					return {
-						email: data["email"] as string,
-						passwordHash: (data["password"] as string) || "",
-						emailVerified: (data["emailVerified"] as boolean) || false,
-						permissionLevel: "user" as const,
-					} as IInsertUser;
+					const userData: Partial<IInsertUser> = {};
+
+					// Only set fields that are provided
+					if (data["email"] !== undefined) {
+						userData.email = data["email"] as string;
+					}
+					if (data["password"] !== undefined) {
+						userData.passwordHash = data["password"] as string;
+					}
+					if (data["emailVerified"] !== undefined) {
+						userData.emailVerified = data["emailVerified"] as boolean;
+					}
+
+					// For creation, provide defaults for required fields
+					if (!isUpdate) {
+						userData.email = userData.email || "";
+						userData.passwordHash = userData.passwordHash || "";
+						userData.emailVerified = userData.emailVerified || false;
+						userData.permissionLevel = "user" as const;
+					}
+
+					return userData as IInsertUser;
 				}
 				case "session": {
 					return {
@@ -347,9 +399,10 @@ export const customDatabaseAdapter = (
 			}): Promise<T> => {
 				debugLog("create", { model, data, select });
 
-				const mappedData = mapBetterAuthToEntity(data, model);
+				const mappedData = mapBetterAuthToEntity(data, model, false);
 				const result = await insertEntity(model, mappedData);
-				return { ...data, id: result.id } as T;
+				const mappedResult = mapEntityToBetterAuth(result, model);
+				return mappedResult as unknown as T;
 			},
 
 			update: async <T>({
@@ -373,6 +426,7 @@ export const customDatabaseAdapter = (
 				const mappedUpdate = mapBetterAuthToEntity(
 					update as DatabaseEntity,
 					model,
+					true,
 				);
 				const result = await updateEntity(
 					model,
@@ -380,7 +434,9 @@ export const customDatabaseAdapter = (
 					mappedUpdate,
 				);
 
-				return result ? ({ ...update, id: whereCondition.value } as T) : null;
+				if (!result) return null;
+				const mappedResult = mapEntityToBetterAuth(result, model);
+				return mappedResult as unknown as T;
 			},
 
 			updateMany: async <T>({
@@ -394,7 +450,30 @@ export const customDatabaseAdapter = (
 			}): Promise<number> => {
 				debugLog("updateMany", { model, where, update });
 
-				throw new Error("updateMany not implemented yet");
+				const query: Record<string, unknown> = {};
+				if (where && where.length > 0) {
+					for (const condition of where) {
+						query[condition.field] = condition.value;
+					}
+				}
+
+				const entitiesToUpdate = await findManyEntities(model, query);
+
+				const mappedUpdate = mapBetterAuthToEntity(
+					update as DatabaseEntity,
+					model,
+					true,
+				);
+				let updatedCount = 0;
+
+				for (const entity of entitiesToUpdate) {
+					const result = await updateEntity(model, entity.id, mappedUpdate);
+					if (result) {
+						updatedCount++;
+					}
+				}
+
+				return updatedCount;
 			},
 
 			findOne: async <T>({
@@ -416,7 +495,9 @@ export const customDatabaseAdapter = (
 						model,
 						whereCondition.value as string,
 					);
-					return result ? (mapEntityToBetterAuth(result, model) as T) : null;
+					return result
+						? (mapEntityToBetterAuth(result, model) as unknown as T)
+						: null;
 				}
 
 				const emailCondition = where.find(
@@ -427,7 +508,22 @@ export const customDatabaseAdapter = (
 						email: emailCondition.value as string,
 					});
 					const user = users[0];
-					return user ? (mapEntityToBetterAuth(user, model) as T) : null;
+					return user
+						? (mapEntityToBetterAuth(user, model) as unknown as T)
+						: null;
+				}
+
+				const nameCondition = where.find(
+					(w: WhereCondition) => w.field === "name",
+				);
+				if (nameCondition && model === "user") {
+					const users = await findManyEntities(model, {
+						name: nameCondition.value as string,
+					});
+					const user = users[0];
+					return user
+						? (mapEntityToBetterAuth(user, model) as unknown as T)
+						: null;
 				}
 
 				if (model === "account") {
@@ -445,7 +541,7 @@ export const customDatabaseAdapter = (
 						});
 						const account = accounts[0];
 						return account
-							? (mapEntityToBetterAuth(account, model) as T)
+							? (mapEntityToBetterAuth(account, model) as unknown as T)
 							: null;
 					}
 
@@ -455,7 +551,7 @@ export const customDatabaseAdapter = (
 						});
 						const account = accounts[0];
 						return account
-							? (mapEntityToBetterAuth(account, model) as T)
+							? (mapEntityToBetterAuth(account, model) as unknown as T)
 							: null;
 					}
 				}
@@ -474,7 +570,7 @@ export const customDatabaseAdapter = (
 						});
 						const session = sessions[0];
 						return session
-							? (mapEntityToBetterAuth(session, model) as T)
+							? (mapEntityToBetterAuth(session, model) as unknown as T)
 							: null;
 					}
 
@@ -484,7 +580,7 @@ export const customDatabaseAdapter = (
 						});
 						const session = sessions[0];
 						return session
-							? (mapEntityToBetterAuth(session, model) as T)
+							? (mapEntityToBetterAuth(session, model) as unknown as T)
 							: null;
 					}
 				}
@@ -521,7 +617,8 @@ export const customDatabaseAdapter = (
 				const results = await findManyEntities(model, query);
 
 				return results.map(
-					(result: DatabaseEntity) => mapEntityToBetterAuth(result, model) as T,
+					(result: DatabaseEntity) =>
+						mapEntityToBetterAuth(result, model) as unknown as T,
 				);
 			},
 
@@ -547,7 +644,27 @@ export const customDatabaseAdapter = (
 			}: { model: string; where: WhereCondition[] }): Promise<number> => {
 				debugLog("deleteMany", { model, where });
 
-				throw new Error("deleteMany not implemented yet");
+				const query: Record<string, unknown> = {};
+				if (where && where.length > 0) {
+					for (const condition of where) {
+						query[condition.field] = condition.value;
+					}
+				}
+
+				const entitiesToDelete = await findManyEntities(model, query);
+
+				let deletedCount = 0;
+
+				for (const entity of entitiesToDelete) {
+					try {
+						await deleteEntity(model, entity.id);
+						deletedCount++;
+					} catch (error) {
+						debugLog("deleteMany error", { entity: entity.id, error });
+					}
+				}
+
+				return deletedCount;
 			},
 
 			count: async ({
