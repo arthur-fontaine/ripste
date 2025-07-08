@@ -489,10 +489,10 @@ export const customDatabaseAdapter = (
 					}
 				}
 
-				console.log(
-					`[Better Auth Adapter] Unhandled findOne conditions for model ${model}:`,
+				debugLog("Unhandled findOne conditions", {
+					model,
 					where,
-				);
+				});
 				return null;
 			},
 
@@ -556,7 +556,14 @@ export const customDatabaseAdapter = (
 			}: { model: string; where?: WhereCondition[] }): Promise<number> => {
 				debugLog("count", { model, where });
 
-				const results = await findManyEntities(model, {});
+				const query: Record<string, unknown> = {};
+				if (where && where.length > 0) {
+					for (const condition of where) {
+						query[condition.field] = condition.value;
+					}
+				}
+
+				const results = await findManyEntities(model, query);
 				return results.length;
 			},
 		};
