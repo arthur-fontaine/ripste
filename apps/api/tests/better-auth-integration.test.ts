@@ -15,11 +15,15 @@ describe("Better Auth Custom Database Adapter", async () => {
 
 	await runAdapterTest({
 		getAdapter: async (betterAuthOptions = {}) => {
-			const adapterFactory = createCustomDatabaseAdapterWithMappings(db, betterAuthOptions, {
-				debugLogs: {
-					isRunningAdapterTests: true,
+			const adapterFactory = createCustomDatabaseAdapterWithMappings(
+				db,
+				betterAuthOptions,
+				{
+					debugLogs: {
+						isRunningAdapterTests: true,
+					},
 				},
-			});
+			);
 			return adapterFactory.createAdapter()(betterAuthOptions);
 		},
 	});
