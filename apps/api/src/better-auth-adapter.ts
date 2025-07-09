@@ -1,6 +1,6 @@
 import { createAdapter, type AdapterDebugLogs } from "better-auth/adapters";
-import type { IDatabase } from "@ripste/db/mikro-orm";
 import type {
+	IDatabase,
 	IInsertUser,
 	IUser,
 	IInsertSession,
@@ -142,7 +142,7 @@ export const customDatabaseAdapter = (
 			switch (model) {
 				case "user": {
 					const userData = data as IInsertUser;
-					// @ts-ignore - temporary storage for name
+					// @ts-expect-error - temporary storage for name
 					const name = userData._tempName as string | undefined;
 
 					const user = await db.user.insert(userData);
@@ -182,7 +182,7 @@ export const customDatabaseAdapter = (
 			switch (model) {
 				case "user": {
 					const userData = data as Partial<IInsertUser>;
-					// @ts-ignore - temporary storage for name
+					// @ts-expect-error - temporary storage for name
 					const name = userData._tempName as string | undefined;
 
 					const user = await db.user.update(id, userData);
@@ -444,7 +444,7 @@ export const customDatabaseAdapter = (
 					}
 
 					if (data["name"] !== undefined) {
-						// @ts-ignore - temporary storage for name
+						// @ts-expect-error - temporary storage for name
 						userData._tempName = data["name"] as string;
 					}
 

@@ -5,7 +5,7 @@ import { MikroOrmDatabase } from "@ripste/db/mikro-orm";
 import { SqliteDriver } from "@mikro-orm/sqlite";
 
 describe("Better Auth Custom Database Adapter", async () => {
-	const db = await MikroOrmDatabase.create(SqliteDriver, ":memory:")
+	const db = await MikroOrmDatabase.create(SqliteDriver, ":memory:");
 
 	await runAdapterTest({
 		getAdapter: async (betterAuthOptions = {}) => {
