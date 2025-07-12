@@ -12,7 +12,10 @@
 			"persistent": true,
 			"cache": false
 		},
-		"test": {},
+		"test": {
+			"cache": true,
+			"dependsOn": ["^build"]
+		},
 		"test:watch": {
 			"cache": false,
 			"persistent": true
