@@ -1,11 +1,11 @@
 import { vValidator } from "@hono/valibot-validator";
 import { Dinar } from "@ripste/dinar.js";
-import { Hono } from "hono";
 import * as v from "valibot";
 import { vValidatorThrower } from "../../../utils/v-validator-thrower.ts";
 import { dinar } from "../../../utils/dinar.ts";
+import { createHonoRouter } from "../../../utils/create-hono-router.ts";
 
-export const postTransactionsRoute = new Hono().post(
+export const postTransactionsRoute = createHonoRouter().post(
 	"/",
 	vValidator(
 		"json",

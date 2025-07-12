@@ -5,10 +5,12 @@ import { otel } from "@hono/otel";
 import { cors } from "hono/cors";
 import { authRouter } from "./routers/auth/auth-router.ts";
 import { paymentsRouter } from "./routers/payments/payments-router.ts";
+import { authMiddleware } from "./auth.ts";
+import { createHonoRouter } from "./utils/create-hono-router.ts";
 
 const { printMetrics, registerMetrics } = prometheus();
 
-export const app = new Hono()
+export const app = createHonoRouter()
 	.use(
 		"*",
 		cors({
@@ -21,6 +23,7 @@ export const app = new Hono()
 			credentials: true,
 		}),
 	)
+	.use("*", authMiddleware)
 	.use("*", otel())
 	.use("*", registerMetrics)
 	.route("/ping", pingRouter)
