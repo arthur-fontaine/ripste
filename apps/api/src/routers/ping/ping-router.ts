@@ -1,5 +1,5 @@
-import { Hono } from "hono";
+import { createHonoRouter } from "../../utils/create-hono-router.ts";
 
-export const pingRouter = new Hono().get("/", (c) => {
+export const pingRouter = createHonoRouter().get("/", (c) => {
 	return c.json({ message: "pong" });
 });
