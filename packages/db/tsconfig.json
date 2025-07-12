@@ -1,7 +1,9 @@
 {
 	"extends": "@ripste/tsconfig/tsconfig.json",
 	"compilerOptions": {
+		"outDir": "dist",
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true
-	}
+	},
+	"exclude": ["dist"]
 }

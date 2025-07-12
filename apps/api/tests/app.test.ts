@@ -1,8 +1,14 @@
 import { testClient } from "hono/testing";
-import { describe, it, expect } from "vitest";
-import { app } from "./app.ts";
+import { describe, it, expect, vi } from "vitest";
+import { MikroOrmDatabase } from "@ripste/db/mikro-orm";
+import { SqliteDriver } from "@mikro-orm/sqlite";
 
-describe("Ping Endpoint", () => {
+vi.mock("../src/database.ts", async () => ({
+	database: await MikroOrmDatabase.create(SqliteDriver, ":memory:"),
+}));
+
+describe("Ping Endpoint", async () => {
+	const { app } = await import("../src/app.ts");
 	const client = testClient(app);
 
 	it("should return ping response", async () => {
@@ -15,7 +21,8 @@ describe("Ping Endpoint", () => {
 	});
 });
 
-describe("Metrics Endpoint", () => {
+describe("Metrics Endpoint", async () => {
+	const { app } = await import("../src/app.ts");
 	const client = testClient(app);
 
 	it("should return metrics", async () => {

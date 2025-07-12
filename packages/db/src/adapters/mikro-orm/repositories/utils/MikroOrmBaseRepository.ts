@@ -2,7 +2,7 @@ import type { EntityManager } from "@mikro-orm/core";
 import type { BaseModel } from "../../models/utils/MikroOrmBaseModel.ts";
 import type { IBaseRepository } from "../../../../domain/ports/repositories/utils/IBaseRepository.ts";
 
-interface IMikroOrmBaseRepositoryOptions {
+export interface IMikroOrmBaseRepositoryOptions {
 	em: EntityManager;
 }
 
@@ -18,6 +18,11 @@ export function MikroOrmBaseRepository<
 
 		constructor(options: IMikroOrmBaseRepositoryOptions) {
 			this.#em = options.em;
+		}
+
+		/** @deprecated */
+		get _em(): EntityManager {
+			return this.#em;
 		}
 
 		findOne: I["findOne"] = async (id) => {
