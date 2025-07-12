@@ -3,7 +3,6 @@ lockfileVersion: '9.0'
 settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
-  injectWorkspacePackages: true
 
 importers:
 
@@ -84,7 +83,7 @@ importers:
         version: 0.202.0(@opentelemetry/api@1.9.0)
       '@ripste/db':
         specifier: workspace:*
-        version: file:packages/db(better-sqlite3@12.1.1)(libsql@0.5.13)(typescript@5.8.3)
+        version: link:../../packages/db
       better-auth:
         specifier: ^1.2.10
         version: 1.2.10
@@ -109,7 +108,7 @@ importers:
         version: 6.4.16(@mikro-orm/core@6.4.16)(better-sqlite3@12.1.1)(libsql@0.5.13)(pg@8.16.0)
       '@ripste/tsconfig':
         specifier: workspace:*
-        version: file:packages/tsconfig
+        version: link:../../packages/tsconfig
       '@types/node':
         specifier: ^24.0.3
         version: 24.0.3
@@ -205,7 +204,7 @@ importers:
         version: 7.52.8(@types/node@24.0.3)
       '@mikro-orm/sqlite':
         specifier: ^6.4.16
-        version: 6.4.16(@mikro-orm/core@6.4.16)(better-sqlite3@12.1.1)(libsql@0.5.13)
+        version: 6.4.16(@mikro-orm/core@6.4.16)(better-sqlite3@12.1.1)(libsql@0.5.13)(pg@8.16.0)
       '@ripste/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
@@ -1589,12 +1588,6 @@ packages:
 
   '@protobufjs/utf8@1.1.0':
     resolution: {integrity: sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==}
-
-  '@ripste/db@file:packages/db':
-    resolution: {directory: packages/db, type: directory}
-
-  '@ripste/tsconfig@file:packages/tsconfig':
-    resolution: {directory: packages/tsconfig, type: directory}
 
   '@rollup/pluginutils@5.2.0':
     resolution: {integrity: sha512-qWJ2ZTbmumwiLFomfzTyt5Kng4hwPi9rwCYN4SHb6eaRU1KNO4ccxINHr/VhH4GgPlt1XfSTLX2LBTme8ne4Zw==}
@@ -4703,24 +4696,6 @@ snapshots:
       - supports-color
       - tedious
 
-  '@mikro-orm/knex@6.4.16(@mikro-orm/core@6.4.16)(better-sqlite3@12.1.1)(libsql@0.5.13)(sqlite3@5.1.7)':
-    dependencies:
-      '@mikro-orm/core': 6.4.16
-      fs-extra: 11.3.0
-      knex: 3.1.0(better-sqlite3@12.1.1)(sqlite3@5.1.7)
-      sqlstring: 2.3.3
-    optionalDependencies:
-      better-sqlite3: 12.1.1
-      libsql: 0.5.13
-    transitivePeerDependencies:
-      - mysql
-      - mysql2
-      - pg
-      - pg-native
-      - sqlite3
-      - supports-color
-      - tedious
-
   '@mikro-orm/postgresql@6.4.16(@mikro-orm/core@6.4.16)(better-sqlite3@12.1.1)(libsql@0.5.13)':
     dependencies:
       '@mikro-orm/core': 6.4.16
@@ -4737,25 +4712,6 @@ snapshots:
       - mysql2
       - pg-native
       - sqlite3
-      - supports-color
-      - tedious
-
-  '@mikro-orm/sqlite@6.4.16(@mikro-orm/core@6.4.16)(better-sqlite3@12.1.1)(libsql@0.5.13)':
-    dependencies:
-      '@mikro-orm/core': 6.4.16
-      '@mikro-orm/knex': 6.4.16(@mikro-orm/core@6.4.16)(better-sqlite3@12.1.1)(libsql@0.5.13)(sqlite3@5.1.7)
-      fs-extra: 11.3.0
-      sqlite3: 5.1.7
-      sqlstring-sqlite: 0.1.1
-    transitivePeerDependencies:
-      - better-sqlite3
-      - bluebird
-      - libsql
-      - mariadb
-      - mysql
-      - mysql2
-      - pg
-      - pg-native
       - supports-color
       - tedious
 
@@ -5582,30 +5538,6 @@ snapshots:
   '@protobufjs/pool@1.1.0': {}
 
   '@protobufjs/utf8@1.1.0': {}
-
-  '@ripste/db@file:packages/db(better-sqlite3@12.1.1)(libsql@0.5.13)(typescript@5.8.3)':
-    dependencies:
-      '@mikro-orm/core': 6.4.16
-      '@mikro-orm/postgresql': 6.4.16(@mikro-orm/core@6.4.16)(better-sqlite3@12.1.1)(libsql@0.5.13)
-      interface-faker: 0.1.0(typescript@5.8.3)
-      isutypes: 0.1.8(typescript@5.8.3)
-    transitivePeerDependencies:
-      - better-sqlite3
-      - libsql
-      - mariadb
-      - mysql
-      - mysql2
-      - pg-native
-      - sqlite3
-      - supports-color
-      - tedious
-      - typescript
-
-  '@ripste/tsconfig@file:packages/tsconfig':
-    dependencies:
-      '@tsconfig/node-ts': 23.6.1
-      '@tsconfig/node22': 22.0.2
-      '@tsconfig/strictest': 2.0.5
 
   '@rollup/pluginutils@5.2.0(rollup@4.43.0)':
     dependencies:
@@ -7076,28 +7008,6 @@ snapshots:
     optionalDependencies:
       better-sqlite3: 12.1.1
       pg: 8.16.0
-      sqlite3: 5.1.7
-    transitivePeerDependencies:
-      - supports-color
-
-  knex@3.1.0(better-sqlite3@12.1.1)(sqlite3@5.1.7):
-    dependencies:
-      colorette: 2.0.19
-      commander: 10.0.1
-      debug: 4.3.4
-      escalade: 3.2.0
-      esm: 3.2.25
-      get-package-type: 0.1.0
-      getopts: 2.3.0
-      interpret: 2.2.0
-      lodash: 4.17.21
-      pg-connection-string: 2.6.2
-      rechoir: 0.8.0
-      resolve-from: 5.0.0
-      tarn: 3.0.2
-      tildify: 2.0.0
-    optionalDependencies:
-      better-sqlite3: 12.1.1
       sqlite3: 5.1.7
     transitivePeerDependencies:
       - supports-color

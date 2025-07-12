@@ -18,7 +18,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN for dir in apps/* packages/*; do \
   if [ -d "$dir" ]; then \
     name=$(basename "$dir"); \
-    pnpm deploy --filter="${name}" --prod "/prod/${name}"; \
+    pnpm deploy --filter="${name}" --prod "/prod/${name}" --legacy; \
   fi \
 done
 

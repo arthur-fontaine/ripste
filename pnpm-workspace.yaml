@@ -2,8 +2,6 @@ packages:
   - packages/*
   - apps/*
 
-injectWorkspacePackages: true
-
 onlyBuiltDependencies:
   - '@biomejs/biome'
   - '@swc/core'
