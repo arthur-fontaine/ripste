@@ -8,6 +8,7 @@
 			"default": "./dist/*.js"
 		}
 	},
+	"files": ["dist", "src"],
 	"author": "",
 	"license": "ISC",
 	"description": "Database models and interfaces for Ripste",
