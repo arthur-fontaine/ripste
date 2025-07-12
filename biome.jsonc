@@ -23,7 +23,10 @@
 			"complexity": {
 				"useLiteralKeys": "off"
 			}
-		}
+		},
+		"ignore": [
+			"better-auth-adapter.ts" // this is file that will be refactored later. we don't care about it for now
+		]
 	},
 	"javascript": {
 		"formatter": {
