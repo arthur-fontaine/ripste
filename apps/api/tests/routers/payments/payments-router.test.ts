@@ -1,13 +1,12 @@
-import { testClient } from "hono/testing";
 import { describe, it, expect } from "vitest";
-import { app } from "../../../src/app.ts";
+import { getApiClient } from "../../test-utils/get-api-client.ts";
 
-describe("Payments Router", () => {
-	const client = testClient(app);
+describe("Payments Router", async () => {
+	const { apiClient } = await getApiClient();
 
 	describe("POST /payments/transactions", () => {
 		it("should return 201 and a location header on successful payment creation", async () => {
-			const res = await client.payments.transactions.$post({
+			const res = await apiClient.payments.transactions.$post({
 				json: {
 					amount: 100,
 					currency: "USD",
@@ -19,7 +18,7 @@ describe("Payments Router", () => {
 		});
 
 		it("should return data with an id on successful payment creation", async () => {
-			const res = await client.payments.transactions.$post({
+			const res = await apiClient.payments.transactions.$post({
 				json: {
 					amount: 100,
 					currency: "USD",
@@ -32,7 +31,7 @@ describe("Payments Router", () => {
 		});
 
 		it("should create a transaction in the database", async () => {
-			const res = await client.payments.transactions.$post({
+			const res = await apiClient.payments.transactions.$post({
 				json: {
 					amount: 100,
 					currency: "USD",
@@ -48,7 +47,7 @@ describe("Payments Router", () => {
 		});
 
 		it("should automatically uppercase the currency", async () => {
-			const res = await client.payments.transactions.$post({
+			const res = await apiClient.payments.transactions.$post({
 				json: {
 					amount: 100,
 					currency: "usd",
@@ -62,7 +61,7 @@ describe("Payments Router", () => {
 		});
 
 		it("should create a transaction event with type 'transaction_created'", async () => {
-			const res = await client.payments.transactions.$post({
+			const res = await apiClient.payments.transactions.$post({
 				json: {
 					amount: 100,
 					currency: "USD",
@@ -80,7 +79,7 @@ describe("Payments Router", () => {
 		});
 
 		it("should create an associated checkout page", async () => {
-			const res = await client.payments.transactions.$post({});
+			const res = await apiClient.payments.transactions.$post({});
 			const body = await res.json();
 			const transactionId = body.data.id;
 
@@ -90,7 +89,7 @@ describe("Payments Router", () => {
 		});
 
 		it("should have an associated API credential", async () => {
-			const res = await client.payments.transactions.$post({});
+			const res = await apiClient.payments.transactions.$post({});
 			const body = await res.json();
 			const transactionId = body.data.id;
 
@@ -99,7 +98,7 @@ describe("Payments Router", () => {
 		});
 
 		it("should have an associated store", async () => {
-			const res = await client.payments.transactions.$post({});
+			const res = await apiClient.payments.transactions.$post({});
 			const body = await res.json();
 			const transactionId = body.data.id;
 
@@ -108,7 +107,7 @@ describe("Payments Router", () => {
 		});
 
 		it("should return 400 if the amount is negative", async () => {
-			const res = await client.payments.transactions.$post({
+			const res = await apiClient.payments.transactions.$post({
 				json: {
 					amount: -100,
 					currency: "USD",
@@ -122,7 +121,7 @@ describe("Payments Router", () => {
 		});
 
 		it("should return 400 if the amount is more than 1,000,000€", async () => {
-			const res = await client.payments.transactions.$post({
+			const res = await apiClient.payments.transactions.$post({
 				json: {
 					amount: 1000001,
 					currency: "EUR",
@@ -138,7 +137,7 @@ describe("Payments Router", () => {
 		});
 
 		it("should pass if the amount is exactly 1,000,000€", async () => {
-			const res = await client.payments.transactions.$post({
+			const res = await apiClient.payments.transactions.$post({
 				json: {
 					amount: 1000000,
 					currency: "EUR",
@@ -149,7 +148,7 @@ describe("Payments Router", () => {
 		});
 
 		it("should return 400 if the amount is more than the equivalent of 1,000,000€ in other currencies", async () => {
-			const res = await client.payments.transactions.$post({
+			const res = await apiClient.payments.transactions.$post({
 				json: {
 					amount: 1000000,
 					currency: "KWD",
@@ -165,7 +164,7 @@ describe("Payments Router", () => {
 		});
 
 		it("should return 400 if the currency is not supported", async () => {
-			const res = await client.payments.transactions.$post({
+			const res = await apiClient.payments.transactions.$post({
 				json: {
 					amount: 100,
 					currency: "XYZ",
@@ -179,7 +178,7 @@ describe("Payments Router", () => {
 		});
 
 		it("should return 400 if the amount decimal places exceed 2 for USD", async () => {
-			const res = await client.payments.transactions.$post({
+			const res = await apiClient.payments.transactions.$post({
 				json: {
 					amount: 100.123,
 					currency: "USD",
@@ -195,7 +194,7 @@ describe("Payments Router", () => {
 		});
 
 		it("should return 400 if the amount decimal places exceed 0 for JPY", async () => {
-			const res = await client.payments.transactions.$post({
+			const res = await apiClient.payments.transactions.$post({
 				json: {
 					amount: 100.5,
 					currency: "JPY",
@@ -211,7 +210,7 @@ describe("Payments Router", () => {
 		});
 
 		it("should return 400 if the amount decimal places exceed 3 for KWD", async () => {
-			const res = await client.payments.transactions.$post({
+			const res = await apiClient.payments.transactions.$post({
 				json: {
 					amount: 100.1234,
 					currency: "KWD",
@@ -227,7 +226,7 @@ describe("Payments Router", () => {
 		});
 
 		it("should pass if the amount decimal places are valid for KWD", async () => {
-			const res = await client.payments.transactions.$post({
+			const res = await apiClient.payments.transactions.$post({
 				json: {
 					amount: 100.123,
 					currency: "KWD",
@@ -238,7 +237,7 @@ describe("Payments Router", () => {
 		});
 
 		it("should return 400 if the currency is BTC", async () => {
-			const res = await client.payments.transactions.$post({
+			const res = await apiClient.payments.transactions.$post({
 				json: {
 					amount: 0.001,
 					currency: "BTC",
