@@ -5,10 +5,11 @@ import { vi } from "vitest";
 
 export async function getApiClient() {
   vi.mock("../../src/database.ts", async () => ({
-    database: await MikroOrmDatabase.create(SqliteDriver, ":memory:"),
+    database: await MikroOrmDatabase.create(SqliteDriver, ":memory:")
   }));
-
-  const { app } = await import("../../src/app.ts");
   
-  return { apiClient: testClient(app), app };
+  const { database } = await import("../../src/database.ts");
+  const { app } = await import("../../src/app.ts");
+
+  return { apiClient: testClient(app), app, database };
 }

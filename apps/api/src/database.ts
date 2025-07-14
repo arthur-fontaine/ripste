@@ -3,7 +3,7 @@ import { PostgreSqlDriver } from "@mikro-orm/postgresql";
 
 const dbName = process.env["POSTGRES_DB"] || "ripste";
 const options = {
-	host: process.env["POSTGRES_HOST"] || "localhost",
+	host: process.env["POSTGRES_HOST"] || "postgres.ripste-dev.orb.local",
 	port: Number(process.env["POSTGRES_PORT"]) || 5432,
 	user: process.env["POSTGRES_USER"] || "ripste",
 	password: process.env["POSTGRES_PASSWORD"] || "your_secure_password_here",

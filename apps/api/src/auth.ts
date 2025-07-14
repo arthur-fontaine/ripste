@@ -1,7 +1,8 @@
 import { betterAuth } from "better-auth";
 import { customDatabaseAdapter } from "./better-auth-adapter.ts";
 import { database } from "./database.ts";
-import type { MiddlewareHandler } from "hono";
+import type * as Hono from "hono";
+import { openAPI } from "better-auth/plugins"
 
 export const auth = betterAuth({
 	basePath: "/auth",
@@ -20,9 +21,17 @@ export const auth = betterAuth({
 			secure: process.env["NODE_ENV"] === "production",
 		},
 	},
+	plugins: [openAPI()],
 });
 
-export const authMiddleware: MiddlewareHandler = async (c, next) => {
+export interface AuthContext extends Hono.Env {
+	Variables: {
+		user: typeof auth.$Infer.Session.user | null;
+		session: typeof auth.$Infer.Session.session | null
+	}
+}
+
+export const authMiddleware: Hono.MiddlewareHandler<AuthContext> = async (c, next) => {
 	const session = await auth.api.getSession({ headers: c.req.raw.headers });
 
 	if (!session) {

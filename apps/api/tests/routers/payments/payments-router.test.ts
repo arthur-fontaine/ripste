@@ -2,7 +2,33 @@ import { describe, it, expect } from "vitest";
 import { getApiClient } from "../../test-utils/get-api-client.ts";
 
 describe("Payments Router", async () => {
-	const { apiClient } = await getApiClient();
+	const { apiClient, app, database } = await getApiClient();
+
+	const signUpResponse = await app.fetch(new Request("https://_/auth/sign-up/email", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({
+			name: 'NFKJDNSK',
+			email: 'fndknfkds@gmail.com',
+			password: 'fneksdKNKNKdsmks.329',
+		}),
+	}));
+	const [u] = await database.user.findMany({ email: 'fndknfkds@gmail.com' });
+	await database.user.update(u!.id, { emailVerified: true });
+	console.log("Sign up response:", signUpResponse.status, await signUpResponse.text());
+	const signInResponse = await app.fetch(new Request("https://_/auth/sign-in/email", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({
+			email: 'fndknfkds@gmail.com',
+			password: 'fneksdKNKNKdsmks.329',
+		}),
+	}));
+	console.log("Sign in response:", signInResponse.status, await signInResponse.text());
 
 	describe("POST /payments/transactions", () => {
 		it("should return 201 and a location header on successful payment creation", async () => {

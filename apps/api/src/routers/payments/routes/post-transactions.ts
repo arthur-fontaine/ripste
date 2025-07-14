@@ -4,9 +4,11 @@ import * as v from "valibot";
 import { vValidatorThrower } from "../../../utils/v-validator-thrower.ts";
 import { dinar } from "../../../utils/dinar.ts";
 import { createHonoRouter } from "../../../utils/create-hono-router.ts";
+import { protectedRoute } from "../../../utils/protected-route.ts";
 
 export const postTransactionsRoute = createHonoRouter().post(
 	"/",
+	protectedRoute,
 	vValidator(
 		"json",
 		v.config(getSchema(), { abortEarly: true }),
