@@ -12,6 +12,9 @@ import type { ICheckoutThemeRepository } from "../../domain/ports/repositories/I
 import type { ICompanyRepository } from "../../domain/ports/repositories/ICompanyRepository.ts";
 import type { IJwtTokenRepository } from "../../domain/ports/repositories/IJwtTokenRepository.ts";
 import type { IOAuth2ClientRepository } from "../../domain/ports/repositories/IOAuth2ClientRepository.ts";
+import type { IOAuthApplicationRepository } from "../../domain/ports/repositories/IOAuthApplicationRepository.ts";
+import type { IOAuthAccessTokenRepository } from "../../domain/ports/repositories/IOAuthAccessTokenRepository.ts";
+import type { IOAuthConsentRepository } from "../../domain/ports/repositories/IOAuthConsentRepository.ts";
 import type { IPaymentAttemptRepository } from "../../domain/ports/repositories/IPaymentAttemptRepository.ts";
 import type { IRefundRepository } from "../../domain/ports/repositories/IRefundRepository.ts";
 import type { IStoreMemberRepository } from "../../domain/ports/repositories/IStoreMemberRepository.ts";
@@ -40,6 +43,9 @@ import { MikroOrmTransactionEventRepository } from "./repositories/MikroOrmTrans
 import { MikroOrmTransactionRepository } from "./repositories/MikroOrmTransactionRepository.ts";
 import { MikroOrmUserProfileRepository } from "./repositories/MikroOrmUserProfileRepository.ts";
 import { MikroOrmOauth2ClientRepository } from "./repositories/MikroOrmOauth2ClientRepository.ts";
+import { MikroOrmOAuthApplicationRepository } from "./repositories/MikroOrmOAuthApplicationRepository.ts";
+import { MikroOrmOAuthAccessTokenRepository } from "./repositories/MikroOrmOAuthAccessTokenRepository.ts";
+import { MikroOrmOAuthConsentRepository } from "./repositories/MikroOrmOAuthConsentRepository.ts";
 import { MikroOrmUserRepository } from "./repositories/MikroOrmUserRepository.ts";
 import { MikroOrmSessionRepository } from "./repositories/MikroOrmSessionRepository.ts";
 import { MikroOrmAccountRepository } from "./repositories/MikroOrmAccountRepository.ts";
@@ -56,6 +62,9 @@ export class MikroOrmDatabase implements IDatabase {
 		this.company = new MikroOrmCompanyRepository(params);
 		this.jwtToken = new MikroOrmJwtTokenRepository(params);
 		this.oauth2Client = new MikroOrmOauth2ClientRepository(params);
+		this.oauthApplication = new MikroOrmOAuthApplicationRepository(params);
+		this.oauthAccessToken = new MikroOrmOAuthAccessTokenRepository(params);
+		this.oauthConsent = new MikroOrmOAuthConsentRepository(params);
 		this.paymentAttempt = new MikroOrmPaymentAttemptRepository(params);
 		this.refund = new MikroOrmRefundRepository(params);
 		this.storeMember = new MikroOrmStoreMemberRepository(params);
@@ -77,6 +86,9 @@ export class MikroOrmDatabase implements IDatabase {
 	company: ICompanyRepository;
 	jwtToken: IJwtTokenRepository;
 	oauth2Client: IOAuth2ClientRepository;
+	oauthApplication: IOAuthApplicationRepository;
+	oauthAccessToken: IOAuthAccessTokenRepository;
+	oauthConsent: IOAuthConsentRepository;
 	paymentAttempt: IPaymentAttemptRepository;
 	refund: IRefundRepository;
 	storeMember: IStoreMemberRepository;

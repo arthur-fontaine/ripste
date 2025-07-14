@@ -4,6 +4,9 @@ import type { ICheckoutThemeRepository } from "./repositories/ICheckoutThemeRepo
 import type { ICompanyRepository } from "./repositories/ICompanyRepository.ts";
 import type { IJwtTokenRepository } from "./repositories/IJwtTokenRepository.ts";
 import type { IOAuth2ClientRepository } from "./repositories/IOAuth2ClientRepository.ts";
+import type { IOAuthApplicationRepository } from "./repositories/IOAuthApplicationRepository.ts";
+import type { IOAuthAccessTokenRepository } from "./repositories/IOAuthAccessTokenRepository.ts";
+import type { IOAuthConsentRepository } from "./repositories/IOAuthConsentRepository.ts";
 import type { IPaymentAttemptRepository } from "./repositories/IPaymentAttemptRepository.ts";
 import type { IRefundRepository } from "./repositories/IRefundRepository.ts";
 import type { IStoreMemberRepository } from "./repositories/IStoreMemberRepository.ts";
@@ -25,6 +28,9 @@ export interface IDatabase {
 	company: ICompanyRepository;
 	jwtToken: IJwtTokenRepository;
 	oauth2Client: IOAuth2ClientRepository;
+	oauthApplication: IOAuthApplicationRepository;
+	oauthAccessToken: IOAuthAccessTokenRepository;
+	oauthConsent: IOAuthConsentRepository;
 	paymentAttempt: IPaymentAttemptRepository;
 	refund: IRefundRepository;
 	storeMember: IStoreMemberRepository;

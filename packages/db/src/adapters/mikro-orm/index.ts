@@ -50,6 +50,24 @@ export type {
 } from "../../domain/models/IOAuth2Client.ts";
 
 export type {
+	IOAuthApplication,
+	IInsertOAuthApplication,
+	IUpdateOAuthApplication,
+} from "../../domain/models/IOAuthApplication.ts";
+
+export type {
+	IOAuthAccessToken,
+	IInsertOAuthAccessToken,
+	IUpdateOAuthAccessToken,
+} from "../../domain/models/IOAuthAccessToken.ts";
+
+export type {
+	IOAuthConsent,
+	IInsertOAuthConsent,
+	IUpdateOAuthConsent,
+} from "../../domain/models/IOAuthConsent.ts";
+
+export type {
 	IPaymentAttempt,
 	IInsertPaymentAttempt,
 	IUpdatePaymentAttempt,

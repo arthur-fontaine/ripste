@@ -9,6 +9,12 @@ import type {
 	IAccount,
 	IInsertVerification,
 	IVerification,
+	IOAuthApplication,
+	IInsertOAuthApplication,
+	IOAuthAccessToken,
+	IInsertOAuthAccessToken,
+	IOAuthConsent,
+	IInsertOAuthConsent,
 } from "@ripste/db/mikro-orm";
 
 interface BetterAuthUser {
@@ -59,17 +65,60 @@ interface BetterAuthVerification {
 	updatedAt?: Date;
 }
 
+interface BetterAuthOAuthApplication {
+	id?: string;
+	clientId: string;
+	clientSecret: string;
+	name: string;
+	redirectURLs: string;
+	metadata?: string | null;
+	type: string;
+	disabled: boolean;
+	userId?: string | null;
+	createdAt?: Date;
+	updatedAt?: Date;
+}
+
+interface BetterAuthOAuthAccessToken {
+	id?: string;
+	accessToken: string;
+	refreshToken: string;
+	accessTokenExpiresAt: Date;
+	refreshTokenExpiresAt: Date;
+	clientId: string;
+	userId: string;
+	scopes: string;
+	createdAt?: Date;
+	updatedAt?: Date;
+}
+
+interface BetterAuthOAuthConsent {
+	id?: string;
+	userId: string;
+	clientId: string;
+	scopes: string;
+	consentGiven: boolean;
+	createdAt?: Date;
+	updatedAt?: Date;
+}
+
 type BetterAuthData =
 	| BetterAuthUser
 	| BetterAuthSession
 	| BetterAuthAccount
-	| BetterAuthVerification;
-type DatabaseEntity = IUser | ISession | IAccount | IVerification;
+	| BetterAuthVerification
+	| BetterAuthOAuthApplication
+	| BetterAuthOAuthAccessToken
+	| BetterAuthOAuthConsent;
+type DatabaseEntity = IUser | ISession | IAccount | IVerification | IOAuthApplication | IOAuthAccessToken | IOAuthConsent;
 type InsertData =
 	| IInsertUser
 	| IInsertSession
 	| IInsertAccount
-	| IInsertVerification;
+	| IInsertVerification
+	| IInsertOAuthApplication
+	| IInsertOAuthAccessToken
+	| IInsertOAuthConsent;
 
 type WhereCondition = {
 	field: string;
@@ -97,6 +146,9 @@ export interface CustomDatabaseAdapterConfig {
 		session?: Record<string, string>;
 		account?: Record<string, string>;
 		verification?: Record<string, string>;
+		oauthApplication?: Record<string, string>;
+		oauthAccessToken?: Record<string, string>;
+		oauthConsent?: Record<string, string>;
 	};
 	/**
 	 * Custom ID generation function
@@ -169,6 +221,12 @@ export const customDatabaseAdapter = (
 					return await db.account.insert(data as IInsertAccount);
 				case "verification":
 					return await db.verification.insert(data as IInsertVerification);
+				case "oauthApplication":
+					return await db.oauthApplication.insert(data as IInsertOAuthApplication);
+				case "oauthAccessToken":
+					return await db.oauthAccessToken.insert(data as IInsertOAuthAccessToken);
+				case "oauthConsent":
+					return await db.oauthConsent.insert(data as IInsertOAuthConsent);
 				default:
 					throw new Error(`Unknown model: ${model}`);
 			}
@@ -221,6 +279,21 @@ export const customDatabaseAdapter = (
 						id,
 						data as Partial<IInsertVerification>,
 					);
+				case "oauthApplication":
+					return await db.oauthApplication.update(
+						id,
+						data as Partial<IInsertOAuthApplication>,
+					);
+				case "oauthAccessToken":
+					return await db.oauthAccessToken.update(
+						id,
+						data as Partial<IInsertOAuthAccessToken>,
+					);
+				case "oauthConsent":
+					return await db.oauthConsent.update(
+						id,
+						data as Partial<IInsertOAuthConsent>,
+					);
 				default:
 					throw new Error(`Unknown model: ${model}`);
 			}
@@ -239,6 +312,12 @@ export const customDatabaseAdapter = (
 					return await db.account.findOne(id);
 				case "verification":
 					return await db.verification.findOne(id);
+				case "oauthApplication":
+					return await db.oauthApplication.findOne(id);
+				case "oauthAccessToken":
+					return await db.oauthAccessToken.findOne(id);
+				case "oauthConsent":
+					return await db.oauthConsent.findOne(id);
 				default:
 					throw new Error(`Unknown model: ${model}`);
 			}
@@ -289,6 +368,12 @@ export const customDatabaseAdapter = (
 				}
 				case "verification":
 					return await db.verification.findMany(query);
+				case "oauthApplication":
+					return await db.oauthApplication.findMany(query);
+				case "oauthAccessToken":
+					return await db.oauthAccessToken.findMany(query);
+				case "oauthConsent":
+					return await db.oauthConsent.findMany(query);
 				default:
 					throw new Error(`Unknown model: ${model}`);
 			}
@@ -308,6 +393,15 @@ export const customDatabaseAdapter = (
 						break;
 					case "verification":
 						await db.verification.delete(id);
+						break;
+					case "oauthApplication":
+						await db.oauthApplication.delete(id);
+						break;
+					case "oauthAccessToken":
+						await db.oauthAccessToken.delete(id);
+						break;
+					case "oauthConsent":
+						await db.oauthConsent.delete(id);
 						break;
 					default:
 						throw new Error(`Unknown model: ${model}`);
@@ -405,6 +499,49 @@ export const customDatabaseAdapter = (
 						updatedAt: verificationEntity.updatedAt,
 					} as BetterAuthVerification;
 				}
+				case "oauthApplication": {
+					const appEntity = entity as IOAuthApplication;
+					return {
+						id: appEntity.id,
+						clientId: appEntity.clientId,
+						clientSecret: appEntity.clientSecret,
+						name: appEntity.name,
+						redirectURLs: appEntity.redirectURLs,
+						metadata: appEntity.metadata,
+						type: appEntity.type,
+						disabled: appEntity.disabled,
+						userId: appEntity.userId,
+						createdAt: appEntity.createdAt,
+						updatedAt: appEntity.updatedAt,
+					} as BetterAuthOAuthApplication;
+				}
+				case "oauthAccessToken": {
+					const tokenEntity = entity as IOAuthAccessToken;
+					return {
+						id: tokenEntity.id,
+						accessToken: tokenEntity.accessToken,
+						refreshToken: tokenEntity.refreshToken,
+						accessTokenExpiresAt: tokenEntity.accessTokenExpiresAt,
+						refreshTokenExpiresAt: tokenEntity.refreshTokenExpiresAt,
+						clientId: tokenEntity.clientId,
+						userId: tokenEntity.userId,
+						scopes: tokenEntity.scopes,
+						createdAt: tokenEntity.createdAt,
+						updatedAt: tokenEntity.updatedAt,
+					} as BetterAuthOAuthAccessToken;
+				}
+				case "oauthConsent": {
+					const consentEntity = entity as IOAuthConsent;
+					return {
+						id: consentEntity.id,
+						userId: consentEntity.userId,
+						clientId: consentEntity.clientId,
+						scopes: consentEntity.scopes,
+						consentGiven: consentEntity.consentGiven,
+						createdAt: consentEntity.createdAt,
+						updatedAt: consentEntity.updatedAt,
+					} as BetterAuthOAuthConsent;
+				}
 				default:
 					return entity as BetterAuthData;
 			}
@@ -490,6 +627,40 @@ export const customDatabaseAdapter = (
 						type: data["type"] as "email" | "phone" | "otp" | "password-reset",
 					} as IInsertVerification;
 				}
+				case "oauthApplication": {
+					return {
+						id: data["id"] as string | undefined,
+						clientId: data["clientId"] as string,
+						clientSecret: data["clientSecret"] as string,
+						name: data["name"] as string,
+						redirectURLs: data["redirectURLs"] as string,
+						metadata: data["metadata"] as string | null,
+						type: data["type"] as string,
+						disabled: data["disabled"] as boolean,
+						userId: data["userId"] as string | null,
+					} as IInsertOAuthApplication;
+				}
+				case "oauthAccessToken": {
+					return {
+						id: data["id"] as string | undefined,
+						accessToken: data["accessToken"] as string,
+						refreshToken: data["refreshToken"] as string,
+						accessTokenExpiresAt: data["accessTokenExpiresAt"] as Date,
+						refreshTokenExpiresAt: data["refreshTokenExpiresAt"] as Date,
+						clientId: data["clientId"] as string,
+						userId: data["userId"] as string,
+						scopes: data["scopes"] as string,
+					} as IInsertOAuthAccessToken;
+				}
+				case "oauthConsent": {
+					return {
+						id: data["id"] as string | undefined,
+						userId: data["userId"] as string,
+						clientId: data["clientId"] as string,
+						scopes: data["scopes"] as string,
+						consentGiven: data["consentGiven"] as boolean,
+					} as IInsertOAuthConsent;
+				}
 				default:
 					throw new Error(`Unknown model: ${model}`);
 			}
@@ -508,7 +679,7 @@ export const customDatabaseAdapter = (
 				debugLog("create", { model, data, select });
 
 				const processedData: Record<string, unknown> = { ...data };
-				if (config.generateId && !processedData["id"]) {
+				if (config.generateId) {
 					processedData["id"] = config.generateId();
 				}
 
@@ -937,7 +1108,13 @@ export const createCustomDatabaseAdapterWithMappings = (
 		fieldMappings.verification = betterAuthConfig.verification.fields;
 	}
 
-	const generateId = betterAuthConfig?.advanced?.database?.generateId;
+	let generateId: () => string;
+
+	if (betterAuthConfig?.advanced?.database?.generateId) {
+		generateId = betterAuthConfig.advanced.database.generateId;
+	} else {
+		generateId = () => crypto.randomUUID();
+	}
 
 	return customDatabaseAdapter(db, {
 		...config,
