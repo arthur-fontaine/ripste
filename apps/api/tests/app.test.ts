@@ -1,18 +1,12 @@
 import { testClient } from "hono/testing";
-import { describe, it, expect, vi } from "vitest";
-import { MikroOrmDatabase } from "@ripste/db/mikro-orm";
-import { SqliteDriver } from "@mikro-orm/sqlite";
-
-vi.mock("../src/database.ts", async () => ({
-	database: await MikroOrmDatabase.create(SqliteDriver, ":memory:"),
-}));
+import { describe, it, expect } from "vitest";
+import { getApiClient } from "./test-utils/get-api-client.ts";
 
 describe("Ping Endpoint", async () => {
-	const { app } = await import("../src/app.ts");
-	const client = testClient(app);
+	const { apiClient } = await getApiClient();
 
 	it("should return ping response", async () => {
-		const res = await client.ping.$get();
+		const res = await apiClient.ping.$get();
 
 		expect(res.status).toBe(200);
 		expect(await res.json()).toEqual({
