@@ -13,16 +13,18 @@ export interface IOAuthApplicationTable extends IBaseModel {
 	userId?: string | null;
 }
 
-export interface IOAuthApplication extends ISU.Selectable<IOAuthApplicationTable> {}
-export interface IInsertOAuthApplication extends ISU.Insertable<IOAuthApplicationTable> {}
-export interface IUpdateOAuthApplication extends ISU.Updateable<IOAuthApplicationTable> {}
+export interface IOAuthApplication
+	extends ISU.Selectable<IOAuthApplicationTable> {}
+export interface IInsertOAuthApplication
+	extends ISU.Insertable<IOAuthApplicationTable> {}
+export interface IUpdateOAuthApplication
+	extends ISU.Updateable<IOAuthApplicationTable> {}
 
-export const generateFakeOAuthApplication = createFakeGenerator<IOAuthApplication>(
-	"IOAuthApplication",
-	__filename,
-);
+export const generateFakeOAuthApplication =
+	createFakeGenerator<IOAuthApplication>("IOAuthApplication", __filename);
 
-export const generateFakeInsertOAuthApplication = createFakeGenerator<IInsertOAuthApplication>(
-	"IInsertOAuthApplication",
-	__filename,
-);
+export const generateFakeInsertOAuthApplication =
+	createFakeGenerator<IInsertOAuthApplication>(
+		"IInsertOAuthApplication",
+		__filename,
+	);

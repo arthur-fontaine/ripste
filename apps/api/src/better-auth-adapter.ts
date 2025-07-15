@@ -110,7 +110,14 @@ type BetterAuthData =
 	| BetterAuthOAuthApplication
 	| BetterAuthOAuthAccessToken
 	| BetterAuthOAuthConsent;
-type DatabaseEntity = IUser | ISession | IAccount | IVerification | IOAuthApplication | IOAuthAccessToken | IOAuthConsent;
+type DatabaseEntity =
+	| IUser
+	| ISession
+	| IAccount
+	| IVerification
+	| IOAuthApplication
+	| IOAuthAccessToken
+	| IOAuthConsent;
 type InsertData =
 	| IInsertUser
 	| IInsertSession
@@ -222,9 +229,13 @@ export const customDatabaseAdapter = (
 				case "verification":
 					return await db.verification.insert(data as IInsertVerification);
 				case "oauthApplication":
-					return await db.oauthApplication.insert(data as IInsertOAuthApplication);
+					return await db.oauthApplication.insert(
+						data as IInsertOAuthApplication,
+					);
 				case "oauthAccessToken":
-					return await db.oauthAccessToken.insert(data as IInsertOAuthAccessToken);
+					return await db.oauthAccessToken.insert(
+						data as IInsertOAuthAccessToken,
+					);
 				case "oauthConsent":
 					return await db.oauthConsent.insert(data as IInsertOAuthConsent);
 				default:

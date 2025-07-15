@@ -12,16 +12,18 @@ export interface IOAuthAccessTokenTable extends IBaseModel {
 	scopes: string;
 }
 
-export interface IOAuthAccessToken extends ISU.Selectable<IOAuthAccessTokenTable> {}
-export interface IInsertOAuthAccessToken extends ISU.Insertable<IOAuthAccessTokenTable> {}
-export interface IUpdateOAuthAccessToken extends ISU.Updateable<IOAuthAccessTokenTable> {}
+export interface IOAuthAccessToken
+	extends ISU.Selectable<IOAuthAccessTokenTable> {}
+export interface IInsertOAuthAccessToken
+	extends ISU.Insertable<IOAuthAccessTokenTable> {}
+export interface IUpdateOAuthAccessToken
+	extends ISU.Updateable<IOAuthAccessTokenTable> {}
 
-export const generateFakeOAuthAccessToken = createFakeGenerator<IOAuthAccessToken>(
-	"IOAuthAccessToken",
-	__filename,
-);
+export const generateFakeOAuthAccessToken =
+	createFakeGenerator<IOAuthAccessToken>("IOAuthAccessToken", __filename);
 
-export const generateFakeInsertOAuthAccessToken = createFakeGenerator<IInsertOAuthAccessToken>(
-	"IInsertOAuthAccessToken",
-	__filename,
-);
+export const generateFakeInsertOAuthAccessToken =
+	createFakeGenerator<IInsertOAuthAccessToken>(
+		"IInsertOAuthAccessToken",
+		__filename,
+	);
