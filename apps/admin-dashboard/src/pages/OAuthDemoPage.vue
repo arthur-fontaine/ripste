@@ -142,8 +142,9 @@ const startOAuthFlow = () => {
 	authUrl.searchParams.set("redirect_uri", redirectUri.value);
 	authUrl.searchParams.set("scope", "openid profile email");
 
-	(globalThis as unknown as { location: { href: string } }).location.href =
-		authUrl.toString();
+	(
+		globalThis as typeof globalThis & { location: { href: string } }
+	).location.href = authUrl.toString();
 };
 </script>
 

@@ -83,16 +83,17 @@ const handleConsent = async (accept: boolean) => {
 
 	try {
 		const response = await authClient.oauth2.consent({ accept });
-		console.log("Consent response:", response);
 
 		if (response.data?.redirectURI) {
-			(globalThis as unknown as { location: { href: string } }).location.href =
-				response.data.redirectURI;
+			(
+				globalThis as typeof globalThis & { location: { href: string } }
+			).location.href = response.data.redirectURI;
 		} else if (response.error) {
 			error.value = response.error.message || "Failed to process consent";
 		} else {
-			(globalThis as unknown as { location: { href: string } }).location.href =
-				"/";
+			(
+				globalThis as typeof globalThis & { location: { href: string } }
+			).location.href = "/";
 		}
 	} catch (err: unknown) {
 		console.error("Consent failed:", err);

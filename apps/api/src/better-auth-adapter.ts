@@ -324,7 +324,6 @@ export const customDatabaseAdapter = (
 				case "verification":
 					return await db.verification.findOne(id);
 				case "oauthApplication":
-					console.log("Finding OAuth Application by ID:", id);
 					if (field === "clientId") {
 						return await db.oauthApplication.findOneByClientId(id);
 					}

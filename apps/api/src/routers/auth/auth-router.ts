@@ -6,7 +6,10 @@ export const authRouter = new Hono()
 	.use(
 		"*",
 		cors({
-			origin: ["http://localhost:5173", "http://localhost:3000"], // Ports du frontend Vue.js et de l'API
+			origin: (
+				process.env["ALLOWED_ORIGINS"] ||
+				"http://localhost:5173,http://localhost:3000"
+			).split(","),
 			allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 			allowHeaders: ["Content-Type", "Authorization"],
 			credentials: true,

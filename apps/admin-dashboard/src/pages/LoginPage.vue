@@ -72,7 +72,6 @@ const handleSubmit = async () => {
 		});
 
 		if (result.data) {
-			console.log("Login successful:", result);
 			router.push("/");
 		} else if (result.error) {
 			error.value = result.error.message || "Login failed";
