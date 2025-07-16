@@ -6,4 +6,6 @@ import type {
 } from "../../models/ISession.ts";
 
 export interface ISessionRepository
-	extends IBaseRepository<ISession, IInsertSession, IUpdateSession> {}
+	extends IBaseRepository<ISession, IInsertSession, IUpdateSession> {
+	deleteByToken(token: string): Promise<void>;
+}

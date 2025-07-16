@@ -13,4 +13,13 @@ export class MikroOrmOAuthApplicationRepository
 		IInsertOAuthApplication,
 		IUpdateOAuthApplication
 	>(MikroOrmOAuthApplicationModel)
-	implements IOAuthApplicationRepository {}
+	implements IOAuthApplicationRepository
+{
+	async findOneByClientId(clientId: string): Promise<IOAuthApplication | null> {
+		const entity = await this._em.findOne(MikroOrmOAuthApplicationModel, {
+			clientId,
+			deletedAt: null,
+		});
+		return entity || null;
+	}
+}

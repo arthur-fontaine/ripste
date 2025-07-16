@@ -10,4 +10,6 @@ export interface IOAuthApplicationRepository
 		IOAuthApplication,
 		IInsertOAuthApplication,
 		IUpdateOAuthApplication
-	> {}
+	> {
+	findOneByClientId(clientId: string): Promise<IOAuthApplication | null>;
+}

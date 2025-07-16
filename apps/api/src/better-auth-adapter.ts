@@ -60,7 +60,6 @@ interface BetterAuthVerification {
 	identifier: string;
 	value: string;
 	expiresAt: Date;
-	type: "email" | "phone" | "otp" | "password-reset";
 	createdAt?: Date;
 	updatedAt?: Date;
 }
@@ -313,6 +312,7 @@ export const customDatabaseAdapter = (
 		async function findOneEntity(
 			model: string,
 			id: string,
+			field: string,
 		): Promise<DatabaseEntity | null> {
 			switch (model) {
 				case "user":
@@ -324,6 +324,10 @@ export const customDatabaseAdapter = (
 				case "verification":
 					return await db.verification.findOne(id);
 				case "oauthApplication":
+					console.log("Finding OAuth Application by ID:", id);
+					if (field === "clientId") {
+						return await db.oauthApplication.findOneByClientId(id);
+					}
 					return await db.oauthApplication.findOne(id);
 				case "oauthAccessToken":
 					return await db.oauthAccessToken.findOne(id);
@@ -363,11 +367,15 @@ export const customDatabaseAdapter = (
 				}
 				case "session": {
 					let transformedQuery = { ...query };
-					if (transformedQuery["userId"]) {
+					// Only transform userId to user if we don't have a token query
+					// This prevents infinite loops when searching by token
+					if (transformedQuery["userId"] && !transformedQuery["token"]) {
 						const { userId, ...rest } = transformedQuery;
 						transformedQuery = { ...rest, user: userId };
 					}
-					return await db.session.findMany(transformedQuery);
+
+					const results = await db.session.findMany(transformedQuery);
+					return results;
 				}
 				case "account": {
 					let transformedQuery = { ...query };
@@ -390,14 +398,22 @@ export const customDatabaseAdapter = (
 			}
 		}
 
-		async function deleteEntity(model: string, id: string): Promise<void> {
+		async function deleteEntity(
+			model: string,
+			id: string,
+			field: string,
+		): Promise<void> {
 			try {
 				switch (model) {
 					case "user":
 						await db.user.delete(id);
 						break;
 					case "session":
-						await db.session.delete(id);
+						if (field === "token") {
+							await db.session.deleteByToken(id);
+						} else {
+							await db.session.delete(id);
+						}
 						break;
 					case "account":
 						await db.account.delete(id);
@@ -505,7 +521,6 @@ export const customDatabaseAdapter = (
 						identifier: verificationEntity.identifier,
 						value: verificationEntity.value,
 						expiresAt: verificationEntity.expiresAt,
-						type: verificationEntity.type,
 						createdAt: verificationEntity.createdAt,
 						updatedAt: verificationEntity.updatedAt,
 					} as BetterAuthVerification;
@@ -635,7 +650,6 @@ export const customDatabaseAdapter = (
 						identifier: data["identifier"] as string,
 						value: data["value"] as string,
 						expiresAt: data["expiresAt"] as Date,
-						type: data["type"] as "email" | "phone" | "otp" | "password-reset",
 					} as IInsertVerification;
 				}
 				case "oauthApplication": {
@@ -789,6 +803,7 @@ export const customDatabaseAdapter = (
 					const result = await findOneEntity(
 						model,
 						whereCondition.value as string,
+						whereCondition.field as string,
 					);
 					return result
 						? (mapEntityToBetterAuth(result, model) as unknown as T)
@@ -889,6 +904,22 @@ export const customDatabaseAdapter = (
 						const session = sessions[0];
 						return session
 							? (mapEntityToBetterAuth(session, model) as unknown as T)
+							: null;
+					}
+				}
+
+				if (model === "oauthApplication") {
+					const clientIdCondition = transformedWhere.find(
+						(w: WhereCondition) => w.field === "clientId",
+					);
+
+					if (clientIdCondition) {
+						const apps = await findManyEntities(model, {
+							clientId: clientIdCondition.value as string,
+						});
+						const app = apps[0];
+						return app
+							? (mapEntityToBetterAuth(app, model) as unknown as T)
 							: null;
 					}
 				}
@@ -1014,14 +1045,97 @@ export const customDatabaseAdapter = (
 			}: { model: string; where: WhereCondition[] }): Promise<void> => {
 				debugLog("delete", { model, where });
 
-				const whereCondition = where.find(
-					(w: WhereCondition) => w.field === "id",
-				);
-				if (!whereCondition) {
-					throw new Error("Delete requires ID field");
+				const idCondition = where.find((w: WhereCondition) => w.field === "id");
+
+				if (idCondition) {
+					await deleteEntity(model, idCondition.value as string, "id");
+					return;
 				}
 
-				await deleteEntity(model, whereCondition.value as string);
+				switch (model) {
+					case "session": {
+						const tokenCondition = where.find(
+							(w: WhereCondition) => w.field === "token",
+						);
+						if (tokenCondition) {
+							await deleteEntity(
+								model,
+								tokenCondition.value as string,
+								"token",
+							);
+							return;
+						}
+						break;
+					}
+					case "oauthApplication": {
+						const clientIdCondition = where.find(
+							(w: WhereCondition) => w.field === "clientId",
+						);
+						if (clientIdCondition) {
+							const app = await db.oauthApplication.findOneByClientId(
+								clientIdCondition.value as string,
+							);
+							if (app) {
+								await deleteEntity(model, app.id, "id");
+							}
+							return;
+						}
+						break;
+					}
+					case "verification": {
+						const identifierCondition = where.find(
+							(w: WhereCondition) => w.field === "identifier",
+						);
+						if (identifierCondition) {
+							const verifications = await findManyEntities(model, {
+								identifier: identifierCondition.value as string,
+							});
+							for (const verification of verifications) {
+								await deleteEntity(model, verification.id, "id");
+							}
+							return;
+						}
+						break;
+					}
+					case "account": {
+						const userIdCondition = where.find(
+							(w: WhereCondition) => w.field === "userId",
+						);
+						const providerIdCondition = where.find(
+							(w: WhereCondition) => w.field === "providerId",
+						);
+
+						if (userIdCondition && providerIdCondition) {
+							const accounts = await findManyEntities(model, {
+								userId: userIdCondition.value as string,
+								providerId: providerIdCondition.value as string,
+							});
+							for (const account of accounts) {
+								await deleteEntity(model, account.id, "id");
+							}
+							return;
+						} else if (userIdCondition) {
+							const accounts = await findManyEntities(model, {
+								userId: userIdCondition.value as string,
+							});
+							for (const account of accounts) {
+								await deleteEntity(model, account.id, "id");
+							}
+							return;
+						}
+						break;
+					}
+				}
+
+				const query: Record<string, unknown> = {};
+				for (const condition of where) {
+					query[condition.field] = condition.value;
+				}
+
+				const entitiesToDelete = await findManyEntities(model, query);
+				for (const entity of entitiesToDelete) {
+					await deleteEntity(model, entity.id, "id");
+				}
 			},
 
 			deleteMany: async ({
@@ -1052,7 +1166,7 @@ export const customDatabaseAdapter = (
 
 				for (const entity of entitiesToDelete) {
 					try {
-						await deleteEntity(model, entity.id);
+						await deleteEntity(model, entity.id, "id");
 						deletedCount++;
 					} catch (error) {
 						debugLog("deleteMany error", { entity: entity.id, error });
