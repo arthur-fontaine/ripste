@@ -18,13 +18,15 @@ export const auth = betterAuth({
 		enabled: true,
 		requireEmailVerification: true,
 	},
+	trustedOrigins: ["http://localhost:5173", "http://localhost:3000"],
 	session: {
 		expiresIn: 60 * 60 * 24 * 7,
 		updateAge: 60 * 60 * 24,
 	},
 	plugins: [
 		oidcProvider({
-			loginPage: "/sign-in",
+			loginPage: "http://localhost:5173/login",
+			consentPage: "http://localhost:5173/consent",
 		}),
 		openAPI(),
 	],
