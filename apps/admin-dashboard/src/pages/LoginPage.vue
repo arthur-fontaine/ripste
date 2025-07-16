@@ -77,9 +77,10 @@ const handleSubmit = async () => {
 		} else if (result.error) {
 			error.value = result.error.message || "Login failed";
 		}
-	} catch (err: any) {
+	} catch (err: unknown) {
 		console.error("Login failed:", err);
-		error.value = err.message || "An error occurred during login";
+		error.value =
+			err instanceof Error ? err.message : "An error occurred during login";
 	} finally {
 		loading.value = false;
 	}

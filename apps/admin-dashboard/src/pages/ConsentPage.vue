@@ -68,11 +68,9 @@ const processing = ref(false);
 const error = ref("");
 
 onMounted(() => {
-	// Check if user is logged in
-	if (session.data) {
+	if (session.value.data) {
 		loading.value = false;
 	} else {
-		// Redirect to login if not authenticated
 		setTimeout(() => {
 			loading.value = false;
 		}, 1000);
@@ -88,16 +86,20 @@ const handleConsent = async (accept: boolean) => {
 		console.log("Consent response:", response);
 
 		if (response.data?.redirectURI) {
-			window.location.href = response.data.redirectURI;
+			(globalThis as unknown as { location: { href: string } }).location.href =
+				response.data.redirectURI;
 		} else if (response.error) {
 			error.value = response.error.message || "Failed to process consent";
 		} else {
-			// Fallback redirect
-			window.location.href = "/";
+			(globalThis as unknown as { location: { href: string } }).location.href =
+				"/";
 		}
-	} catch (err: any) {
+	} catch (err: unknown) {
 		console.error("Consent failed:", err);
-		error.value = err.message || "An error occurred while processing consent";
+		error.value =
+			err instanceof Error
+				? err.message
+				: "An error occurred while processing consent";
 	} finally {
 		processing.value = false;
 	}

@@ -90,16 +90,17 @@ const handleSubmit = async () => {
 		if (result.data) {
 			success.value =
 				"Account created successfully! Please check your email to verify your account.";
-			// Reset form
+
 			name.value = "";
 			email.value = "";
 			password.value = "";
 		} else if (result.error) {
 			error.value = result.error.message || "Sign up failed";
 		}
-	} catch (err: any) {
+	} catch (err: unknown) {
 		console.error("Sign up failed:", err);
-		error.value = err.message || "An error occurred during sign up";
+		error.value =
+			err instanceof Error ? err.message : "An error occurred during sign up";
 	} finally {
 		loading.value = false;
 	}

@@ -119,9 +119,12 @@ const registerApp = async () => {
 		} else if (response.error) {
 			error.value = response.error.message || "Failed to register app";
 		}
-	} catch (err: any) {
+	} catch (err: unknown) {
 		console.error("App registration failed:", err);
-		error.value = err.message || "An error occurred during app registration";
+		error.value =
+			err instanceof Error
+				? err.message
+				: "An error occurred during app registration";
 	} finally {
 		registeringApp.value = false;
 	}
@@ -133,14 +136,14 @@ const startOAuthFlow = () => {
 		return;
 	}
 
-	const authUrl = new URL(`http://localhost:3000/auth/oauth2/authorize`);
+	const authUrl = new URL("http://localhost:3000/auth/oauth2/authorize");
 	authUrl.searchParams.set("client_id", testClientId.value);
 	authUrl.searchParams.set("response_type", "code");
 	authUrl.searchParams.set("redirect_uri", redirectUri.value);
 	authUrl.searchParams.set("scope", "openid profile email");
 
-	// Navigate to the authorization URL
-	(window as any).location.href = authUrl.toString();
+	(globalThis as unknown as { location: { href: string } }).location.href =
+		authUrl.toString();
 };
 </script>
 
