@@ -15,7 +15,6 @@ import type {
 import { MikroOrmStoreModel } from "./MikroOrmStoreModel.ts";
 import { MikroOrmUserModel } from "./MikroOrmUserModel.ts";
 import { MikroOrmJwtTokenModel } from "./MikroOrmJwtTokenModel.ts";
-import { MikroOrmOauth2ClientModel } from "./MikroOrmOauth2ClientModel.ts";
 import { MikroOrmTransactionModel } from "./MikroOrmTransactionModel.ts";
 
 const CredentialType = {
@@ -73,19 +72,6 @@ export class MikroOrmApiCredentialModel
 
 	get jwtTokenId(): string | null {
 		return this.jwtToken ? this.jwtToken.id : null;
-	}
-
-	@OneToMany(
-		() => MikroOrmOauth2ClientModel,
-		(client) => client.credential,
-		{
-			nullable: true,
-		},
-	)
-	oauth2Client: MikroOrmOauth2ClientModel | null = null;
-
-	get oauth2ClientId(): string | null {
-		return this.oauth2Client ? this.oauth2Client.id : null;
 	}
 
 	@OneToMany(

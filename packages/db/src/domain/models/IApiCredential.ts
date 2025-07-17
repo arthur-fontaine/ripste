@@ -1,7 +1,6 @@
 import type { ISU } from "isutypes";
 import type { IBaseModel } from "./IBaseModel.ts";
 import type { IJwtToken } from "./IJwtToken.ts";
-import type { IOAuth2Client } from "./IOAuth2Client.ts";
 import type { IStore } from "./IStore.ts";
 import type { ITransaction } from "./ITransaction.ts";
 import type { IUser } from "./IUser.ts";
@@ -17,11 +16,7 @@ export interface IApiCredentialTable extends IBaseModel {
 	store: ISU.SingleReference<IStore | null, "storeId", "id">;
 	createdByUser: ISU.SingleReference<IUser | null, "createdByUserId", "id">;
 	jwtToken: ISU.SingleReference<IJwtToken | null, "jwtTokenId", "id">;
-	oauth2Client: ISU.SingleReference<
-		IOAuth2Client | null,
-		"oauth2ClientId",
-		"id"
-	>;
+
 	transactions: ISU.ManyReference<ITransaction>;
 }
 
