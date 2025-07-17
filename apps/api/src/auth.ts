@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { customDatabaseAdapter } from "./better-auth-adapter.ts";
 import { database } from "./database.ts";
+import { emailService } from "./email.ts";
 
 export const auth = betterAuth({
 	basePath: "/auth",
@@ -8,6 +9,18 @@ export const auth = betterAuth({
 	emailAndPassword: {
 		enabled: true,
 		requireEmailVerification: true,
+		sendEmailVerificationOnSignUp: true,
+	},
+	emailVerification: {
+		sendOnSignUp: true,
+		autoSignInAfterVerification: true,
+		sendVerificationEmail: async ({ user, url }) => {
+			await emailService.sendRegistrationConfirmation({
+				userEmail: user.email,
+				userName: user.name || user.email,
+				confirmationUrl: url,
+			});
+		},
 	},
 	session: {
 		expiresIn: 60 * 60 * 24 * 7,
