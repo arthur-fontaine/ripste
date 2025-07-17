@@ -5,6 +5,7 @@ import { cors } from "hono/cors";
 import { authRouter } from "./routers/auth/auth-router.ts";
 import { paymentsRouter } from "./routers/payments/payments-router.ts";
 import { createHonoRouter } from "./utils/create-hono-router.ts";
+import { adminRouter } from "./routers/admin/admin-router.ts";
 
 const { printMetrics, registerMetrics } = prometheus();
 
@@ -26,4 +27,5 @@ export const app = createHonoRouter()
 	.route("/ping", pingRouter)
 	.route("/auth", authRouter)
 	.route("/payments", paymentsRouter)
+	.route("/admin", adminRouter)
 	.get("/metrics", printMetrics);
