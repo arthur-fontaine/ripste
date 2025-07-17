@@ -18,15 +18,20 @@ export const auth = betterAuth({
 		enabled: true,
 		requireEmailVerification: true,
 	},
-	trustedOrigins: ["http://localhost:5173", "http://localhost:3000"],
+	trustedOrigins: (
+		process.env["ALLOWED_ORIGINS"] ||
+		"http://localhost:5173,http://localhost:3000"
+	).split(","),
 	session: {
 		expiresIn: 60 * 60 * 24 * 7,
 		updateAge: 60 * 60 * 24,
 	},
 	plugins: [
 		oidcProvider({
-			loginPage: "http://localhost:5173/login",
-			consentPage: "http://localhost:5173/consent",
+			loginPage:
+				process.env["OIDC_LOGIN_PAGE"] || "http://localhost:5173/login",
+			consentPage:
+				process.env["OIDC_CONSENT_PAGE"] || "http://localhost:5173/consent",
 		}),
 		openAPI(),
 	],
