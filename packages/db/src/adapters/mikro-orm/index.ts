@@ -44,12 +44,6 @@ export type {
 } from "../../domain/models/IJwtToken.ts";
 
 export type {
-	IOAuth2Client,
-	IInsertOAuth2Client,
-	IUpdateOAuth2Client,
-} from "../../domain/models/IOAuth2Client.ts";
-
-export type {
 	IOAuthApplication,
 	IInsertOAuthApplication,
 	IUpdateOAuthApplication,

@@ -11,7 +11,6 @@ import type { ICheckoutPageRepository } from "../../domain/ports/repositories/IC
 import type { ICheckoutThemeRepository } from "../../domain/ports/repositories/ICheckoutThemeRepository.ts";
 import type { ICompanyRepository } from "../../domain/ports/repositories/ICompanyRepository.ts";
 import type { IJwtTokenRepository } from "../../domain/ports/repositories/IJwtTokenRepository.ts";
-import type { IOAuth2ClientRepository } from "../../domain/ports/repositories/IOAuth2ClientRepository.ts";
 import type { IOAuthApplicationRepository } from "../../domain/ports/repositories/IOAuthApplicationRepository.ts";
 import type { IOAuthAccessTokenRepository } from "../../domain/ports/repositories/IOAuthAccessTokenRepository.ts";
 import type { IOAuthConsentRepository } from "../../domain/ports/repositories/IOAuthConsentRepository.ts";
@@ -42,7 +41,6 @@ import { MikroOrmThemeCustomizationRepository } from "./repositories/MikroOrmThe
 import { MikroOrmTransactionEventRepository } from "./repositories/MikroOrmTransactionEventRepository.ts";
 import { MikroOrmTransactionRepository } from "./repositories/MikroOrmTransactionRepository.ts";
 import { MikroOrmUserProfileRepository } from "./repositories/MikroOrmUserProfileRepository.ts";
-import { MikroOrmOauth2ClientRepository } from "./repositories/MikroOrmOauth2ClientRepository.ts";
 import { MikroOrmOAuthApplicationRepository } from "./repositories/MikroOrmOAuthApplicationRepository.ts";
 import { MikroOrmOAuthAccessTokenRepository } from "./repositories/MikroOrmOAuthAccessTokenRepository.ts";
 import { MikroOrmOAuthConsentRepository } from "./repositories/MikroOrmOAuthConsentRepository.ts";
@@ -61,7 +59,6 @@ export class MikroOrmDatabase implements IDatabase {
 		this.checkoutTheme = new MikroOrmCheckoutThemeRepository(params);
 		this.company = new MikroOrmCompanyRepository(params);
 		this.jwtToken = new MikroOrmJwtTokenRepository(params);
-		this.oauth2Client = new MikroOrmOauth2ClientRepository(params);
 		this.oauthApplication = new MikroOrmOAuthApplicationRepository(params);
 		this.oauthAccessToken = new MikroOrmOAuthAccessTokenRepository(params);
 		this.oauthConsent = new MikroOrmOAuthConsentRepository(params);
@@ -85,7 +82,6 @@ export class MikroOrmDatabase implements IDatabase {
 	checkoutTheme: ICheckoutThemeRepository;
 	company: ICompanyRepository;
 	jwtToken: IJwtTokenRepository;
-	oauth2Client: IOAuth2ClientRepository;
 	oauthApplication: IOAuthApplicationRepository;
 	oauthAccessToken: IOAuthAccessTokenRepository;
 	oauthConsent: IOAuthConsentRepository;

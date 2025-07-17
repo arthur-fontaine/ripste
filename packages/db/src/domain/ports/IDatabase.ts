@@ -3,7 +3,6 @@ import type { ICheckoutPageRepository } from "./repositories/ICheckoutPageReposi
 import type { ICheckoutThemeRepository } from "./repositories/ICheckoutThemeRepository.ts";
 import type { ICompanyRepository } from "./repositories/ICompanyRepository.ts";
 import type { IJwtTokenRepository } from "./repositories/IJwtTokenRepository.ts";
-import type { IOAuth2ClientRepository } from "./repositories/IOAuth2ClientRepository.ts";
 import type { IOAuthApplicationRepository } from "./repositories/IOAuthApplicationRepository.ts";
 import type { IOAuthAccessTokenRepository } from "./repositories/IOAuthAccessTokenRepository.ts";
 import type { IOAuthConsentRepository } from "./repositories/IOAuthConsentRepository.ts";
@@ -27,7 +26,6 @@ export interface IDatabase {
 	checkoutTheme: ICheckoutThemeRepository;
 	company: ICompanyRepository;
 	jwtToken: IJwtTokenRepository;
-	oauth2Client: IOAuth2ClientRepository;
 	oauthApplication: IOAuthApplicationRepository;
 	oauthAccessToken: IOAuthAccessTokenRepository;
 	oauthConsent: IOAuthConsentRepository;
