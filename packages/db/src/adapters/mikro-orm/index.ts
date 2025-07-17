@@ -13,12 +13,6 @@ export type {
 } from "../../domain/models/IAccount.ts";
 
 export type {
-	IApiCredential,
-	IInsertApiCredential,
-	IUpdateApiCredential,
-} from "../../domain/models/IApiCredential.ts";
-
-export type {
 	ICheckoutPage,
 	IInsertCheckoutPage,
 	IUpdateCheckoutPage,
@@ -36,12 +30,6 @@ export type {
 	IInsertCompany,
 	IUpdateCompany,
 } from "../../domain/models/ICompany.ts";
-
-export type {
-	IJwtToken,
-	IInsertJwtToken,
-	IUpdateJwtToken,
-} from "../../domain/models/IJwtToken.ts";
 
 export type {
 	IOAuthApplication,

@@ -1,8 +1,6 @@
-import type { IApiCredentialRepository } from "./repositories/IApiCredentialRepository.ts";
 import type { ICheckoutPageRepository } from "./repositories/ICheckoutPageRepository.ts";
 import type { ICheckoutThemeRepository } from "./repositories/ICheckoutThemeRepository.ts";
 import type { ICompanyRepository } from "./repositories/ICompanyRepository.ts";
-import type { IJwtTokenRepository } from "./repositories/IJwtTokenRepository.ts";
 import type { IOAuthApplicationRepository } from "./repositories/IOAuthApplicationRepository.ts";
 import type { IOAuthAccessTokenRepository } from "./repositories/IOAuthAccessTokenRepository.ts";
 import type { IOAuthConsentRepository } from "./repositories/IOAuthConsentRepository.ts";
@@ -21,11 +19,9 @@ import type { IAccountRepository } from "./repositories/IAccountRepository.ts";
 import type { IVerificationRepository } from "./repositories/IVerificationRepository.ts";
 
 export interface IDatabase {
-	apiCredential: IApiCredentialRepository;
 	checkoutPage: ICheckoutPageRepository;
 	checkoutTheme: ICheckoutThemeRepository;
 	company: ICompanyRepository;
-	jwtToken: IJwtTokenRepository;
 	oauthApplication: IOAuthApplicationRepository;
 	oauthAccessToken: IOAuthAccessTokenRepository;
 	oauthConsent: IOAuthConsentRepository;

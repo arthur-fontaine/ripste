@@ -12,7 +12,6 @@ import type {
 	IInsertTransaction,
 } from "../../../domain/models/ITransaction.ts";
 import { MikroOrmStoreModel } from "./MikroOrmStoreModel.ts";
-import { MikroOrmApiCredentialModel } from "./MikroOrmApiCredentialModel.ts";
 import { MikroOrmTransactionEventModel } from "./MikroOrmTransactionEventModel.ts";
 import { MikroOrmCheckoutPageModel } from "./MikroOrmCheckoutPageModel.ts";
 import { MikroOrmPaymentAttemptModel } from "./MikroOrmPaymentAttemptModel.ts";
@@ -51,13 +50,6 @@ export class MikroOrmTransactionModel
 
 	get storeId(): string {
 		return this.store.id;
-	}
-
-	@ManyToOne(() => MikroOrmApiCredentialModel, { nullable: true })
-	apiCredential: MikroOrmApiCredentialModel | null = null;
-
-	get apiCredentialId(): string | null {
-		return this.apiCredential ? this.apiCredential.id : null;
 	}
 
 	@OneToMany(

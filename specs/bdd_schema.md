@@ -133,55 +133,6 @@ User-store relationship with permissions.
 
 **Index:** `user_id`, `store_id`, `(user_id, store_id)` **UNIQUE**
 
----
-
-## API Authentication
-
-### `api_credentials`
-API credentials for stores.
-
-| Column | Type | Constraints | Description |
-|---------|------|-------------|-------------|
-| `id` | `uuid` | **PK**, `gen_random_uuid()` | Unique identifier |
-| `store_id` | `uuid` | **FK** → `stores.id`, **NOT NULL** | Store reference |
-| `name` | `varchar(100)` | **NOT NULL** | Credential name |
-| `credential_type` | `enum` | `'jwt', 'oauth2'` | Authentication type |
-| `is_active` | `boolean` | Default: `true` | Active status |
-| `created_by` | `uuid` | **FK** → `users.id`, **NOT NULL** | Creator |
-| `created_at` | `timestamp` | Default: `now()` | Creation date |
-| `expires_at` | `timestamp` | | Expiration date |
-| `last_used_at` | `timestamp` | | Last usage |
-
-**Index:** `store_id`, `credential_type`, `is_active`
-
-### `jwt_tokens`
-JWT tokens for API authentication.
-
-| Column | Type | Constraints | Description |
-|---------|------|-------------|-------------|
-| `id` | `uuid` | **PK**, `gen_random_uuid()` | Unique identifier |
-| `credential_id` | `uuid` | **FK** → `api_credentials.id`, **UNIQUE** | Credential reference |
-| `token_hash` | `varchar(255)` | **UNIQUE**, **NOT NULL** | Token hash |
-| `permissions` | `text[]` | | Feature flags and permissions |
-
-**Index:** `token_hash`
-
-### `oauth2_clients`
-OAuth2 clients for authentication.
-
-| Column | Type | Constraints | Description |
-|---------|------|-------------|-------------|
-| `id` | `uuid` | **PK**, `gen_random_uuid()` | Unique identifier |
-| `credential_id` | `uuid` | **FK** → `api_credentials.id`, **UNIQUE** | Credential reference |
-| `client_id` | `varchar(255)` | **UNIQUE**, **NOT NULL** | OAuth2 client ID |
-| `client_secret_hash` | `varchar(255)` | **NOT NULL** | Client secret hash |
-| `redirect_uris` | `text[]` | **NOT NULL** | Redirect URIs |
-| `scopes` | `text[]` | | OAuth2 scopes |
-
-**Index:** `client_id`
-
----
-
 ## Customization
 
 ### `checkout_themes`
@@ -228,7 +179,6 @@ Core business: payment transactions.
 | `currency` | `varchar(3)` | Default: `'EUR'` | Currency |
 | `status` | `enum` | `'created', 'processing', 'completed', 'failed', 'cancelled'` | Status |
 | `metadata` | `jsonb` | | Merchant business data |
-| `api_credential_id` | `uuid` | **FK** → `api_credentials.id` | Creator credential |
 | `created_at` | `timestamp` | Default: `now()` | Creation date |
 | `updated_at` | `timestamp` | | Last modification date |
 
