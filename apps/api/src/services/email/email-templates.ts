@@ -4,15 +4,14 @@ import type {
 	PlatformRejectionData,
 } from "./email-service.interface.ts";
 
-export class EmailTemplates {
-	static registrationConfirmation(data: RegistrationConfirmationData): {
-		subject: string;
-		html: string;
-		text: string;
-	} {
-		const subject = "Confirmez votre inscription - Ripste";
+export function registrationConfirmation(data: RegistrationConfirmationData): {
+	subject: string;
+	html: string;
+	text: string;
+} {
+	const subject = "Confirmez votre inscription - Ripste";
 
-		const html = `
+	const html = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -41,7 +40,7 @@ export class EmailTemplates {
 				<a href="${data.confirmationUrl}" class="btn">Confirmer mon email</a>
 			</p>
 			<p>Si le bouton ne fonctionne pas, vous pouvez copier et coller ce lien dans votre navigateur :</p>
-			<p style="word-break: break-all; color: #007bff;">${data.confirmationUrl}</p>
+			<a style="word-break: break-all; color: #007bff;">${data.confirmationUrl}</a>
 			<p>Ce lien est valide pendant 24 heures.</p>
 		</div>
 		<div class="footer">
@@ -52,7 +51,7 @@ export class EmailTemplates {
 </body>
 </html>`;
 
-		const text = `
+	const text = `
 Bonjour ${data.userName},
 
 Merci de vous être inscrit sur Ripste. Pour finaliser votre inscription, veuillez confirmer votre adresse email en visitant ce lien :
@@ -66,18 +65,18 @@ Si vous n'avez pas créé de compte, vous pouvez ignorer cet email.
 © 2025 Ripste. Tous droits réservés.
 		`;
 
-		return { subject, html, text };
-	}
+	return { subject, html, text };
+}
 
-	static platformAcceptance(data: PlatformAcceptanceData): {
-		subject: string;
-		html: string;
-		text: string;
-	} {
-		const subject =
-			"Félicitations ! Votre accès à la plateforme Ripste a été approuvé";
+export function platformAcceptance(data: PlatformAcceptanceData): {
+	subject: string;
+	html: string;
+	text: string;
+} {
+	const subject =
+		"Félicitations ! Votre accès à la plateforme Ripste a été approuvé";
 
-		const html = `
+	const html = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -119,7 +118,7 @@ Si vous n'avez pas créé de compte, vous pouvez ignorer cet email.
 </body>
 </html>`;
 
-		const text = `
+	const text = `
 Bonjour ${data.userName},
 
 Excellente nouvelle ! Votre demande d'accès à la plateforme Ripste a été approuvée.
@@ -137,17 +136,17 @@ Bienvenue dans la communauté Ripste !
 © 2025 Ripste. Tous droits réservés.
 		`;
 
-		return { subject, html, text };
-	}
+	return { subject, html, text };
+}
 
-	static platformRejection(data: PlatformRejectionData): {
-		subject: string;
-		html: string;
-		text: string;
-	} {
-		const subject = "Mise à jour de votre demande d'accès - Ripste";
+export function platformRejection(data: PlatformRejectionData): {
+	subject: string;
+	html: string;
+	text: string;
+} {
+	const subject = "Mise à jour de votre demande d'accès - Ripste";
 
-		const html = `
+	const html = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -200,7 +199,7 @@ Bienvenue dans la communauté Ripste !
 </body>
 </html>`;
 
-		const text = `
+	const text = `
 Bonjour ${data.userName},
 
 Nous vous remercions pour votre intérêt pour la plateforme Ripste.
@@ -218,6 +217,5 @@ Merci pour votre intérêt pour Ripste.
 © 2025 Ripste. Tous droits réservés.
 		`;
 
-		return { subject, html, text };
-	}
+	return { subject, html, text };
 }
