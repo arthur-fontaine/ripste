@@ -12,7 +12,7 @@ vi.mock("resend", () => ({
 
 describe("ResendEmailService", () => {
 	let emailService: ResendEmailService;
-	let mockResendSend: any;
+	let mockResendSend: ReturnType<typeof vi.fn>;
 
 	beforeEach(() => {
 		vi.clearAllMocks();

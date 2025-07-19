@@ -6,12 +6,23 @@ import type {
 	PlatformAcceptanceData,
 	PlatformRejectionData,
 } from "./email-service.interface.ts";
-import { EmailTemplates } from "./email-templates.ts";
-
+import {
+	registrationConfirmation,
+	platformAcceptance,
+	platformRejection,
+} from "./email-templates.ts";
 export interface ResendEmailServiceConfig {
 	apiKey: string;
 	fromEmail: string;
 	fromName?: string;
+}
+
+interface ResendEmailData {
+	from: string;
+	to: string;
+	subject: string;
+	html: string;
+	text?: string;
 }
 
 export class ResendEmailService implements EmailService {
@@ -28,7 +39,7 @@ export class ResendEmailService implements EmailService {
 	async sendRegistrationConfirmation(
 		data: RegistrationConfirmationData,
 	): Promise<void> {
-		const template = EmailTemplates.registrationConfirmation(data);
+		const template = registrationConfirmation(data);
 
 		await this.sendEmail({
 			to: data.userEmail,
@@ -39,7 +50,7 @@ export class ResendEmailService implements EmailService {
 	}
 
 	async sendPlatformAcceptance(data: PlatformAcceptanceData): Promise<void> {
-		const template = EmailTemplates.platformAcceptance(data);
+		const template = platformAcceptance(data);
 
 		await this.sendEmail({
 			to: data.userEmail,
@@ -50,7 +61,7 @@ export class ResendEmailService implements EmailService {
 	}
 
 	async sendPlatformRejection(data: PlatformRejectionData): Promise<void> {
-		const template = EmailTemplates.platformRejection(data);
+		const template = platformRejection(data);
 
 		await this.sendEmail({
 			to: data.userEmail,
@@ -66,7 +77,7 @@ export class ResendEmailService implements EmailService {
 
 	private async sendEmail(template: EmailTemplate): Promise<void> {
 		try {
-			const emailData: any = {
+			const emailData: ResendEmailData = {
 				from: `${this.fromName} <${this.fromEmail}>`,
 				to: template.to,
 				subject: template.subject,
