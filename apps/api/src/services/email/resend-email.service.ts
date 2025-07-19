@@ -6,11 +6,9 @@ import type {
 	PlatformAcceptanceData,
 	PlatformRejectionData,
 } from "./email-service.interface.ts";
-import {
-	registrationConfirmation,
-	platformAcceptance,
-	platformRejection,
-} from "./email-templates.ts";
+import { platformRejection } from "./templates/PlatformRejection.ts";
+import { platformAcceptance } from "./templates/PlatformAcceptance.ts";
+import { registrationConfirmation } from "./templates/RegistrationConfirmation.ts";
 export interface ResendEmailServiceConfig {
 	apiKey: string;
 	fromEmail: string;

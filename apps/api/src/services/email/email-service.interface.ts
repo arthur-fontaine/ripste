@@ -41,9 +41,4 @@ export interface EmailService {
 	 * Envoie un email de refus sur la plateforme
 	 */
 	sendPlatformRejection(data: PlatformRejectionData): Promise<void>;
-
-	/**
-	 * Envoie un email personnalisé
-	 */
-	sendCustomEmail(template: EmailTemplate): Promise<void>;
 }
