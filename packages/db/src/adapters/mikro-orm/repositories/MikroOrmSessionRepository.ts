@@ -30,4 +30,15 @@ export class MikroOrmSessionRepository
 			return newSession;
 		};
 	}
+
+	async deleteByToken(token: string): Promise<void> {
+		const session = await this._em.findOne(MikroOrmSessionModel, {
+			token,
+			deletedAt: null,
+		});
+		if (session) {
+			session.deletedAt = new Date();
+			await this._em.persistAndFlush(session);
+		}
+	}
 }

@@ -6,4 +6,7 @@ export default defineConfig({
 			NODE_ENV: "test",
 		},
 	},
+	server: {
+		cors: false,
+	},
 });

@@ -13,12 +13,6 @@ export type {
 } from "../../domain/models/IAccount.ts";
 
 export type {
-	IApiCredential,
-	IInsertApiCredential,
-	IUpdateApiCredential,
-} from "../../domain/models/IApiCredential.ts";
-
-export type {
 	ICheckoutPage,
 	IInsertCheckoutPage,
 	IUpdateCheckoutPage,
@@ -38,16 +32,22 @@ export type {
 } from "../../domain/models/ICompany.ts";
 
 export type {
-	IJwtToken,
-	IInsertJwtToken,
-	IUpdateJwtToken,
-} from "../../domain/models/IJwtToken.ts";
+	IOAuthApplication,
+	IInsertOAuthApplication,
+	IUpdateOAuthApplication,
+} from "../../domain/models/IOAuthApplication.ts";
 
 export type {
-	IOAuth2Client,
-	IInsertOAuth2Client,
-	IUpdateOAuth2Client,
-} from "../../domain/models/IOAuth2Client.ts";
+	IOAuthAccessToken,
+	IInsertOAuthAccessToken,
+	IUpdateOAuthAccessToken,
+} from "../../domain/models/IOAuthAccessToken.ts";
+
+export type {
+	IOAuthConsent,
+	IInsertOAuthConsent,
+	IUpdateOAuthConsent,
+} from "../../domain/models/IOAuthConsent.ts";
 
 export type {
 	IPaymentAttempt,

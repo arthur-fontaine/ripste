@@ -31,5 +31,10 @@
 		"typescript": "^5.8.3",
 		"vitest": "^3.2.1"
 	},
-	"packageManager": "pnpm@10.12.1"
+	"packageManager": "pnpm@10.12.1",
+	"pnpm": {
+		"overrides": {
+			"better-call": "^1.0.12"
+		}
+	}
 }

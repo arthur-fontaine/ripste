@@ -5,7 +5,6 @@ export interface IVerificationTable extends IBaseModel {
 	identifier: string;
 	value: string;
 	expiresAt: Date;
-	type: "email" | "phone" | "otp" | "password-reset";
 }
 
 export interface IVerification extends ISU.Selectable<IVerificationTable> {}
