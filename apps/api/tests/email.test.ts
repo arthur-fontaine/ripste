@@ -1,35 +1,35 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { ResendEmailService } from "../src/services/email/resend-email.service.ts";
-import type { EmailTemplate } from "../src/services/email/email-service.interface.ts";
+import {
+	ResendEmailService,
+	type IEmailTemplate,
+} from "../src/services/email/index.js";
 
+const mockSend = vi.fn();
 vi.mock("resend", () => ({
 	Resend: vi.fn().mockImplementation(() => ({
 		emails: {
-			send: vi.fn(),
+			send: mockSend,
 		},
 	})),
 }));
 
 describe("ResendEmailService", () => {
 	let emailService: ResendEmailService;
-	let mockResendSend: ReturnType<typeof vi.fn>;
 
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mockSend.mockReset();
 
 		emailService = new ResendEmailService({
 			apiKey: "test-api-key",
 			fromEmail: "test@example.com",
 			fromName: "Test Service",
 		});
-
-		// @ts-expect-error - Accessing private property for testing
-		mockResendSend = emailService.resend.emails.send;
 	});
 
 	describe("sendRegistrationConfirmation", () => {
 		it("should send registration confirmation email", async () => {
-			mockResendSend.mockResolvedValue({ data: { id: "email-id" } });
+			mockSend.mockResolvedValue({ data: { id: "email-id" } });
 
 			await emailService.sendRegistrationConfirmation({
 				userEmail: "user@example.com",
@@ -37,7 +37,7 @@ describe("ResendEmailService", () => {
 				confirmationUrl: "https://example.com/confirm",
 			});
 
-			expect(mockResendSend).toHaveBeenCalledWith({
+			expect(mockSend).toHaveBeenCalledWith({
 				from: "Test Service <test@example.com>",
 				to: "user@example.com",
 				subject: "Confirmez votre inscription - Ripste",
@@ -47,7 +47,7 @@ describe("ResendEmailService", () => {
 		});
 
 		it("should handle resend errors", async () => {
-			mockResendSend.mockResolvedValue({
+			mockSend.mockResolvedValue({
 				error: { message: "Invalid API key" },
 			});
 
@@ -63,7 +63,7 @@ describe("ResendEmailService", () => {
 
 	describe("sendPlatformAcceptance", () => {
 		it("should send platform acceptance email", async () => {
-			mockResendSend.mockResolvedValue({ data: { id: "email-id" } });
+			mockSend.mockResolvedValue({ data: { id: "email-id" } });
 
 			await emailService.sendPlatformAcceptance({
 				userEmail: "user@example.com",
@@ -71,7 +71,7 @@ describe("ResendEmailService", () => {
 				loginUrl: "https://example.com/login",
 			});
 
-			expect(mockResendSend).toHaveBeenCalledWith({
+			expect(mockSend).toHaveBeenCalledWith({
 				from: "Test Service <test@example.com>",
 				to: "user@example.com",
 				subject:
@@ -84,7 +84,7 @@ describe("ResendEmailService", () => {
 
 	describe("sendPlatformRejection", () => {
 		it("should send platform rejection email", async () => {
-			mockResendSend.mockResolvedValue({ data: { id: "email-id" } });
+			mockSend.mockResolvedValue({ data: { id: "email-id" } });
 
 			await emailService.sendPlatformRejection({
 				userEmail: "user@example.com",
@@ -93,7 +93,7 @@ describe("ResendEmailService", () => {
 				supportEmail: "support@example.com",
 			});
 
-			expect(mockResendSend).toHaveBeenCalledWith({
+			expect(mockSend).toHaveBeenCalledWith({
 				from: "Test Service <test@example.com>",
 				to: "user@example.com",
 				subject: "Mise à jour de votre demande d'accès - Ripste",
@@ -105,9 +105,9 @@ describe("ResendEmailService", () => {
 
 	describe("sendCustomEmail", () => {
 		it("should send custom email", async () => {
-			mockResendSend.mockResolvedValue({ data: { id: "email-id" } });
+			mockSend.mockResolvedValue({ data: { id: "email-id" } });
 
-			const template: EmailTemplate = {
+			const template: IEmailTemplate = {
 				to: "user@example.com",
 				subject: "Custom Subject",
 				htmlContent: "<h1>Custom Content</h1>",
@@ -116,7 +116,7 @@ describe("ResendEmailService", () => {
 
 			await emailService.sendCustomEmail(template);
 
-			expect(mockResendSend).toHaveBeenCalledWith({
+			expect(mockSend).toHaveBeenCalledWith({
 				from: "Test Service <test@example.com>",
 				to: "user@example.com",
 				subject: "Custom Subject",
@@ -126,9 +126,9 @@ describe("ResendEmailService", () => {
 		});
 
 		it("should send custom email without text content", async () => {
-			mockResendSend.mockResolvedValue({ data: { id: "email-id" } });
+			mockSend.mockResolvedValue({ data: { id: "email-id" } });
 
-			const template: EmailTemplate = {
+			const template: IEmailTemplate = {
 				to: "user@example.com",
 				subject: "Custom Subject",
 				htmlContent: "<h1>Custom Content</h1>",
@@ -136,7 +136,7 @@ describe("ResendEmailService", () => {
 
 			await emailService.sendCustomEmail(template);
 
-			expect(mockResendSend).toHaveBeenCalledWith({
+			expect(mockSend).toHaveBeenCalledWith({
 				from: "Test Service <test@example.com>",
 				to: "user@example.com",
 				subject: "Custom Subject",

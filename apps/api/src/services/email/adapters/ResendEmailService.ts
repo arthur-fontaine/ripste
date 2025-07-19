@@ -1,14 +1,13 @@
 import { Resend } from "resend";
-import type {
-	EmailService,
-	EmailTemplate,
-	RegistrationConfirmationData,
-	PlatformAcceptanceData,
-	PlatformRejectionData,
-} from "./email-service.interface.ts";
-import { platformRejection } from "./templates/PlatformRejection.ts";
-import { platformAcceptance } from "./templates/PlatformAcceptance.ts";
-import { registrationConfirmation } from "./templates/RegistrationConfirmation.ts";
+import type { IEmailService } from "../domain/ports/IEmailService.ts";
+import { platformRejection } from "../templates/PlatformRejection.ts";
+import { platformAcceptance } from "../templates/PlatformAcceptance.ts";
+import { registrationConfirmation } from "../templates/RegistrationConfirmation.ts";
+import type { IEmailTemplate } from "../domain/ports/IEmailTemplate.ts";
+import type { IRegistrationConfirmationData } from "../domain/ports/IRegistrationConfirmationData.ts";
+import type { IPlatformAcceptanceData } from "../domain/ports/IPlatformAcceptanceData.ts";
+import type { IPlatformRejectionData } from "../domain/ports/IPlatformRejectionData.ts";
+
 export interface ResendEmailServiceConfig {
 	apiKey: string;
 	fromEmail: string;
@@ -23,7 +22,7 @@ interface ResendEmailData {
 	text?: string;
 }
 
-export class ResendEmailService implements EmailService {
+export class ResendEmailService implements IEmailService {
 	private resend: Resend;
 	private fromEmail: string;
 	private fromName: string;
@@ -35,7 +34,7 @@ export class ResendEmailService implements EmailService {
 	}
 
 	async sendRegistrationConfirmation(
-		data: RegistrationConfirmationData,
+		data: IRegistrationConfirmationData,
 	): Promise<void> {
 		const template = registrationConfirmation(data);
 
@@ -47,7 +46,7 @@ export class ResendEmailService implements EmailService {
 		});
 	}
 
-	async sendPlatformAcceptance(data: PlatformAcceptanceData): Promise<void> {
+	async sendPlatformAcceptance(data: IPlatformAcceptanceData): Promise<void> {
 		const template = platformAcceptance(data);
 
 		await this.sendEmail({
@@ -58,7 +57,7 @@ export class ResendEmailService implements EmailService {
 		});
 	}
 
-	async sendPlatformRejection(data: PlatformRejectionData): Promise<void> {
+	async sendPlatformRejection(data: IPlatformRejectionData): Promise<void> {
 		const template = platformRejection(data);
 
 		await this.sendEmail({
@@ -69,11 +68,11 @@ export class ResendEmailService implements EmailService {
 		});
 	}
 
-	async sendCustomEmail(template: EmailTemplate): Promise<void> {
+	async sendCustomEmail(template: IEmailTemplate): Promise<void> {
 		await this.sendEmail(template);
 	}
 
-	private async sendEmail(template: EmailTemplate): Promise<void> {
+	private async sendEmail(template: IEmailTemplate): Promise<void> {
 		try {
 			const emailData: ResendEmailData = {
 				from: `${this.fromName} <${this.fromEmail}>`,

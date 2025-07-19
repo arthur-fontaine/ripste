@@ -2,6 +2,15 @@ import { testClient } from "hono/testing";
 import { describe, it, expect } from "vitest";
 import { getApiClient } from "./test-utils/get-api-client.ts";
 
+vi.mock("../src/email.ts", () => ({
+	emailService: {
+		sendRegistrationConfirmation: vi.fn(),
+		sendPlatformAcceptance: vi.fn(),
+		sendPlatformRejection: vi.fn(),
+		sendCustomEmail: vi.fn(),
+	},
+}));
+
 describe("Ping Endpoint", async () => {
 	const { apiClient } = await getApiClient();
 
