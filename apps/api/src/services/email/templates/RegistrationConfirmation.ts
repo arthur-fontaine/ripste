@@ -1,6 +1,6 @@
-import type { RegistrationConfirmationData } from "../email-service.interface.ts";
+import type { IRegistrationConfirmationData } from "../domain/ports/IRegistrationConfirmationData.ts";
 
-export function registrationConfirmation(data: RegistrationConfirmationData): {
+export function registrationConfirmation(data: IRegistrationConfirmationData): {
 	subject: string;
 	html: string;
 	text: string;

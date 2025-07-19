@@ -1,6 +1,6 @@
-import type { PlatformRejectionData } from "../email-service.interface.ts";
+import type { IPlatformRejectionData } from "../domain/ports/IPlatformRejectionData.ts";
 
-export function platformRejection(data: PlatformRejectionData): {
+export function platformRejection(data: IPlatformRejectionData): {
 	subject: string;
 	html: string;
 	text: string;
