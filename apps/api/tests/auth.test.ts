@@ -2,7 +2,6 @@ import { describe, it, expect, vi } from "vitest";
 import { createAuthClient } from "better-auth/client";
 import { SqliteDriver } from "@mikro-orm/sqlite";
 import { MikroOrmDatabase } from "@ripste/db/mikro-orm";
-import { ssoClient } from "better-auth/client/plugins";
 
 vi.mock("../src/database.ts", async () => ({
 	database: await MikroOrmDatabase.create(SqliteDriver, ":memory:"),
@@ -32,7 +31,6 @@ const authClient = createAuthClient({
 			return await app.fetch(request);
 		},
 	},
-	plugins: [ssoClient()],
 });
 
 async function createTestUser(

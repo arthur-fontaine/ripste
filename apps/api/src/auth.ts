@@ -8,11 +8,6 @@ export const auth = betterAuth({
 	database: createCustomDatabaseAdapterWithMappings(
 		database,
 		{},
-		{
-			debugLogs: {
-				isRunningAdapterTests: false,
-			},
-		},
 	).createAdapter(),
 	emailAndPassword: {
 		enabled: true,

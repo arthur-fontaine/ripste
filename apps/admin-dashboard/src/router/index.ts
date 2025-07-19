@@ -31,11 +31,6 @@ const routes = [
 		name: "OAuthDemo",
 		component: OAuthDemoPage,
 	},
-	// Alias pour /sign-in (utilisé par l'OIDC provider)
-	{
-		path: "/sign-in",
-		redirect: "/login",
-	},
 ];
 
 const router = createRouter({
