@@ -12,12 +12,9 @@ export class MikroOrmVerificationModel extends BaseModel {
 	@Property({ type: t.string })
 	identifier!: string;
 
-	@Property({ type: t.string })
+	@Property({ type: t.text })
 	value!: string;
 
 	@Property({ type: t.datetime })
 	expiresAt!: Date;
-
-	@Property({ type: t.enum })
-	type!: "email" | "phone" | "otp" | "password-reset";
 }

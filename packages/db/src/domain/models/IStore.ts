@@ -4,7 +4,6 @@ import { createFakeGenerator } from "interface-faker";
 import type { ICompanyTable } from "./ICompany.ts";
 import type { IStoreMemberTable } from "./IStoreMember.ts";
 import type { IStoreStatusTable } from "./IStoreStatus.ts";
-import type { IApiCredentialTable } from "./IApiCredential.ts";
 import type { ICheckoutThemeTable } from "./ICheckoutTheme.ts";
 import type { ITransactionTable } from "./ITransaction.ts";
 
@@ -16,7 +15,6 @@ export interface IStoreTable extends IBaseModel {
 	company: ISU.SingleReference<ICompanyTable | null, "companyId", "id">;
 	storeMembers: ISU.ManyReference<IStoreMemberTable>;
 	storeStatuses: ISU.ManyReference<IStoreStatusTable>;
-	apiCredentials: ISU.ManyReference<IApiCredentialTable>;
 	checkoutThemes: ISU.ManyReference<ICheckoutThemeTable>;
 	transactions: ISU.ManyReference<ITransactionTable>;
 }
