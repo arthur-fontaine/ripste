@@ -724,11 +724,10 @@ export const customDatabaseAdapter = (
 			}): Promise<T | null> => {
 				debugLog("update", { model, where, update });
 
-				const whereCondition = where.find(
-					(w: WhereCondition) => w.field === "id",
-				);
+				const whereCondition = where[0];
+
 				if (!whereCondition) {
-					throw new Error("Update requires ID field");
+					throw new Error("Update requires at least one where condition");
 				}
 
 				const mappedUpdate = mapBetterAuthToEntity(
@@ -736,11 +735,106 @@ export const customDatabaseAdapter = (
 					model,
 					true,
 				);
-				const result = await updateEntity(
-					model,
-					whereCondition.value as string,
-					mappedUpdate,
-				);
+
+				let result: DatabaseEntity | null = null;
+
+				if (whereCondition.field === "id") {
+					result = await updateEntity(
+						model,
+						whereCondition.value as string,
+						mappedUpdate,
+					);
+				} else {
+					switch (model) {
+						case "user": {
+							if (whereCondition.field === "email") {
+								const users = await findManyEntities(model, {
+									email: whereCondition.value as string,
+								});
+								if (users.length > 0 && users[0]) {
+									result = await updateEntity(model, users[0].id, mappedUpdate);
+								}
+							}
+							break;
+						}
+						case "session": {
+							if (whereCondition.field === "token") {
+								const sessions = await findManyEntities(model, {
+									token: whereCondition.value as string,
+								});
+								if (sessions.length > 0 && sessions[0]) {
+									result = await updateEntity(
+										model,
+										sessions[0].id,
+										mappedUpdate,
+									);
+								}
+							}
+							break;
+						}
+						case "account": {
+							if (
+								whereCondition.field === "userId" ||
+								whereCondition.field === "providerId"
+							) {
+								const query: Record<string, unknown> = {};
+								for (const condition of where) {
+									query[condition.field] = condition.value;
+								}
+								const accounts = await findManyEntities(model, query);
+								if (accounts.length > 0 && accounts[0]) {
+									result = await updateEntity(
+										model,
+										accounts[0].id,
+										mappedUpdate,
+									);
+								}
+							}
+							break;
+						}
+						case "verification": {
+							if (whereCondition.field === "identifier") {
+								const verifications = await findManyEntities(model, {
+									identifier: whereCondition.value as string,
+								});
+								if (verifications.length > 0 && verifications[0]) {
+									result = await updateEntity(
+										model,
+										verifications[0].id,
+										mappedUpdate,
+									);
+								}
+							}
+							break;
+						}
+						case "oauthApplication": {
+							if (whereCondition.field === "clientId") {
+								const apps = await findManyEntities(model, {
+									clientId: whereCondition.value as string,
+								});
+								if (apps.length > 0 && apps[0]) {
+									result = await updateEntity(model, apps[0].id, mappedUpdate);
+								}
+							}
+							break;
+						}
+						default: {
+							const query: Record<string, unknown> = {};
+							for (const condition of where) {
+								query[condition.field] = condition.value;
+							}
+							const entities = await findManyEntities(model, query);
+							if (entities.length > 0 && entities[0]) {
+								result = await updateEntity(
+									model,
+									entities[0].id,
+									mappedUpdate,
+								);
+							}
+							break;
+						}
+					}
+				}
 
 				if (!result) return null;
 				const mappedResult = mapEntityToBetterAuth(result, model);

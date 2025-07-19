@@ -7,6 +7,15 @@ vi.mock("../src/database.ts", async () => ({
 	database: await MikroOrmDatabase.create(SqliteDriver, ":memory:"),
 }));
 
+vi.mock("../src/email.ts", () => ({
+	emailService: {
+		sendRegistrationConfirmation: vi.fn(),
+		sendPlatformAcceptance: vi.fn(),
+		sendPlatformRejection: vi.fn(),
+		sendCustomEmail: vi.fn(),
+	},
+}));
+
 describe("Ping Endpoint", async () => {
 	const { app } = await import("../src/app.ts");
 	const client = testClient(app);
