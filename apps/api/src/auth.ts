@@ -41,6 +41,7 @@ export const auth = betterAuth({
 				process.env["OIDC_LOGIN_PAGE"] || "http://localhost:5173/login",
 			consentPage:
 				process.env["OIDC_CONSENT_PAGE"] || "http://localhost:5173/consent",
+			useJWTPlugin: true,
 		}),
 		openAPI(),
 	],
