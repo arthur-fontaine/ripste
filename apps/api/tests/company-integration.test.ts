@@ -12,14 +12,12 @@ vi.mock("../src/database.ts", () => ({
 }));
 
 describe("Company API Integration Tests", () => {
-	let app: any;
 	let client: any;
 
 	beforeEach(async () => {
 		database = await MikroOrmDatabase.create(SqliteDriver, ":memory:");
 		const appModule = await import("../src/app.ts");
-		app = appModule.app;
-		client = testClient(app);
+		client = testClient(appModule.app);
 	});
 
 	it("should handle complete company management workflow", async () => {
@@ -167,7 +165,7 @@ describe("Company API Integration Tests", () => {
 		const invalidUpdateRes = await client.companies[":id"].$put({
 			param: { id: company.id },
 			json: {
-				kbis: "99999999999999", 
+				kbis: "99999999999999",
 			},
 		});
 		expect(invalidUpdateRes.status).toBe(400);

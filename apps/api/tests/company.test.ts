@@ -13,19 +13,20 @@ vi.mock("../src/database.ts", () => ({
 }));
 
 describe("Company Router", () => {
-	let app: any;
 	let client: any;
 
 	beforeEach(async () => {
 		database = await MikroOrmDatabase.create(SqliteDriver, ":memory:");
 		const appModule = await import("../src/app.ts");
-		app = appModule.app;
-		client = testClient(app);
+		client = testClient(appModule.app);
 	});
 
 	describe("POST /companies", () => {
 		it("should create a company with required fields", async () => {
-			const companyData: Omit<IInsertCompany, "id" | "createdAt" | "updatedAt" | "deletedAt" | "stores"> = {
+			const companyData: Omit<
+				IInsertCompany,
+				"id" | "createdAt" | "updatedAt" | "deletedAt" | "stores"
+			> = {
 				legalName: "Acme Corp",
 				kbis: "12345678901234",
 				tradeName: null,
@@ -51,7 +52,10 @@ describe("Company Router", () => {
 		});
 
 		it("should create a company with all fields", async () => {
-			const companyData: Omit<IInsertCompany, "id" | "createdAt" | "updatedAt" | "deletedAt" | "stores"> = {
+			const companyData: Omit<
+				IInsertCompany,
+				"id" | "createdAt" | "updatedAt" | "deletedAt" | "stores"
+			> = {
 				legalName: "Tech Solutions SAS",
 				tradeName: "TechSol",
 				kbis: "98765432109876",
@@ -103,7 +107,10 @@ describe("Company Router", () => {
 		});
 
 		it("should return 400 when kbis is not unique", async () => {
-			const companyData: Omit<IInsertCompany, "id" | "createdAt" | "updatedAt" | "deletedAt" | "stores"> = {
+			const companyData: Omit<
+				IInsertCompany,
+				"id" | "createdAt" | "updatedAt" | "deletedAt" | "stores"
+			> = {
 				legalName: "First Company",
 				kbis: "12345678901234",
 				tradeName: null,
@@ -401,10 +408,12 @@ describe("Company Router", () => {
 
 			const newCompanyData = {
 				legalName: "New Company",
-				kbis: "12345678901234", 
+				kbis: "12345678901234",
 			};
 
-			const createNewRes = await client.companies.$post({ json: newCompanyData });
+			const createNewRes = await client.companies.$post({
+				json: newCompanyData,
+			});
 			expect(createNewRes.status).toBe(201);
 			const newCompany = await createNewRes.json();
 			expect(newCompany.legalName).toBe("New Company");
