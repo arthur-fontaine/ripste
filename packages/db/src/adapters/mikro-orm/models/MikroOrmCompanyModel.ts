@@ -19,7 +19,7 @@ export class MikroOrmCompanyModel extends BaseModel implements ICompany {
 	@Property({ type: t.string, nullable: true })
 	tradeName!: string | null;
 
-	@Property({ type: t.string })
+	@Property({ type: t.string, unique: true })
 	kbis!: string;
 
 	@Property({ type: t.string, nullable: true })

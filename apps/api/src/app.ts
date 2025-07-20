@@ -3,6 +3,7 @@ import { pingRouter } from "./routers/ping/ping-router.ts";
 import { prometheus } from "@hono/prometheus";
 import { otel } from "@hono/otel";
 import { authRouter } from "./routers/auth/auth-router.ts";
+import { companyRouter } from "./routers/company/company-router.ts";
 import { cors } from "hono/cors";
 
 const { printMetrics, registerMetrics } = prometheus();
@@ -24,4 +25,5 @@ export const app = new Hono()
 	.use("*", registerMetrics)
 	.route("/ping", pingRouter)
 	.route("/auth", authRouter)
+	.route("/companies", companyRouter)
 	.get("/metrics", printMetrics);
