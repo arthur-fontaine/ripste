@@ -12,13 +12,12 @@ vi.mock("../src/database.ts", () => ({
 	},
 }));
 
-describe("Company Router", () => {
-	let client: any;
+describe("Company Router", async () => {
+	const appModule = await import("../src/app.ts");
+	const client = testClient(appModule.app);
 
 	beforeEach(async () => {
 		database = await MikroOrmDatabase.create(SqliteDriver, ":memory:");
-		const appModule = await import("../src/app.ts");
-		client = testClient(appModule.app);
 	});
 
 	describe("POST /companies", () => {

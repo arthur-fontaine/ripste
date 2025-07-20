@@ -11,13 +11,12 @@ vi.mock("../src/database.ts", () => ({
 	},
 }));
 
-describe("Company API Integration Tests", () => {
-	let client: any;
+describe("Company API Integration Tests", async () => {
+	const appModule = await import("../src/app.ts");
+	const client = testClient(appModule.app);
 
 	beforeEach(async () => {
 		database = await MikroOrmDatabase.create(SqliteDriver, ":memory:");
-		const appModule = await import("../src/app.ts");
-		client = testClient(appModule.app);
 	});
 
 	it("should handle complete company management workflow", async () => {
