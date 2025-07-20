@@ -2,6 +2,38 @@ import { Hono } from "hono";
 import { database } from "../../database.ts";
 import type { IInsertCompany, IUpdateCompany } from "@ripste/db/mikro-orm";
 
+const KBIS_REGEX = /^\d{14}$/;
+
+class ValidationError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = "ValidationError";
+	}
+}
+
+class UniqueConstraintError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = "UniqueConstraintError";
+	}
+}
+
+function handleDatabaseError(error: unknown): never {
+	if (error instanceof Error) {
+		if (
+			error.message.includes("unique") ||
+			error.message.includes("UNIQUE") ||
+			error.message.includes("duplicate") ||
+			error.message.includes("kbis")
+		) {
+			throw new UniqueConstraintError(
+				"A company with this KBIS already exists",
+			);
+		}
+	}
+	throw error;
+}
+
 interface CreateCompanyRequest {
 	legalName: string;
 	tradeName?: string | null;
@@ -24,15 +56,15 @@ function validateCompanyData(data: CreateCompanyRequest): CreateCompanyRequest {
 		typeof data.legalName !== "string" ||
 		data.legalName.trim() === ""
 	) {
-		throw new Error("Legal name is required");
+		throw new ValidationError("Legal name is required");
 	}
 
 	if (!data.kbis || typeof data.kbis !== "string") {
-		throw new Error("KBIS is required");
+		throw new ValidationError("KBIS is required");
 	}
 
-	if (!/^\d{14}$/.test(data.kbis)) {
-		throw new Error("KBIS must be exactly 14 digits");
+	if (!KBIS_REGEX.test(data.kbis)) {
+		throw new ValidationError("KBIS must be exactly 14 digits");
 	}
 
 	return {
@@ -48,7 +80,7 @@ function validateUpdateCompanyData(
 	data: UpdateCompanyRequest,
 ): UpdateCompanyRequest {
 	if (data.kbis !== undefined) {
-		throw new Error("KBIS cannot be updated for security reasons");
+		throw new ValidationError("KBIS cannot be updated for security reasons");
 	}
 
 	if (data.legalName !== undefined) {
@@ -57,7 +89,7 @@ function validateUpdateCompanyData(
 			typeof data.legalName !== "string" ||
 			data.legalName.trim() === ""
 		) {
-			throw new Error("Legal name cannot be empty");
+			throw new ValidationError("Legal name cannot be empty");
 		}
 	}
 
@@ -97,24 +129,15 @@ export const companyRouter = new Hono()
 
 			return c.json(company, 201);
 		} catch (error) {
-			if (error instanceof Error) {
-				if (
-					error.message.includes("required") ||
-					error.message.includes("must be")
-				) {
-					return c.json({ error: error.message }, 400);
-				}
+			if (error instanceof ValidationError) {
+				return c.json({ error: error.message }, 400);
+			}
 
-				if (
-					error.message.includes("unique") ||
-					error.message.includes("UNIQUE") ||
-					error.message.includes("duplicate") ||
-					error.message.includes("kbis")
-				) {
-					return c.json(
-						{ error: "A company with this KBIS already exists" },
-						400,
-					);
+			try {
+				handleDatabaseError(error);
+			} catch (dbError) {
+				if (dbError instanceof UniqueConstraintError) {
+					return c.json({ error: dbError.message }, 400);
 				}
 			}
 
@@ -168,13 +191,8 @@ export const companyRouter = new Hono()
 
 			return c.json(updatedCompany);
 		} catch (error) {
-			if (error instanceof Error) {
-				if (
-					error.message.includes("cannot be") ||
-					error.message.includes("security reasons")
-				) {
-					return c.json({ error: error.message }, 400);
-				}
+			if (error instanceof ValidationError) {
+				return c.json({ error: error.message }, 400);
 			}
 
 			console.error("Error updating company:", error);

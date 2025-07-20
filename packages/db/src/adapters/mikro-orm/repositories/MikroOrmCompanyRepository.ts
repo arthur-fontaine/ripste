@@ -6,6 +6,7 @@ import type {
 	IInsertCompany,
 	IUpdateCompany,
 } from "../../../domain/models/ICompany.ts";
+import { randomUUID } from "node:crypto";
 
 export class MikroOrmCompanyRepository
 	extends MikroOrmBaseRepository<ICompany, IInsertCompany, IUpdateCompany>(
@@ -20,7 +21,7 @@ export class MikroOrmCompanyRepository
 		}
 
 		entity.deletedAt = new Date();
-		entity.kbis = `${entity.kbis}_DELETED_${Date.now()}`;
+		entity.kbis = `${entity.kbis}_DELETED_${randomUUID().slice(0, 8)}`;
 
 		await this._em.persistAndFlush(entity);
 		return true;
