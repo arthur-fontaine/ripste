@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { getApiClient } from "../../test-utils/get-api-client.ts";
+import { readBody } from "../../test-utils/readBody.ts";
 
 describe("Payments Router", async () => {
 	const { app, database } = await getApiClient();
@@ -87,7 +88,7 @@ describe("Payments Router", async () => {
 					},
 				},
 			});
-			const body = await res.json();
+			const body = readBody(await res.json());
 
 			expect(body).toHaveProperty("data");
 			expect(body.data).toHaveProperty("id");
@@ -106,7 +107,7 @@ describe("Payments Router", async () => {
 					},
 				},
 			});
-			const body = await res.json();
+			const body = readBody(await res.json());
 			const transactionId = body.data.id;
 
 			const [transaction] = await database.transaction.findMany({
@@ -130,7 +131,7 @@ describe("Payments Router", async () => {
 					},
 				},
 			});
-			const body = await res.json();
+			const body = readBody(await res.json());
 			const transactionId = body.data.id;
 
 			const [transaction] = await database.transaction.findMany({
@@ -152,7 +153,7 @@ describe("Payments Router", async () => {
 					},
 				},
 			});
-			const body = await res.json();
+			const body = readBody(await res.json());
 			const transactionId = body.data.id;
 
 			const [transactionEvent] = await database.transactionEvent.findMany({
@@ -176,7 +177,7 @@ describe("Payments Router", async () => {
 					},
 				},
 			});
-			const body = await res.json();
+			const body = readBody(await res.json());
 			const transactionId = body.data.id;
 
 			const [checkout] = await database.checkoutPage.findMany({
@@ -199,7 +200,7 @@ describe("Payments Router", async () => {
 					},
 				},
 			});
-			const body = await res.json();
+			const body = readBody(await res.json());
 			const transactionId = body.data.id;
 
 			const transaction = await database.transaction.findOne(transactionId);
@@ -219,7 +220,7 @@ describe("Payments Router", async () => {
 					},
 				},
 			});
-			const body = await res.json();
+			const body = readBody(await res.json());
 			const transactionId = body.data.id;
 
 			const transaction = await database.transaction.findOne(transactionId);
@@ -241,7 +242,7 @@ describe("Payments Router", async () => {
 			});
 
 			expect(res.status).toBe(400);
-			const body = await res.json();
+			const body = readBody(await res.json());
 			expect(body).toHaveProperty("error");
 			expect(body.error).toBe("Amount must be a positive number.");
 		});
@@ -261,7 +262,7 @@ describe("Payments Router", async () => {
 			});
 
 			expect(res.status).toBe(400);
-			const body = await res.json();
+			const body = readBody(await res.json());
 			expect(body).toHaveProperty("error");
 			expect(body.error).toBe(
 				"Amount must not exceed 1,000,000€ or its equivalent in other currencies. Please contact support for larger transactions.",
@@ -300,7 +301,7 @@ describe("Payments Router", async () => {
 			});
 
 			expect(res.status).toBe(400);
-			const body = await res.json();
+			const body = readBody(await res.json());
 			expect(body).toHaveProperty("error");
 			expect(body.error).toBe(
 				"Amount must not exceed 1,000,000€ or its equivalent in other currencies. Please contact support for larger transactions.",
@@ -322,7 +323,7 @@ describe("Payments Router", async () => {
 			});
 
 			expect(res.status).toBe(400);
-			const body = await res.json();
+			const body = readBody(await res.json());
 			expect(body).toHaveProperty("error");
 			expect(body.error).toBe("Unsupported currency.");
 		});
@@ -342,7 +343,7 @@ describe("Payments Router", async () => {
 			});
 
 			expect(res.status).toBe(400);
-			const body = await res.json();
+			const body = readBody(await res.json());
 			expect(body).toHaveProperty("error");
 			expect(body.error).toBe(
 				"Amount must have at most 2 decimal places for USD.",
@@ -364,7 +365,7 @@ describe("Payments Router", async () => {
 			});
 
 			expect(res.status).toBe(400);
-			const body = await res.json();
+			const body = readBody(await res.json());
 			expect(body).toHaveProperty("error");
 			expect(body.error).toBe(
 				"Amount must have at most 0 decimal places for JPY.",
@@ -386,7 +387,7 @@ describe("Payments Router", async () => {
 			});
 
 			expect(res.status).toBe(400);
-			const body = await res.json();
+			const body = readBody(await res.json());
 			expect(body).toHaveProperty("error");
 			expect(body.error).toBe(
 				"Amount must have at most 3 decimal places for KWD.",
@@ -425,7 +426,7 @@ describe("Payments Router", async () => {
 			});
 
 			expect(res.status).toBe(400);
-			const body = await res.json();
+			const body = readBody(await res.json());
 			expect(body).toHaveProperty("error");
 			expect(body.error).toBe("Cryptocurrency payments are not yet supported.");
 		});
@@ -439,7 +440,7 @@ describe("Payments Router", async () => {
 		// 	});
 
 		// 	expect(res.status).toBe(400);
-		// 	const body = await res.json();
+		// 	const body = readData(await res.json());
 		// 	expect(body).toHaveProperty("error");
 		// 	expect(body.error).toBe(
 		// 		"Amount must have at most 8 decimal places for BTC.",
