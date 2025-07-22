@@ -5,8 +5,7 @@ import type { ITransactionTable } from "./ITransaction.ts";
 import type { IsoString } from "../../types/iso-string.d.ts";
 
 export interface ITransactionEventTable extends IBaseModel {
-	eventType: string;
-	eventData: ITransactionEventData | null;
+	eventData: ITransactionEventData;
 	transaction: ISU.SingleReference<ITransactionTable, "transactionId", "id">;
 }
 
