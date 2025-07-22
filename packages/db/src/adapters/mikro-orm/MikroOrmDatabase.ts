@@ -96,11 +96,14 @@ export class MikroOrmDatabase implements IDatabase {
 		dbName: string,
 		options: Partial<MikroORMOptions> = {},
 	) {
+		// biome-ignore lint/style/useConst: We need to declare it here to access it in loadModels
+		let em: EntityManager;
+
 		const orm = await MikroORM.init({
 			...options,
 			driver,
 			dbName,
-			entities: Object.values(loadModels()),
+			entities: Object.values(loadModels(() => em)),
 			namingStrategy: class
 				extends UnderscoreNamingStrategy
 				implements NamingStrategy
@@ -113,7 +116,7 @@ export class MikroOrmDatabase implements IDatabase {
 
 		await orm.schema.refreshDatabase();
 
-		const em = orm.em.fork();
+		em = orm.em.fork();
 
 		const db = new MikroOrmDatabase(em);
 

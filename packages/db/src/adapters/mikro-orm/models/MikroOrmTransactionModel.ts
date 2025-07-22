@@ -52,6 +52,10 @@ export class MikroOrmTransactionModel
 		return this.store.id;
 	}
 
+	set storeId(storeId: string) {
+		this.store = this._em.getReference(MikroOrmStoreModel, storeId);
+	}
+
 	@OneToMany(
 		() => MikroOrmTransactionEventModel,
 		(event) => event.transaction,

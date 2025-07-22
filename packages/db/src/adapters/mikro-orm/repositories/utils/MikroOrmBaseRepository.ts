@@ -7,10 +7,10 @@ export interface IMikroOrmBaseRepositoryOptions {
 }
 
 export function MikroOrmBaseRepository<
-	Selectable extends BaseModel,
+	Selectable extends Omit<BaseModel, '_loadEm' | '_em'>,
 	Insertable,
 	Updatable,
->(model: new (...args: never) => Selectable) {
+>(model: new (...args: never) => NoInfer<Selectable>) {
 	type I = IBaseRepository<Selectable, Insertable, Updatable>;
 
 	return class MikroOrmBaseRepository implements I {
