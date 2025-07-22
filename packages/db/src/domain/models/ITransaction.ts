@@ -6,6 +6,7 @@ import type { ITransactionEventTable } from "./ITransactionEvent.ts";
 import type { ICheckoutPageTable } from "./ICheckoutPage.ts";
 import type { IPaymentAttemptTable } from "./IPaymentAttempt.ts";
 import type { IRefundTable } from "./IRefund.ts";
+import type { ISession } from "./ISession.ts";
 
 export interface ITransactionTable extends IBaseModel {
 	reference: string;
@@ -15,6 +16,7 @@ export interface ITransactionTable extends IBaseModel {
 	methodType: "checkout_page" | "api_direct" | "link" | "qr_code";
 	metadata: Record<string, string> | null;
 
+	session: ISU.SingleReference<ISession, "sessionId", "id">;
 	store: ISU.SingleReference<IStoreTable, "storeId", "id">;
 	transactionEvents: ISU.ManyReference<ITransactionEventTable>;
 	checkoutPages: ISU.ManyReference<ICheckoutPageTable>;

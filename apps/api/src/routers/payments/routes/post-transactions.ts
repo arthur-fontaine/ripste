@@ -19,7 +19,7 @@ export const postTransactionsRoute = createHonoRouter().post(
 	storeRouteMiddleware,
 	async (c) => {
 		const { amount, currency, reference, metadata } = c.req.valid("json");
-		
+
 		const transaction = await database.transaction.insert({
 			amount,
 			currency,
@@ -28,6 +28,7 @@ export const postTransactionsRoute = createHonoRouter().post(
 			methodType: "checkout_page",
 			metadata: metadata ?? null,
 			storeId: c.get("store").id,
+			sessionId: c.get("session").id,
 		});
 
 		await database.transactionEvent.insert({
