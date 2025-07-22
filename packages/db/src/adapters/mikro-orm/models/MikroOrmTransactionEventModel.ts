@@ -26,4 +26,8 @@ export class MikroOrmTransactionEventModel
 	get transactionId(): string {
 		return this.transaction.id;
 	}
+
+	set transactionId(value: string) {
+		this.transaction = this._em.getReference(MikroOrmTransactionModel, value);
+	}
 }

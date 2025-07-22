@@ -27,10 +27,6 @@ export type ITransactionEventData =
 
 export interface TransactionCreatedEvent {
 	type: "transaction_created";
-	amount: number;
-	currency: string;
-	reference: string;
-	storeId: string;
 }
 
 export interface TransactionProcessingEvent {
