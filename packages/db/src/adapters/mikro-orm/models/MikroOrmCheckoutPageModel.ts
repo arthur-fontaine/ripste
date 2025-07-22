@@ -47,7 +47,10 @@ export class MikroOrmCheckoutPageModel
 	}
 
 	set transactionId(transactionId: string) {
-		this.transaction = this._em.getReference(MikroOrmTransactionModel, transactionId);
+		this.transaction = this._em.getReference(
+			MikroOrmTransactionModel,
+			transactionId,
+		);
 	}
 
 	@ManyToOne(() => MikroOrmCheckoutThemeModel)

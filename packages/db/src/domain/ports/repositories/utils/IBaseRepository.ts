@@ -10,9 +10,10 @@ export interface IBaseRepository<
 	delete(id: Selectable["id"]): Promise<boolean>;
 }
 
-type IFindManyQuery<Selectable> =
-	Selectable extends Array<infer T>
+type IFindManyQuery<Selectable> = Selectable extends Array<infer T>
 	? IFindManyQuery<T>
 	: Partial<{
-		[K in keyof Selectable as K extends `${string}Id` ? never : K]: Partial<Selectable[K]> | { $in: Partial<Selectable[K]>[] };
-	}>;
+			[K in keyof Selectable as K extends `${string}Id` ? never : K]:
+				| Partial<Selectable[K]>
+				| { $in: Partial<Selectable[K]>[] };
+		}>;

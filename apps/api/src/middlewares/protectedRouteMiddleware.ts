@@ -8,10 +8,9 @@ export interface ProtectedRouteContext extends AuthContext {
 	} & AuthContext["Variables"];
 }
 
-export const protectedRouteMiddleware: MiddlewareHandler<ProtectedRouteContext> = async (
-	c,
-	next,
-) => {
+export const protectedRouteMiddleware: MiddlewareHandler<
+	ProtectedRouteContext
+> = async (c, next) => {
 	const user = c.get("user");
 	const session = c.get("session");
 

@@ -66,7 +66,6 @@ describe("Payments Router", async () => {
 					checkoutPage: {
 						title: "Test Checkout",
 						themeId: theme.id,
-
 					},
 				},
 			});
@@ -85,7 +84,6 @@ describe("Payments Router", async () => {
 					checkoutPage: {
 						title: "Test Checkout",
 						themeId: theme.id,
-
 					},
 				},
 			});
@@ -105,7 +103,6 @@ describe("Payments Router", async () => {
 					checkoutPage: {
 						title: "Test Checkout",
 						themeId: theme.id,
-
 					},
 				},
 			});
@@ -130,7 +127,6 @@ describe("Payments Router", async () => {
 					checkoutPage: {
 						title: "Test Checkout",
 						themeId: theme.id,
-
 					},
 				},
 			});
@@ -153,7 +149,6 @@ describe("Payments Router", async () => {
 					checkoutPage: {
 						title: "Test Checkout",
 						themeId: theme.id,
-
 					},
 				},
 			});
@@ -178,7 +173,6 @@ describe("Payments Router", async () => {
 					checkoutPage: {
 						title: "Test Checkout",
 						themeId: theme.id,
-
 					},
 				},
 			});
@@ -202,7 +196,6 @@ describe("Payments Router", async () => {
 					checkoutPage: {
 						title: "Test Checkout",
 						themeId: theme.id,
-
 					},
 				},
 			});
@@ -223,7 +216,6 @@ describe("Payments Router", async () => {
 					checkoutPage: {
 						title: "Test Checkout",
 						themeId: theme.id,
-
 					},
 				},
 			});
@@ -244,7 +236,6 @@ describe("Payments Router", async () => {
 					checkoutPage: {
 						title: "Test Checkout",
 						themeId: theme.id,
-
 					},
 				},
 			});
@@ -265,7 +256,6 @@ describe("Payments Router", async () => {
 					checkoutPage: {
 						title: "Test Checkout",
 						themeId: theme.id,
-
 					},
 				},
 			});
@@ -288,7 +278,6 @@ describe("Payments Router", async () => {
 					checkoutPage: {
 						title: "Test Checkout",
 						themeId: theme.id,
-
 					},
 				},
 			});
@@ -306,7 +295,6 @@ describe("Payments Router", async () => {
 					checkoutPage: {
 						title: "Test Checkout",
 						themeId: theme.id,
-
 					},
 				},
 			});
@@ -329,7 +317,6 @@ describe("Payments Router", async () => {
 					checkoutPage: {
 						title: "Test Checkout",
 						themeId: theme.id,
-
 					},
 				},
 			});
@@ -350,7 +337,6 @@ describe("Payments Router", async () => {
 					checkoutPage: {
 						title: "Test Checkout",
 						themeId: theme.id,
-
 					},
 				},
 			});
@@ -373,7 +359,6 @@ describe("Payments Router", async () => {
 					checkoutPage: {
 						title: "Test Checkout",
 						themeId: theme.id,
-
 					},
 				},
 			});
@@ -396,7 +381,6 @@ describe("Payments Router", async () => {
 					checkoutPage: {
 						title: "Test Checkout",
 						themeId: theme.id,
-
 					},
 				},
 			});
@@ -419,7 +403,6 @@ describe("Payments Router", async () => {
 					checkoutPage: {
 						title: "Test Checkout",
 						themeId: theme.id,
-
 					},
 				},
 			});
@@ -437,7 +420,6 @@ describe("Payments Router", async () => {
 					checkoutPage: {
 						title: "Test Checkout",
 						themeId: theme.id,
-
 					},
 				},
 			});

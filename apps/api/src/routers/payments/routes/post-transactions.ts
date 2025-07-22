@@ -18,7 +18,14 @@ export const postTransactionsRoute = createHonoRouter().post(
 	protectedRouteMiddleware,
 	storeRouteMiddleware,
 	async (c) => {
-		const { amount, currency, reference, metadata, expiresAt, checkoutPage: { themeId, ...checkoutPage } } = c.req.valid("json");
+		const {
+			amount,
+			currency,
+			reference,
+			metadata,
+			expiresAt,
+			checkoutPage: { themeId, ...checkoutPage },
+		} = c.req.valid("json");
 
 		const [theme] = await database.checkoutTheme.findMany({
 			store: { id: c.get("store").id },
@@ -51,7 +58,7 @@ export const postTransactionsRoute = createHonoRouter().post(
 			redirectSuccessUrl: null,
 			themeId: theme.id,
 			transactionId: transaction.id,
-			uri: '',
+			uri: "",
 		});
 
 		return c.json(
@@ -78,7 +85,7 @@ function getSchema() {
 					v.string(),
 					v.transform((date) => new Date(date)),
 					v.date(),
-				)
+				),
 			),
 			null,
 		),
@@ -86,47 +93,79 @@ function getSchema() {
 			title: v.string(),
 			themeId: v.string(),
 			description: v.optional(v.nullable(v.string()), null),
-			logo: v.optional(v.nullable(v.object({
-				url: v.string(),
-				alt: v.optional(v.nullable(v.string()), null),
-				width: v.optional(v.nullable(v.number()), null),
-				height: v.optional(v.nullable(v.number()), null),
-			})), null),
-			colors: v.optional(v.nullable(v.object({
-				primary: v.optional(v.nullable(v.string()), null),
-				secondary: v.optional(v.nullable(v.string()), null),
-				background: v.optional(v.nullable(v.string()), null),
-				text: v.optional(v.nullable(v.string()), null),
-				success: v.optional(v.nullable(v.string()), null),
-				error: v.optional(v.nullable(v.string()), null),
-			})), null),
-			items: v.optional(v.nullable(v.array(v.object({
-				name: v.string(),
-				description: v.optional(v.nullable(v.string()), null),
-				quantity: v.number(),
-				unitPrice: v.number(),
-				imageUrl: v.optional(v.nullable(v.string()), null),
-			}))), null),
-			contact: v.optional(v.nullable(v.object({
-				supportEmail: v.optional(v.nullable(v.string()), null),
-				supportPhone: v.optional(v.nullable(v.string()), null),
-				website: v.optional(v.nullable(v.string()), null),
-			})), null),
-			settings: v.optional(v.nullable(v.object({
-				showItems: v.boolean(),
-				showTotal: v.boolean(),
-				showCurrency: v.boolean(),
-				language: v.picklist(["fr", "en", "es", "de"]),
-				showPoweredBy: v.boolean(),
-			})), null),
-			customTexts: v.optional(v.nullable(v.object({
-				payButton: v.optional(v.nullable(v.string()), null),
-				cancelButton: v.optional(v.nullable(v.string()), null),
-				processingMessage: v.optional(v.nullable(v.string()), null),
-				successMessage: v.optional(v.nullable(v.string()), null),
-				errorMessage: v.optional(v.nullable(v.string()), null),
-			})), null),
-		})
+			logo: v.optional(
+				v.nullable(
+					v.object({
+						url: v.string(),
+						alt: v.optional(v.nullable(v.string()), null),
+						width: v.optional(v.nullable(v.number()), null),
+						height: v.optional(v.nullable(v.number()), null),
+					}),
+				),
+				null,
+			),
+			colors: v.optional(
+				v.nullable(
+					v.object({
+						primary: v.optional(v.nullable(v.string()), null),
+						secondary: v.optional(v.nullable(v.string()), null),
+						background: v.optional(v.nullable(v.string()), null),
+						text: v.optional(v.nullable(v.string()), null),
+						success: v.optional(v.nullable(v.string()), null),
+						error: v.optional(v.nullable(v.string()), null),
+					}),
+				),
+				null,
+			),
+			items: v.optional(
+				v.nullable(
+					v.array(
+						v.object({
+							name: v.string(),
+							description: v.optional(v.nullable(v.string()), null),
+							quantity: v.number(),
+							unitPrice: v.number(),
+							imageUrl: v.optional(v.nullable(v.string()), null),
+						}),
+					),
+				),
+				null,
+			),
+			contact: v.optional(
+				v.nullable(
+					v.object({
+						supportEmail: v.optional(v.nullable(v.string()), null),
+						supportPhone: v.optional(v.nullable(v.string()), null),
+						website: v.optional(v.nullable(v.string()), null),
+					}),
+				),
+				null,
+			),
+			settings: v.optional(
+				v.nullable(
+					v.object({
+						showItems: v.boolean(),
+						showTotal: v.boolean(),
+						showCurrency: v.boolean(),
+						language: v.picklist(["fr", "en", "es", "de"]),
+						showPoweredBy: v.boolean(),
+					}),
+				),
+				null,
+			),
+			customTexts: v.optional(
+				v.nullable(
+					v.object({
+						payButton: v.optional(v.nullable(v.string()), null),
+						cancelButton: v.optional(v.nullable(v.string()), null),
+						processingMessage: v.optional(v.nullable(v.string()), null),
+						successMessage: v.optional(v.nullable(v.string()), null),
+						errorMessage: v.optional(v.nullable(v.string()), null),
+					}),
+				),
+				null,
+			),
+		}),
 	});
 
 	type Data = v.InferOutput<typeof baseSchema>;
