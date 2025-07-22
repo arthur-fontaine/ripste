@@ -1,9 +1,5 @@
 import { Hono } from "hono";
-import type { auth } from "../auth.ts";
+import { authMiddleware, type AuthContext } from "../middlewares/authMiddleware.ts";
 
-export const createHonoRouter = () => new Hono<{
-  Variables: {
-    user: typeof auth.$Infer.Session.user | null;
-    session: typeof auth.$Infer.Session.session | null
-  }
-}>()
+export const createHonoRouter = () => new Hono<AuthContext>()
+  .use("*", authMiddleware);

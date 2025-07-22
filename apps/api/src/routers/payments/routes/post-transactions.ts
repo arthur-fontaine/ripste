@@ -4,6 +4,9 @@ import * as v from "valibot";
 import { vValidatorThrower } from "../../../utils/v-validator-thrower.ts";
 import { dinar } from "../../../utils/dinar.ts";
 import { createHonoRouter } from "../../../utils/create-hono-router.ts";
+import { database } from "../../../database.ts";
+import { protectedRouteMiddleware } from "../../../middlewares/protectedRouteMiddleware.ts";
+import { storeRouteMiddleware } from "../../../middlewares/storeRouteMiddleware.ts";
 
 export const postTransactionsRoute = createHonoRouter().post(
 	"/",
@@ -12,8 +15,26 @@ export const postTransactionsRoute = createHonoRouter().post(
 		v.config(getSchema(), { abortEarly: true }),
 		vValidatorThrower,
 	),
+	protectedRouteMiddleware,
+	storeRouteMiddleware,
 	async (c) => {
-		return c.json({});
+		const { amount, currency, reference, metadata } = c.req.valid("json");
+		const transaction = await database.transaction.insert({
+			amount,
+			currency,
+			reference,
+			status: "created",
+			methodType: "checkout_page",
+			metadata: metadata ?? null,
+			storeId: c.get("store").id,
+		});
+
+		return c.json(
+			{
+				data: { id: transaction.id },
+			},
+			201,
+		);
 	},
 );
 
@@ -21,6 +42,8 @@ function getSchema() {
 	interface Data {
 		amount: number;
 		currency: string;
+		reference: string;
+		metadata?: Record<string, string> | null | undefined;
 	}
 
 	const EURO_LIMIT = 1_000_000;
@@ -29,6 +52,8 @@ function getSchema() {
 	const baseSchema = v.objectAsync({
 		amount: v.number(),
 		currency: v.pipe(v.string(), v.toUpperCase()),
+		reference: v.string(),
+		metadata: v.optional(v.nullable(v.record(v.string(), v.string()))),
 	});
 
 	return v.pipeAsync(

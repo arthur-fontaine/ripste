@@ -40,6 +40,11 @@ export class MikroOrmStoreModel extends BaseModel implements IStore {
 		return this.company ? this.company.id : null;
 	}
 
+	set companyId(companyId: string | null) {
+		if (companyId !== null)
+			this.company = this._em.getReference(MikroOrmCompanyModel, companyId);
+	}
+
 	@OneToMany(
 		() => MikroOrmStoreMemberModel,
 		(member) => member.store,
