@@ -4,6 +4,6 @@
 		"@ripste/tsconfig/tsconfig.json"
 	],
 	"compilerOptions": {
-		"rewriteRelativeImportExtensions": false,
+		"rewriteRelativeImportExtensions": false
 	}
 }

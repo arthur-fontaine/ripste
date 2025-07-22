@@ -23,16 +23,14 @@ export class Dinar {
 	}
 
 	async getCurrencies(): Promise<string[]> {
-		return this.#cache.callWithCache(
-			"supportedCurrencies",
-			() => this.#currencyProvider.getSupportedCurrencies(),
+		return this.#cache.callWithCache("supportedCurrencies", () =>
+			this.#currencyProvider.getSupportedCurrencies(),
 		);
 	}
 
 	async convert(amount: number, from: string, to: string): Promise<number> {
-		const rates = await this.#cache.callWithCache(
-			`rates-${from}`,
-			() => this.#currencyProvider.getRates(from),
+		const rates = await this.#cache.callWithCache(`rates-${from}`, () =>
+			this.#currencyProvider.getRates(from),
 		);
 		const rateTo = rates[to];
 		if (!rateTo) {
