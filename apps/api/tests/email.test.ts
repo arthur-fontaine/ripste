@@ -1,8 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import {
-	ResendEmailService,
-	type IEmailTemplate,
-} from "../src/services/email/index.js";
+import { ResendEmailService } from "../src/services/email/index.js";
 
 const mockSend = vi.fn();
 vi.mock("resend", () => ({
@@ -99,48 +96,6 @@ describe("ResendEmailService", () => {
 				subject: "Mise à jour de votre demande d'accès - Ripste",
 				html: expect.stringContaining("John Doe"),
 				text: expect.stringContaining("John Doe"),
-			});
-		});
-	});
-
-	describe("sendCustomEmail", () => {
-		it("should send custom email", async () => {
-			mockSend.mockResolvedValue({ data: { id: "email-id" } });
-
-			const template: IEmailTemplate = {
-				to: "user@example.com",
-				subject: "Custom Subject",
-				htmlContent: "<h1>Custom Content</h1>",
-				textContent: "Custom Content",
-			};
-
-			await emailService.sendCustomEmail(template);
-
-			expect(mockSend).toHaveBeenCalledWith({
-				from: "Test Service <test@example.com>",
-				to: "user@example.com",
-				subject: "Custom Subject",
-				html: "<h1>Custom Content</h1>",
-				text: "Custom Content",
-			});
-		});
-
-		it("should send custom email without text content", async () => {
-			mockSend.mockResolvedValue({ data: { id: "email-id" } });
-
-			const template: IEmailTemplate = {
-				to: "user@example.com",
-				subject: "Custom Subject",
-				htmlContent: "<h1>Custom Content</h1>",
-			};
-
-			await emailService.sendCustomEmail(template);
-
-			expect(mockSend).toHaveBeenCalledWith({
-				from: "Test Service <test@example.com>",
-				to: "user@example.com",
-				subject: "Custom Subject",
-				html: "<h1>Custom Content</h1>",
 			});
 		});
 	});

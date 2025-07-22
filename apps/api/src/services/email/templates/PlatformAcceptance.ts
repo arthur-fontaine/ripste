@@ -1,4 +1,4 @@
-import type { IPlatformAcceptanceData } from "../domain/ports/IPlatformAcceptanceData.ts";
+import type { IPlatformAcceptanceData } from "../domain/models/IPlatformAcceptanceData.ts";
 
 export function platformAcceptance(data: IPlatformAcceptanceData): {
 	subject: string;

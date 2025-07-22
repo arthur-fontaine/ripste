@@ -1,7 +1,6 @@
-import type { IPlatformAcceptanceData } from "./IPlatformAcceptanceData.ts";
-import type { IPlatformRejectionData } from "./IPlatformRejectionData.ts";
-import type { IRegistrationConfirmationData } from "./IRegistrationConfirmationData.ts";
-import type { IEmailTemplate } from "./IEmailTemplate.ts";
+import type { IPlatformAcceptanceData } from "../models/IPlatformAcceptanceData.ts";
+import type { IPlatformRejectionData } from "../models/IPlatformRejectionData.ts";
+import type { IRegistrationConfirmationData } from "../models/IRegistrationConfirmationData.ts";
 
 export interface IEmailService {
 	/**
@@ -20,9 +19,4 @@ export interface IEmailService {
 	 * Envoie un email de refus sur la plateforme
 	 */
 	sendPlatformRejection(data: IPlatformRejectionData): Promise<void>;
-
-	/**
-	 * Envoie un email personnalisé
-	 */
-	sendCustomEmail(template: IEmailTemplate): Promise<void>;
 }

@@ -1,4 +1,4 @@
-import type { IPlatformRejectionData } from "../domain/ports/IPlatformRejectionData.ts";
+import type { IPlatformRejectionData } from "../domain/models/IPlatformRejectionData.ts";
 
 export function platformRejection(data: IPlatformRejectionData): {
 	subject: string;

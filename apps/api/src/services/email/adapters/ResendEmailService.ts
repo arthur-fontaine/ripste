@@ -1,12 +1,12 @@
 import { Resend } from "resend";
 import type { IEmailService } from "../domain/ports/IEmailService.ts";
+import type { IEmailTemplate } from "../domain/models/IEmailTemplate.ts";
+import type { IRegistrationConfirmationData } from "../domain/models/IRegistrationConfirmationData.ts";
+import type { IPlatformAcceptanceData } from "../domain/models/IPlatformAcceptanceData.ts";
+import type { IPlatformRejectionData } from "../domain/models/IPlatformRejectionData.ts";
 import { platformRejection } from "../templates/PlatformRejection.ts";
 import { platformAcceptance } from "../templates/PlatformAcceptance.ts";
 import { registrationConfirmation } from "../templates/RegistrationConfirmation.ts";
-import type { IEmailTemplate } from "../domain/ports/IEmailTemplate.ts";
-import type { IRegistrationConfirmationData } from "../domain/ports/IRegistrationConfirmationData.ts";
-import type { IPlatformAcceptanceData } from "../domain/ports/IPlatformAcceptanceData.ts";
-import type { IPlatformRejectionData } from "../domain/ports/IPlatformRejectionData.ts";
 
 export interface ResendEmailServiceConfig {
 	apiKey: string;
@@ -66,10 +66,6 @@ export class ResendEmailService implements IEmailService {
 			htmlContent: template.html,
 			textContent: template.text,
 		});
-	}
-
-	async sendCustomEmail(template: IEmailTemplate): Promise<void> {
-		await this.sendEmail(template);
 	}
 
 	private async sendEmail(template: IEmailTemplate): Promise<void> {

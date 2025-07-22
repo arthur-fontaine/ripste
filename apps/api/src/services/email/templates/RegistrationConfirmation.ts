@@ -1,4 +1,4 @@
-import type { IRegistrationConfirmationData } from "../domain/ports/IRegistrationConfirmationData.ts";
+import type { IRegistrationConfirmationData } from "../domain/models/IRegistrationConfirmationData.ts";
 
 export function registrationConfirmation(data: IRegistrationConfirmationData): {
 	subject: string;
