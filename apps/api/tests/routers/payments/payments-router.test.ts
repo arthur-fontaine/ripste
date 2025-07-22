@@ -1,60 +1,14 @@
 import { describe, it, expect } from "vitest";
 import { getApiClient } from "../../test-utils/get-api-client.ts";
 import { readBody } from "../../test-utils/readBody.ts";
+import { getRealConditionApiClient } from "../../test-utils/getRealConditionApiClient.ts";
 
 describe("Payments Router", async () => {
-	const { app, database } = await getApiClient();
-
-	await app.fetch(
-		new Request("https://_/auth/sign-up/email", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				name: "NFKJDNSK",
-				email: "fndknfkds@gmail.com",
-				password: "fneksdKNKNKdsmks.329",
-			}),
-		}),
-	);
-	const [u] = await database.user.findMany({ email: "fndknfkds@gmail.com" });
-	if (!u) throw new Error("User not found");
-	await database.user.update(u.id, { emailVerified: true });
-	const store = await database.store.insert({
-		name: "Test Store",
-		slug: "test-store",
-		contactEmail: "test@example.com",
-		companyId: null,
-		contactPhone: null,
-	});
-	await database.storeMember.insert({
-		storeId: store.id,
-		userId: u.id,
-		permissionLevel: "owner",
-	});
-	const theme = await database.checkoutTheme.insert({
-		name: "Default Theme",
-		storeId: store.id,
-		version: 1,
-	});
-	const signInResponse = await app.fetch(
-		new Request("https://_/auth/sign-in/email", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				email: "fndknfkds@gmail.com",
-				password: "fneksdKNKNKdsmks.329",
-			}),
-		}),
-	);
-	const cookie = signInResponse.headers.get("set-cookie");
-	if (!cookie) {
-		throw new Error("Missing cookie");
-	}
-	const { apiClient } = await getApiClient({ cookie });
+	const { database } = await getApiClient();
+	const {
+		apiClient,
+		data: { theme },
+	} = await getRealConditionApiClient();
 
 	describe("POST /payments/transactions", () => {
 		it("should return 201 and a location header on successful payment creation", async () => {
