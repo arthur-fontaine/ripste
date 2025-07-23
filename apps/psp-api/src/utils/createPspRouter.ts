@@ -2,11 +2,14 @@ import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { interfaceToZod } from "interface-to-zod";
 
-interface IPspRouter {
-	pay(
-		paymentInfos: IPaymentInfos,
+export interface IPspRouter {
+	submitPayment(paymentInfos: IPaymentInfos): Promise<{ id: string }>;
+	getPaymentStatus(
+		id: string,
 	): Promise<
-		{ success: true; error?: never } | { success: false; error: string }
+		| { status: "waiting" }
+		| { status: "success" }
+		| { status: "failure"; error: string }
 	>;
 }
 
@@ -24,16 +27,19 @@ type IPaymentMethod =
 const PaymentInfosSchema = interfaceToZod<IPaymentInfos>();
 
 export function createPspRouter(psp: IPspRouter) {
-	return new Hono().post(
-		"/pay",
-		zValidator("json", PaymentInfosSchema),
-		async (c) => {
-			const paymentInfos = c.req.valid("json");
-			const result = await psp.pay(paymentInfos);
-			if (!result.success) {
-				return c.json({ error: result.error }, 400);
-			}
-			return c.json({ status: "success" });
-		},
-	);
+	return new Hono()
+		.post(
+			"/submit-payment",
+			zValidator("json", PaymentInfosSchema),
+			async (c) => {
+				const paymentInfos = c.req.valid("json");
+				const result = await psp.submitPayment(paymentInfos);
+				return c.json({ id: result.id }, 201);
+			},
+		)
+		.get("/payments/:id/status", async (c) => {
+			const id = c.req.param("id");
+			const result = await psp.getPaymentStatus(id);
+			return c.json(result);
+		});
 }
