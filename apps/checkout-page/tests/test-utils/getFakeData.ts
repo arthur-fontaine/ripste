@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { database } from "../../src/database.ts";
 
 export async function getFakeData() {
@@ -56,7 +55,7 @@ async function createSession(user: Awaited<ReturnType<typeof createUser>>) {
 	const session = await database.session.insert({
 		userId: user.id,
 		expiresAt: new Date(Date.now() + 1000 * 60 * 60),
-		token: randomUUID(),
+		token: "test-session-token",
 	});
 
 	return session;
@@ -116,7 +115,7 @@ async function createCheckoutPage(
 		redirectSuccessUrl: null,
 		themeId: theme.id,
 		transactionId: transaction.id,
-		uri: randomUUID(),
+		uri: 'random-id',
 	});
 
 	return checkoutPage;

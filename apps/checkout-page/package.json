@@ -5,7 +5,7 @@
     "build": "vike build",
     "preview": "vike preview",
     "test": "vitest run",
-		"test:watch": "vitest"
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@mikro-orm/postgresql": "^6.4.16",
@@ -23,6 +23,7 @@
     "@mikro-orm/sqlite": "^6.4.16",
     "@ripste/tsconfig": "workspace:*",
     "@tailwindcss/vite": "^4.1.11",
+    "playwright": "^1.54.1",
     "tailwindcss": "^4.1.11",
     "typescript": "^5.8.3",
     "vite": "^6.3.5"

@@ -4,6 +4,8 @@ import { render } from "vike/abort";
 
 export type Data = {
   id: string;
+  amount: number;
+  currency: string;
 };
 
 export default async function data(pageContext: PageContextServer): Promise<Data> {
@@ -15,7 +17,14 @@ export default async function data(pageContext: PageContextServer): Promise<Data
     throw render(404, "Checkout page not found");
   }
 
+  const transaction = await database.transaction.findOne(checkoutPage.transaction.id);
+  if (!transaction) {
+    throw render(404, "Transaction not found");
+  }
+
   return {
     id: checkoutPage.id,
+    amount: transaction.amount,
+    currency: transaction.currency,
   };
 }

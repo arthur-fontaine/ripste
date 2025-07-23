@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p>{{ data.id }}</p>
+    <p>{{ formattedAmount }}</p>
   </div>
 </template>
 
@@ -9,4 +9,9 @@ import type { Data } from "./+data";
 import { useData } from "vike-vue/useData";
 
 const data = useData<Data>();
+
+const formattedAmount = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: data.currency,
+}).format(data.amount);
 </script>
