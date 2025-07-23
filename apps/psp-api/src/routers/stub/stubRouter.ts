@@ -5,6 +5,7 @@ import {
 } from "../../utils/createPspRouter.ts";
 import { setTimeout } from "node:timers/promises";
 import { randomUUID } from "node:crypto";
+import { HTTPException } from "hono/http-exception";
 
 class PaymentsDb {
 	#paymentsMap = new Map<
@@ -74,7 +75,9 @@ export const stubRouter = createPspRouter({
 	async getPaymentStatus(id) {
 		const paymentPromise = paymentsDb.getPaymentStatus(id);
 		if (!paymentPromise) {
-			return { status: "failure", error: "Payment not found" };
+			throw new HTTPException(404, {
+				message: `Payment with id ${id} not found`,
+			});
 		}
 
 		return paymentPromise;

@@ -177,4 +177,15 @@ describe("Stub Router", () => {
 			status: "failure",
 		});
 	});
+
+	it("should throw 404 for non-existent payment", async () => {
+		const res = await client.stub.payments[":id"].status.$get({
+			param: { id: "non-existent-id" },
+		});
+
+		expect(res.status).toBe(404);
+		expect(await res.text()).toEqual(
+			"Payment with id non-existent-id not found",
+		);
+	});
 });
