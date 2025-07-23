@@ -85,6 +85,7 @@ const handleSubmit = async () => {
 			email: email.value,
 			password: password.value,
 			name: name.value,
+			callbackURL: `${window.location.origin}/`,
 		});
 
 		if (result.data) {

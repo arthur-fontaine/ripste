@@ -8,5 +8,8 @@ export default defineConfig({
 		coverage: {
 			include: ["src"],
 		},
+		env: {
+			RESEND_API_KEY: "test-api-key",
+		},
 	},
 });

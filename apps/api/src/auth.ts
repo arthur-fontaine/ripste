@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { createCustomDatabaseAdapterWithMappings } from "./better-auth-adapter.ts";
 import { oidcProvider, openAPI } from "better-auth/plugins";
 import { database } from "./database.ts";
+import { emailService } from "./email.ts";
 
 export const auth = betterAuth({
 	basePath: "/auth",
@@ -12,6 +13,18 @@ export const auth = betterAuth({
 	emailAndPassword: {
 		enabled: true,
 		requireEmailVerification: true,
+		sendEmailVerificationOnSignUp: true,
+	},
+	emailVerification: {
+		sendOnSignUp: true,
+		autoSignInAfterVerification: true,
+		sendVerificationEmail: async ({ user, url }) => {
+			await emailService.sendRegistrationConfirmation({
+				userEmail: user.email,
+				userName: user.name || user.email,
+				confirmationUrl: url,
+			});
+		},
 	},
 	trustedOrigins: (
 		process.env["ALLOWED_ORIGINS"] ||

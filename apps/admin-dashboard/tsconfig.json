@@ -4,6 +4,9 @@
 		"@ripste/tsconfig/tsconfig.json"
 	],
 	"compilerOptions": {
+		"lib": ["DOM", "ESNext"],
 		"rewriteRelativeImportExtensions": false
-	}
+	},
+	"exclude": ["dist"],
+	"include": ["src"]
 }

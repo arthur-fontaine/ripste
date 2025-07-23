@@ -2,6 +2,15 @@ import { describe, it, expect, vi } from "vitest";
 import { createAuthClient } from "better-auth/client";
 import { getApiClient } from "./test-utils/get-api-client.ts";
 
+vi.mock("../src/email.ts", () => ({
+	emailService: {
+		sendRegistrationConfirmation: vi.fn(),
+		sendPlatformAcceptance: vi.fn(),
+		sendPlatformRejection: vi.fn(),
+		sendCustomEmail: vi.fn(),
+	},
+}));
+
 interface UserSignUpData {
 	name: string;
 	email: string;
