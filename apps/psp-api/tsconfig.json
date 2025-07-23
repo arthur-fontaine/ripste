@@ -1,3 +1,4 @@
 {
-	"extends": "@ripste/tsconfig/tsconfig.json"
+	"extends": "@ripste/tsconfig/tsconfig.json",
+	"exclude": ["coverage"]
 }

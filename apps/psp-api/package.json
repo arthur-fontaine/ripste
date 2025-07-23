@@ -3,11 +3,19 @@
 	"type": "module",
 	"version": "1.0.0",
 	"main": "src/main.ts",
+	"files": ["dist"],
+	"exports": {
+		"./client": {
+			"types": "./dist/client.d.ts",
+			"default": "./dist/client.js"
+		}
+	},
 	"scripts": {
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"start": "node --experimental-strip-types src/main.ts",
-		"dev": "node --watch --experimental-strip-types src/main.ts"
+		"dev": "node --watch --experimental-strip-types src/main.ts",
+		"build": "rslib build"
 	},
 	"keywords": [],
 	"author": "",
@@ -25,6 +33,7 @@
 	},
 	"devDependencies": {
 		"@ripste/tsconfig": "workspace:*",
+		"@rslib/core": "^0.10.4",
 		"zod": "^4.0.5"
 	}
 }
