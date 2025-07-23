@@ -1,5 +1,5 @@
 import { testClient } from "hono/testing";
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { getApiClient } from "./test-utils/get-api-client.ts";
 
 vi.mock("../src/email.ts", () => ({
