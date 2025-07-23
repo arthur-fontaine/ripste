@@ -27,10 +27,18 @@ export class MikroOrmStoreMemberModel
 		return this.user.id;
 	}
 
+	set userId(userId: string) {
+		this.user = this._em.getReference(MikroOrmUserModel, userId);
+	}
+
 	@ManyToOne(() => MikroOrmStoreModel)
 	store!: MikroOrmStoreModel;
 
 	get storeId(): string {
 		return this.store.id;
+	}
+
+	set storeId(storeId: string) {
+		this.store = this._em.getReference(MikroOrmStoreModel, storeId);
 	}
 }

@@ -14,6 +14,7 @@ WORKDIR /app
 COPY . .
 
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm run build
 
 RUN for dir in apps/* packages/*; do \
   if [ -d "$dir" ]; then \

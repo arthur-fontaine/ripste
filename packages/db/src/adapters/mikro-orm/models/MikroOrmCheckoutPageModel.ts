@@ -46,10 +46,21 @@ export class MikroOrmCheckoutPageModel
 		return this.transaction.id;
 	}
 
+	set transactionId(transactionId: string) {
+		this.transaction = this._em.getReference(
+			MikroOrmTransactionModel,
+			transactionId,
+		);
+	}
+
 	@ManyToOne(() => MikroOrmCheckoutThemeModel)
 	theme!: MikroOrmCheckoutThemeModel;
 
 	get themeId(): string {
 		return this.theme.id;
+	}
+
+	set themeId(themeId: string) {
+		this.theme = this._em.getReference(MikroOrmCheckoutThemeModel, themeId);
 	}
 }

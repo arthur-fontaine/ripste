@@ -16,6 +16,7 @@ import { MikroOrmTransactionEventModel } from "./MikroOrmTransactionEventModel.t
 import { MikroOrmCheckoutPageModel } from "./MikroOrmCheckoutPageModel.ts";
 import { MikroOrmPaymentAttemptModel } from "./MikroOrmPaymentAttemptModel.ts";
 import { MikroOrmRefundModel } from "./MikroOrmRefundModel.ts";
+import { MikroOrmSessionModel } from "./MikroOrmSessionModel.ts";
 
 @Entity()
 export class MikroOrmTransactionModel
@@ -45,11 +46,26 @@ export class MikroOrmTransactionModel
 	@Property({ type: t.json, nullable: true })
 	metadata!: Record<string, string> | null;
 
+	@ManyToOne(() => MikroOrmSessionModel)
+	session!: MikroOrmSessionModel;
+
+	get sessionId(): string {
+		return this.session.id;
+	}
+
+	set sessionId(sessionId: string) {
+		this.session = this._em.getReference(MikroOrmSessionModel, sessionId);
+	}
+
 	@ManyToOne(() => MikroOrmStoreModel)
 	store!: MikroOrmStoreModel;
 
 	get storeId(): string {
 		return this.store.id;
+	}
+
+	set storeId(storeId: string) {
+		this.store = this._em.getReference(MikroOrmStoreModel, storeId);
 	}
 
 	@OneToMany(
