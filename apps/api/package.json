@@ -25,6 +25,7 @@
 		"@opentelemetry/exporter-trace-otlp-grpc": "^0.202.0",
 		"@opentelemetry/sdk-node": "^0.202.0",
 		"@ripste/db": "workspace:*",
+		"@ripste/psp-api": "workspace:*",
 		"better-auth": "^1.2.10",
 		"@ripste/dinar.js": "workspace:*",
 		"currency-codes": "^2.2.0",

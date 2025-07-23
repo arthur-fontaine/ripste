@@ -81,15 +81,11 @@ const PaymentInfosSchema = interfaceToZod<IPaymentInfos>()
 
 export function createPspRouter(psp: IPspRouter) {
 	return new Hono()
-		.post(
-			"/submit-payment",
-			zValidator("json", PaymentInfosSchema),
-			async (c) => {
-				const paymentInfos = c.req.valid("json");
-				const result = await psp.submitPayment(paymentInfos);
-				return c.json({ id: result.id }, 201);
-			},
-		)
+		.post("/payments", zValidator("json", PaymentInfosSchema), async (c) => {
+			const paymentInfos = c.req.valid("json");
+			const result = await psp.submitPayment(paymentInfos);
+			return c.json({ id: result.id }, 201);
+		})
 		.get("/payments/:id/status", async (c) => {
 			const id = c.req.param("id");
 			const result = await psp.getPaymentStatus(id);

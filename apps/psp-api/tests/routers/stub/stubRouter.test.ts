@@ -15,7 +15,7 @@ describe("Stub Router", () => {
 	const client = testClient(app);
 
 	async function pay(paymentMethod: { type: string; cardNumber: string }) {
-		const submitPaymentResp = await client.stub["submit-payment"].$post({
+		const submitPaymentResp = await client.stub["payments"].$post({
 			json: {
 				amount: 100,
 				currency: "USD",
@@ -194,7 +194,7 @@ describe("Stub Router", () => {
 	});
 
 	it("should throw 400 if no cvv is provided", async () => {
-		const res = await client.stub["submit-payment"].$post({
+		const res = await client.stub["payments"].$post({
 			json: {
 				amount: 100,
 				currency: "USD",
@@ -212,7 +212,7 @@ describe("Stub Router", () => {
 	});
 
 	it("should throw 400 if cvv is not a number", async () => {
-		const res = await client.stub["submit-payment"].$post({
+		const res = await client.stub["payments"].$post({
 			json: {
 				amount: 100,
 				currency: "USD",
@@ -224,10 +224,13 @@ describe("Stub Router", () => {
 				},
 			},
 		});
+
+		expect(res.status).toBe(400);
+		expect(await res.text()).toContain("CVV must be a 3 or 4 digit number");
 	});
 
 	it("should throw 400 if cvv is 2 digits", async () => {
-		const res = await client.stub["submit-payment"].$post({
+		const res = await client.stub["payments"].$post({
 			json: {
 				amount: 100,
 				currency: "USD",
@@ -245,7 +248,7 @@ describe("Stub Router", () => {
 	});
 
 	it("should throw 400 if cvv is 5 digits", async () => {
-		const res = await client.stub["submit-payment"].$post({
+		const res = await client.stub["payments"].$post({
 			json: {
 				amount: 100,
 				currency: "USD",
@@ -263,7 +266,7 @@ describe("Stub Router", () => {
 	});
 
 	it("should throw 400 if no expiry date is provided", async () => {
-		const res = await client.stub["submit-payment"].$post({
+		const res = await client.stub["payments"].$post({
 			json: {
 				amount: 100,
 				currency: "USD",
@@ -281,7 +284,7 @@ describe("Stub Router", () => {
 	});
 
 	it("should throw 400 if invalid expiry date is provided", async () => {
-		const res = await client.stub["submit-payment"].$post({
+		const res = await client.stub["payments"].$post({
 			json: {
 				amount: 100,
 				currency: "USD",
@@ -299,7 +302,7 @@ describe("Stub Router", () => {
 	});
 
 	it("should throw 400 if expiry date is in the past", async () => {
-		const res = await client.stub["submit-payment"].$post({
+		const res = await client.stub["payments"].$post({
 			json: {
 				amount: 100,
 				currency: "USD",
