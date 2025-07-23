@@ -10,6 +10,6 @@ export default defineConfig({
 		},
 		env: {
 			RESEND_API_KEY: "test-api-key",
-		}
+		},
 	},
 });
