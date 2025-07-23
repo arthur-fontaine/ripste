@@ -27,6 +27,7 @@ describe("Payments Router", async () => {
 
 			expect(res.status).toBe(201);
 			expect(res.headers.get("Location")).toBeDefined();
+			expect(res.headers.get("Location")).not.toBeFalsy();
 		});
 
 		it("should return data with an id on successful payment creation", async () => {
