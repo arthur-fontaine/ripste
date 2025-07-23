@@ -5,5 +5,5 @@
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true
 	},
-	"exclude": ["dist"]
+	"exclude": ["dist", "coverage"]
 }
