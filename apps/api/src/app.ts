@@ -3,7 +3,6 @@ import { prometheus } from "@hono/prometheus";
 import { cors } from "hono/cors";
 import { otel } from "@hono/otel";
 import { authRouter } from "./routers/auth/auth-router.ts";
-import { adminRouter } from "./routers/admin/admin-router.ts";
 import { paymentsRouter } from "./routers/payments/payments-router.ts";
 import { createHonoRouter } from "./utils/create-hono-router.ts";
 
@@ -27,6 +26,4 @@ export const app = createHonoRouter()
 	.route("/ping", pingRouter)
 	.route("/auth", authRouter)
 	.route("/payments", paymentsRouter)
-	.route("/admin", adminRouter)
-	.route("/admin", adminRouter)
 	.get("/metrics", printMetrics);
