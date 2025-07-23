@@ -19,7 +19,11 @@ describe("Stub Router", () => {
 			json: {
 				amount: 100,
 				currency: "USD",
-				paymentMethod,
+				paymentMethod: {
+					...paymentMethod,
+					expiryDate: "12/2100",
+					cvv: "123",
+				},
 			},
 		});
 		const submitPaymentRes = await submitPaymentResp.json();
@@ -187,5 +191,128 @@ describe("Stub Router", () => {
 		expect(await res.text()).toEqual(
 			"Payment with id non-existent-id not found",
 		);
+	});
+
+	it("should throw 400 if no cvv is provided", async () => {
+		const res = await client.stub["submit-payment"].$post({
+			json: {
+				amount: 100,
+				currency: "USD",
+				paymentMethod: {
+					type: "visa",
+					cardNumber: "4242424242424242",
+					cvv: "",
+					expiryDate: "12/2100",
+				},
+			},
+		});
+
+		expect(res.status).toBe(400);
+		expect(await res.text()).toContain("CVV is required");
+	});
+
+	it("should throw 400 if cvv is not a number", async () => {
+		const res = await client.stub["submit-payment"].$post({
+			json: {
+				amount: 100,
+				currency: "USD",
+				paymentMethod: {
+					type: "visa",
+					cardNumber: "4242424242424242",
+					cvv: "abc",
+					expiryDate: "12/2100",
+				},
+			},
+		});
+	});
+
+	it("should throw 400 if cvv is 2 digits", async () => {
+		const res = await client.stub["submit-payment"].$post({
+			json: {
+				amount: 100,
+				currency: "USD",
+				paymentMethod: {
+					type: "visa",
+					cardNumber: "4242424242424242",
+					cvv: "12",
+					expiryDate: "12/2100",
+				},
+			},
+		});
+
+		expect(res.status).toBe(400);
+		expect(await res.text()).toContain("CVV must be a 3 or 4 digit number");
+	});
+
+	it("should throw 400 if cvv is 5 digits", async () => {
+		const res = await client.stub["submit-payment"].$post({
+			json: {
+				amount: 100,
+				currency: "USD",
+				paymentMethod: {
+					type: "visa",
+					cardNumber: "4242424242424242",
+					cvv: "12345",
+					expiryDate: "12/2100",
+				},
+			},
+		});
+
+		expect(res.status).toBe(400);
+		expect(await res.text()).toContain("CVV must be a 3 or 4 digit number");
+	});
+
+	it("should throw 400 if no expiry date is provided", async () => {
+		const res = await client.stub["submit-payment"].$post({
+			json: {
+				amount: 100,
+				currency: "USD",
+				paymentMethod: {
+					type: "visa",
+					cardNumber: "4242424242424242",
+					cvv: "123",
+					expiryDate: "",
+				},
+			},
+		});
+
+		expect(res.status).toBe(400);
+		expect(await res.text()).toContain("Expiry date is required");
+	});
+
+	it("should throw 400 if invalid expiry date is provided", async () => {
+		const res = await client.stub["submit-payment"].$post({
+			json: {
+				amount: 100,
+				currency: "USD",
+				paymentMethod: {
+					type: "visa",
+					cardNumber: "4242424242424242",
+					cvv: "123",
+					expiryDate: "12/025",
+				},
+			},
+		});
+
+		expect(res.status).toBe(400);
+		expect(await res.text()).toContain("Expiry date must be in MM/YYYY format");
+	});
+
+	it("should throw 400 if expiry date is in the past", async () => {
+		const res = await client.stub["submit-payment"].$post({
+			json: {
+				amount: 100,
+				currency: "USD",
+				paymentMethod: {
+					type: "visa",
+					cardNumber: "4242424242424242",
+					cvv: "123",
+					expiryDate: "01/2000",
+				},
+			},
+		});
+
+		expect(res.status).toBe(400);
+		expect(await res.text()).toContain("Expiry date cannot be in the past");
 	});
 });
