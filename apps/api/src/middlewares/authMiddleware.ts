@@ -1,5 +1,5 @@
 import type * as Hono from "hono";
-import { auth } from "../auth.js";
+import { auth } from "../auth.ts";
 
 export interface AuthContext extends Hono.Env {
 	Variables: {

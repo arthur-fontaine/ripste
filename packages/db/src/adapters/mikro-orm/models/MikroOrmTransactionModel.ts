@@ -16,7 +16,7 @@ import { MikroOrmTransactionEventModel } from "./MikroOrmTransactionEventModel.t
 import { MikroOrmCheckoutPageModel } from "./MikroOrmCheckoutPageModel.ts";
 import { MikroOrmPaymentAttemptModel } from "./MikroOrmPaymentAttemptModel.ts";
 import { MikroOrmRefundModel } from "./MikroOrmRefundModel.ts";
-import { MikroOrmSessionModel } from "./MikroOrmSessionModel.js";
+import { MikroOrmSessionModel } from "./MikroOrmSessionModel.ts";
 
 @Entity()
 export class MikroOrmTransactionModel
