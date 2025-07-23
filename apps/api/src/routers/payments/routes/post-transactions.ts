@@ -7,6 +7,7 @@ import { createHonoRouter } from "../../../utils/create-hono-router.ts";
 import { database } from "../../../database.ts";
 import { protectedRouteMiddleware } from "../../../middlewares/protectedRouteMiddleware.ts";
 import { storeRouteMiddleware } from "../../../middlewares/storeRouteMiddleware.ts";
+import { randomUUID } from "node:crypto";
 
 export const postTransactionsRoute = createHonoRouter().post(
 	"/",
@@ -58,8 +59,10 @@ export const postTransactionsRoute = createHonoRouter().post(
 			redirectSuccessUrl: null,
 			themeId: theme.id,
 			transactionId: transaction.id,
-			uri: "",
+			uri: randomUUID(),
 		});
+
+		c.header("Location", `/transactions/${transaction.id}`);
 
 		return c.json(
 			{
