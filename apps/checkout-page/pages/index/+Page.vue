@@ -1,5 +1,6 @@
 <template>
-  <h1>Welcome</h1>
+  <h1 class="font-bold text-3xl pb-4">My Vike app</h1>
+
   This page is:
   <ul>
     <li>Rendered to HTML.</li>
@@ -7,6 +8,6 @@
   </ul>
 </template>
 
-<script lang="ts" setup>
-import Counter from "./Counter.vue";
+<script setup lang="ts">
+import Counter from "../../components/Counter.vue";
 </script>

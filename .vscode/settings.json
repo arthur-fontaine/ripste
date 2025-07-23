@@ -9,6 +9,7 @@
 		"dinarjs",
 		"admin",
 		"psp",
-		"api/better-auth"
+		"api/better-auth",
+		"checkout-page"
 	]
 }
