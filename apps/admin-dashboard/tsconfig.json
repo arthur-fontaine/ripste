@@ -2,5 +2,11 @@
 	"extends": [
 		"@vue/tsconfig/tsconfig.dom.json",
 		"@ripste/tsconfig/tsconfig.json"
-	]
+	],
+	"compilerOptions": {
+		"lib": ["DOM", "ESNext"],
+		"rewriteRelativeImportExtensions": false
+	},
+	"exclude": ["dist"],
+	"include": ["src"]
 }

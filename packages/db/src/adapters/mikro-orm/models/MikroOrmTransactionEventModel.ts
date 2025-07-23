@@ -17,16 +17,17 @@ export class MikroOrmTransactionEventModel
 		Object.assign(this, params);
 	}
 
-	@Property({ type: t.string })
-	eventType!: string;
-
-	@Property({ type: t.json, nullable: true })
-	eventData!: ITransactionEventData | null;
+	@Property({ type: t.json })
+	eventData!: ITransactionEventData;
 
 	@ManyToOne(() => MikroOrmTransactionModel)
 	transaction!: MikroOrmTransactionModel;
 
 	get transactionId(): string {
 		return this.transaction.id;
+	}
+
+	set transactionId(value: string) {
+		this.transaction = this._em.getReference(MikroOrmTransactionModel, value);
 	}
 }

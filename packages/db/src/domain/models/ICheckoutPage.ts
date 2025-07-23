@@ -49,7 +49,7 @@ export interface ICheckoutDisplayData {
 		quantity: number;
 		unitPrice: number;
 		imageUrl: string | null;
-	} | null>;
+	}> | null;
 
 	contact: {
 		supportEmail: string | null;

@@ -1,10 +1,14 @@
 import { describe, it, expect, vi } from "vitest";
 import { createAuthClient } from "better-auth/client";
-import { SqliteDriver } from "@mikro-orm/sqlite";
-import { MikroOrmDatabase } from "@ripste/db/mikro-orm";
+import { getApiClient } from "./test-utils/get-api-client.ts";
 
-vi.mock("../src/database.ts", async () => ({
-	database: await MikroOrmDatabase.create(SqliteDriver, ":memory:"),
+vi.mock("../src/email.ts", () => ({
+	emailService: {
+		sendRegistrationConfirmation: vi.fn(),
+		sendPlatformAcceptance: vi.fn(),
+		sendPlatformRejection: vi.fn(),
+		sendCustomEmail: vi.fn(),
+	},
 }));
 
 interface UserSignUpData {
@@ -27,7 +31,7 @@ const authClient = createAuthClient({
 		) => {
 			const request =
 				input instanceof Request ? input : new Request(input, init);
-			const { app } = await import("../src/app.ts");
+			const { app } = await getApiClient();
 			return await app.fetch(request);
 		},
 	},

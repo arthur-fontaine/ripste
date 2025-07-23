@@ -38,6 +38,10 @@ export class MikroOrmCheckoutThemeModel
 		return this.store.id;
 	}
 
+	set storeId(storeId: string) {
+		this.store = this._em.getReference(MikroOrmStoreModel, storeId);
+	}
+
 	@OneToMany(
 		() => MikroOrmThemeCustomizationModel,
 		(custom) => custom.theme,

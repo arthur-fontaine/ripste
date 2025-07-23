@@ -1,6 +1,6 @@
 /// <reference types="@rspack/core/module" />
 
-import type { EntityClass } from "@mikro-orm/core";
+import type { EntityClass, EntityManager } from "@mikro-orm/core";
 
 export { MikroOrmDatabase } from "./MikroOrmDatabase.ts";
 
@@ -122,7 +122,7 @@ export type {
 	IUpdateVerification,
 } from "../../domain/models/IVerification.ts";
 
-export const loadModels = () => {
+export const loadModels = (loadEm: () => EntityManager) => {
 	const modelsContext = import.meta.webpackContext("./models", {
 		recursive: false,
 	});
@@ -137,6 +137,7 @@ export const loadModels = () => {
 			if (!modelClass) {
 				throw new Error(`Model class not found in module: ${key}`);
 			}
+			modelClass.prototype._loadEm = loadEm;
 			acc[modelName] = modelClass;
 			return acc;
 		},
