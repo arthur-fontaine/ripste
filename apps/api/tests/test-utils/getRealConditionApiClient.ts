@@ -7,9 +7,17 @@ export async function getRealConditionApiClient() {
 
 	const cookie = await getLoginCookie();
 
-	const { apiClient } = await getApiClient({ cookie });
+	const { apiClient, setDatabase, getDatabase, database } = await getApiClient({
+		cookie,
+	});
 
-	return { apiClient, data: { user, store, theme } };
+	return {
+		apiClient,
+		setDatabase,
+		getDatabase,
+		database,
+		data: { user, store, theme },
+	};
 }
 
 async function createUser() {
