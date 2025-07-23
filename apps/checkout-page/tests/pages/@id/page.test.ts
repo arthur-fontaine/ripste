@@ -1,10 +1,4 @@
-import { MikroOrmDatabase } from "@ripste/db/mikro-orm";
-import { SqliteDriver } from "@mikro-orm/sqlite";
 import { describe, expect, it, vi } from "vitest";
-
-vi.mock("../../../src/database.ts", async () => ({
-  database: await MikroOrmDatabase.create(SqliteDriver, ":memory:"),
-}));
 
 describe("Checkout Page", async () => {
   const { getFakeData } = await import("../../test-utils/getFakeData.ts");
@@ -18,7 +12,7 @@ describe("Checkout Page", async () => {
   });
 
   it("should render checkout page with correct data", async () => {
-    const { html, status } = await fetchHtml(`/checkout/${checkoutPage.uri}`);
+    const { html, status } = await fetchHtml(`/${checkoutPage.uri}`);
 
     expect(status).toBe(200);
   });

@@ -1,7 +1,14 @@
-import { afterAll, beforeAll } from 'vitest'
+import { afterAll, beforeAll, vi } from 'vitest'
 import { setTimeout } from 'node:timers/promises'
 import { dev } from 'vike/api'
 import path from 'node:path'
+import { MikroOrmDatabase } from '@ripste/db/mikro-orm';
+import { SqliteDriver } from '@mikro-orm/sqlite';
+import { unlink } from 'node:fs/promises';
+
+vi.mock("../src/database.ts", async () => ({
+  database: await MikroOrmDatabase.create(SqliteDriver, "test.db"),
+}));
 
 let viteServer: Awaited<ReturnType<typeof dev>>['viteServer'] | undefined = undefined
 
@@ -11,7 +18,12 @@ beforeAll(async () => {
     viteConfig: {
       logLevel: 'warn' as const,
       root,
-      configFile: `${root}/vite.config.ts`
+      configFile: `${root}/vite.config.ts`,
+      resolve: {
+        alias: {
+          '../../database.ts': path.resolve(root, 'tests/test-utils/fakeDatabase.ts'),
+        },
+      },
     }
   })
   viteServer = _viteServer
@@ -21,4 +33,5 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await viteServer?.close()
+  await unlink('test.db').catch(() => {});
 })
