@@ -1,4 +1,5 @@
 {
+  "extends": ["@ripste/tsconfig/tsconfig.json"],
   "compilerOptions": {
     "strict": true,
     "esModuleInterop": true,
