@@ -206,6 +206,9 @@ importers:
       '@hono/otel':
         specifier: ^0.2.0
         version: 0.2.2(hono@4.7.11)
+      '@hono/zod-validator':
+        specifier: ^0.7.2
+        version: 0.7.2(hono@4.7.11)(zod@4.0.5)
       '@opentelemetry/sdk-node':
         specifier: ^0.202.0
         version: 0.202.0(@opentelemetry/api@1.9.0)
@@ -215,10 +218,19 @@ importers:
       hono:
         specifier: ^4.7.11
         version: 4.7.11
+      interface-to-zod:
+        specifier: ^0.1.1
+        version: 0.1.1(typescript@5.8.3)
+      ts-pattern:
+        specifier: ^5.7.1
+        version: 5.7.1
     devDependencies:
       '@ripste/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
+      zod:
+        specifier: ^4.0.5
+        version: 4.0.5
 
   packages/db:
     dependencies:
@@ -997,6 +1009,12 @@ packages:
     peerDependencies:
       hono: '>=3.9.0'
       valibot: ^1.0.0 || ^1.0.0-beta.4 || ^1.0.0-rc
+
+  '@hono/zod-validator@0.7.2':
+    resolution: {integrity: sha512-ub5eL/NeZ4eLZawu78JpW/J+dugDAYhwqUIdp9KYScI6PZECij4Hx4UsrthlEUutqDDhPwRI0MscUfNkvn/mqQ==}
+    peerDependencies:
+      hono: '>=3.9.0'
+      zod: ^3.25.0 || ^4.0.0
 
   '@isaacs/balanced-match@4.0.1':
     resolution: {integrity: sha512-yzMTt9lEb8Gv7zRioUilSglI0c0smZ9k5D65677DLWLtWJaXIS3CqcGyUFByYKlnUj6TkjLVs54fBl6+TiGQDQ==}
@@ -3243,6 +3261,12 @@ packages:
     peerDependencies:
       typescript: '>=4.0.0'
 
+  interface-to-zod@0.1.1:
+    resolution: {integrity: sha512-u4Zu2BSrv7l6biTn0M2/dbF3D7c35uImYhGZX59ttBnTyDoIpYQcA49RNUjuWP4iI+vcmdOeAgbMS3J601bsTg==}
+    engines: {node: '>=22.9.0'}
+    peerDependencies:
+      typescript: '>=4.0.0'
+
   interpret@2.2.0:
     resolution: {integrity: sha512-Ju0Bz/cEia55xDwUWEa8+olFpCiQoypjnQySseKtmjNrnps3P+xfpUmGr90T7yjlVJmOtybRvPXhKMbHr+fWnw==}
     engines: {node: '>= 0.10'}
@@ -4433,6 +4457,9 @@ packages:
   ts-morph@26.0.0:
     resolution: {integrity: sha512-ztMO++owQnz8c/gIENcM9XfCEzgoGphTv+nKpYNM1bgsdOVC/jRZuEBf6N+mLLDNg68Kl+GgUZfOySaRiG1/Ug==}
 
+  ts-pattern@5.7.1:
+    resolution: {integrity: sha512-EGs8PguQqAAUIcQfK4E9xdXxB6s2GK4sJfT/vcc9V1ELIvC4LH/zXu2t/5fajtv6oiRCxdv7BgtVK3vWgROxag==}
+
   tsconfig-paths@4.2.0:
     resolution: {integrity: sha512-NoZ4roiN7LnbKn9QqE1amc9DJfzvZXxF4xDavcOWt1BPkdx+m+0gJuPM+S0vCe7zTJMYUP0R8pO2XMr+Y8oLIg==}
     engines: {node: '>=6'}
@@ -4774,6 +4801,9 @@ packages:
 
   zod@3.25.67:
     resolution: {integrity: sha512-idA2YXwpCdqUSKRCACDE6ItZD9TZzy3OZMtpfLoh6oPR47lipysRrJfjzMqFxQ3uJuUPyUeWe1r9vLH33xO/Qw==}
+
+  zod@4.0.5:
+    resolution: {integrity: sha512-/5UuuRPStvHXu7RS+gmvRf4NXrNxpSllGwDnCBcJZtQsKrviYXm54yDGV2KYNLT5kq0lHGcl7lqWJLgSaG+tgA==}
 
 snapshots:
 
@@ -5284,6 +5314,11 @@ snapshots:
     dependencies:
       hono: 4.7.11
       valibot: 1.1.0(typescript@5.8.3)
+
+  '@hono/zod-validator@0.7.2(hono@4.7.11)(zod@4.0.5)':
+    dependencies:
+      hono: 4.7.11
+      zod: 4.0.5
 
   '@isaacs/balanced-match@4.0.1': {}
 
@@ -7895,6 +7930,12 @@ snapshots:
       ts-morph: 26.0.0
       typescript: 5.8.3
 
+  interface-to-zod@0.1.1(typescript@5.8.3):
+    dependencies:
+      ts-morph: 26.0.0
+      typescript: 5.8.3
+      zod: 4.0.5
+
   interpret@2.2.0: {}
 
   ip-address@9.0.5:
@@ -9075,6 +9116,8 @@ snapshots:
       '@ts-morph/common': 0.27.0
       code-block-writer: 13.0.3
 
+  ts-pattern@5.7.1: {}
+
   tsconfig-paths@4.2.0:
     dependencies:
       json5: 2.2.3
@@ -9391,3 +9434,5 @@ snapshots:
   yocto-queue@1.2.1: {}
 
   zod@3.25.67: {}
+
+  zod@4.0.5: {}

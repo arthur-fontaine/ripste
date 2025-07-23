@@ -7,6 +7,7 @@
 		"telemetry",
 		"api/payment",
 		"dinarjs",
-		"admin"
+		"admin",
+		"psp"
 	]
 }
