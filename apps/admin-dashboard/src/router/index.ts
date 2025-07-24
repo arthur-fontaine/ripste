@@ -53,13 +53,7 @@ const routes = [
 		path: "/store/create",
 		name: "CreateStore",
 		component: StoreFormPage,
-	},
-	{
-		path: "/metrics",
-		name: "AdminMetrics",
-		component: () => import("../pages/AdminMetrics.vue"),
-		meta: { requiresAuth: true },
-	},
+	}
 ];
 
 const router = createRouter({

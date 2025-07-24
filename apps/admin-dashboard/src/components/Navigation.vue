@@ -7,7 +7,6 @@
       <div class="flex gap-4 items-center">
         <template v-if="session.data">
           <router-link to="/" class="hover:bg-white/20 px-3 py-2 rounded transition-colors">Home</router-link>
-          <router-link to="/metrics" class="hover:bg-white/20 px-3 py-2 rounded transition-colors">Statistiques</router-link>
           
           <div class="relative" v-click-outside="() => showUserMenu = false">
             <button 
