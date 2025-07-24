@@ -69,7 +69,6 @@
               <div>
                 <p class="text-sm font-medium text-gray-600">Taux de Succès</p>
                 <p class="text-2xl font-bold text-gray-900">{{ metrics.successRate }}%</p>
-                <p class="text-sm text-gray-500">Temps moy: {{ metrics.averageProcessingTime }}s</p>
               </div>
               <div class="h-12 w-12 bg-emerald-100 rounded-lg flex items-center justify-center">
                 <svg class="h-6 w-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -234,29 +233,30 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from "vue";
 import { apiClient } from "../lib/api";
-import type { ITransactionMetrics } from "@ripste/api/src/routers/admin/domain/models/ITransactionMetrics.ts";
-import type { ITransactionDayMetric } from "@ripste/api/src/routers/admin/domain/models/ITransactionDayMetric.ts";
 
 const loading = ref(true);
 const error = ref<string | null>(null);
-const metrics = ref<ITransactionMetrics>(null);
+const metrics = ref<Exclude<
+	Awaited<
+		ReturnType<
+			Awaited<
+				ReturnType<
+					(typeof apiClient)["admin"]["metrics"]["transactions"]["$get"]
+				>
+			>["json"]
+		>
+	>,
+	{ error: string }
+> | null>(null);
 
 const maxDailyTransactions = computed(() => {
 	if (!metrics.value?.transactionsByDay) return 0;
-	return Math.max(
-		...metrics.value.transactionsByDay.map(
-			(day: ITransactionDayMetric) => day.count,
-		),
-	);
+	return Math.max(...metrics.value.transactionsByDay.map((day) => day.count));
 });
 
 const maxDailyVolume = computed(() => {
 	if (!metrics.value?.transactionsByDay) return 0;
-	return Math.max(
-		...metrics.value.transactionsByDay.map(
-			(day: ITransactionDayMetric) => day.volume,
-		),
-	);
+	return Math.max(...metrics.value.transactionsByDay.map((day) => day.volume));
 });
 
 const totalTransactions = computed(() => {
@@ -291,7 +291,9 @@ const getPercentage = (value: number, max: number): number => {
 	return max > 0 ? (value / max) * 100 : 0;
 };
 
-const getStatusPercentage = (status: string): number => {
+const getStatusPercentage = (
+	status: "successful" | "pending" | "failed",
+): number => {
 	if (!metrics.value?.transactionsByStatus) return 0;
 	const value = metrics.value.transactionsByStatus[status];
 	return totalTransactions.value > 0
@@ -299,7 +301,7 @@ const getStatusPercentage = (status: string): number => {
 		: 0;
 };
 
-const getTypePercentage = (type: string): number => {
+const getTypePercentage = (type: "payment" | "refund"): number => {
 	if (!metrics.value?.transactionsByType) return 0;
 	const value = metrics.value.transactionsByType[type];
 	return totalTypes.value > 0 ? (value / totalTypes.value) * 100 : 0;
@@ -311,7 +313,11 @@ const fetchMetrics = async () => {
 		error.value = null;
 
 		const response = await apiClient.admin.metrics.transactions.$get();
-		metrics.value = await response.json();
+		const value = await response.json();
+		if ("error" in value) {
+			throw new Error(value.error);
+		}
+		metrics.value = value;
 
 		console.log("Metrics loaded:", metrics.value);
 	} catch (err) {
