@@ -7,12 +7,12 @@ import Layout from "../layouts/LayoutDefault.vue";
 // https://vike.dev/config
 
 export default {
-  // https://vike.dev/Layout
-  Layout,
+	// https://vike.dev/Layout
+	Layout,
 
-  // https://vike.dev/head-tags
-  title: "My Vike App",
-  description: "Demo showcasing Vike",
+	// https://vike.dev/head-tags
+	title: "My Vike App",
+	description: "Demo showcasing Vike",
 
-  extends: [vikeVue, vikeVuePinia],
+	extends: [vikeVue, vikeVuePinia],
 } satisfies Config;

@@ -6,6 +6,6 @@
 // See https://stackoverflow.com/questions/71477277/typescript-cannot-find-module-in-vue-project
 
 declare module "*.vue" {
-  import Vue from "vue";
-  export default Vue;
+	import Vue from "vue";
+	export default Vue;
 }

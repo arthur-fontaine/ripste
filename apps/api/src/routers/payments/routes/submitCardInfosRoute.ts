@@ -22,7 +22,8 @@ export const submitCardInfosRoute = createHonoRouter().post(
 	vValidator("query", v.object({ uri: v.string() }), vValidatorThrower),
 	async (c) => {
 		const uri = c.req.valid("query").uri;
-		const { provider, cardNumber, cvv, month, year, holderName } = c.req.valid("json");
+		const { provider, cardNumber, cvv, month, year, holderName } =
+			c.req.valid("json");
 
 		const [checkoutPage] = await database.checkoutPage.findMany({ uri });
 		if (!checkoutPage) {

@@ -8,7 +8,7 @@ import { app } from "../../../../psp-api/src/app.ts";
 const pspServer = serve({
 	fetch: app.fetch,
 	port: 3002,
-})
+});
 
 afterAll(() => {
 	pspServer.close();
@@ -452,8 +452,11 @@ describe("Payments Router", async () => {
 
 			expect(res.status).toBe(200);
 
-			const newCheckoutPage = await database.checkoutPage.findOne(checkoutPage.id);
-			if (!newCheckoutPage) throw new Error("Checkout page not found after payment");
+			const newCheckoutPage = await database.checkoutPage.findOne(
+				checkoutPage.id,
+			);
+			if (!newCheckoutPage)
+				throw new Error("Checkout page not found after payment");
 
 			expect(newCheckoutPage.completedAt).toBeDefined();
 			expect(newCheckoutPage.completedAt).not.toBeNull();

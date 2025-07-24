@@ -116,7 +116,7 @@ async function createCheckoutPage(
 		redirectSuccessUrl: null,
 		themeId: theme.id,
 		transactionId: transaction.id,
-		uri: 'random-id',
+		uri: "random-id",
 	});
 
 	return checkoutPage;

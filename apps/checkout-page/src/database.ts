@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import "dotenv/config";
 
 import { MikroOrmDatabase } from "@ripste/db/mikro-orm";
 import { PostgreSqlDriver } from "@mikro-orm/postgresql";

@@ -3,9 +3,7 @@
 	"type": "module",
 	"version": "1.0.0",
 	"main": "src/main.ts",
-	"files": [
-		"dist"
-	],
+	"files": ["dist"],
 	"exports": {
 		"./client": {
 			"types": "./dist/client.d.ts",

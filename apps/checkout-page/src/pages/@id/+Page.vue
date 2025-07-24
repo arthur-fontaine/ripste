@@ -50,22 +50,22 @@
 </template>
 
 <script lang="ts" setup>
-import type { Data } from './+data';
-import { useData } from 'vike-vue/useData';
-import { useCardInfosStore } from './useCardInfosStore';
+import type { Data } from "./+data";
+import { useData } from "vike-vue/useData";
+import { useCardInfosStore } from "./useCardInfosStore";
 
 const data = useData<Data>();
 const cardInfos = useCardInfosStore();
 
-const formattedAmount = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: data.currency
+const formattedAmount = new Intl.NumberFormat("en-US", {
+	style: "currency",
+	currency: data.currency,
 }).format(data.amount);
 
 cardInfos.$subscribe((_, state) => {
-  if (state.payResult.status === 'success') {
-    window.location.href = `${window.location.pathname}/success`;
-  } else if (state.payResult.status === 'error') {
-  }
+	if (state.payResult.status === "success") {
+		window.location.href = `${window.location.pathname}/success`;
+	} else if (state.payResult.status === "error") {
+	}
 });
 </script>
