@@ -402,4 +402,49 @@ describe("Payments Router", async () => {
 		// 	);
 		// });
 	});
+
+	describe("POST /payments/submit-card-infos", () => {
+		it("should mark the checkout page as completed", async () => {
+			const transactionRes = await apiClient.payments.transactions.$post({
+				json: {
+					amount: 100,
+					currency: "USD",
+					reference: "test-transaction",
+					metadata: null,
+					checkoutPage: {
+						title: "Test Checkout",
+						themeId: theme.id,
+					},
+				},
+			});
+			const body = readBody(await transactionRes.json());
+			const transactionId = body.data.id;
+
+			const [checkoutPage] = await database.checkoutPage.findMany({
+				transaction: { id: transactionId },
+			});
+			if (!checkoutPage) throw new Error("Checkout page not found");
+
+			expect(checkoutPage.completedAt).toBeNull();
+
+			await apiClient.payments["submit-card-infos"].$post({
+				json: {
+					provider: "visa",
+					cardNumber: "4242424242424242",
+					holderName: "John Doe",
+					month: 12,
+					year: 2100,
+					cvv: "123",
+				},
+				param: { uri: checkoutPage.uri },
+			});
+
+			const newCheckoutPage = await database.checkoutPage.findOne(checkoutPage.id);
+			if (!newCheckoutPage) throw new Error("Checkout page not found after payment");
+			
+			expect(newCheckoutPage.completedAt).toBeDefined();
+			expect(newCheckoutPage.completedAt).not.toBeNull();
+			expect(newCheckoutPage.completedAt).toBeInstanceOf(Date);
+		});
+	});
 });
