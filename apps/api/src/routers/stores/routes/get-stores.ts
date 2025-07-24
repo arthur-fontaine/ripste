@@ -7,7 +7,6 @@ export const getStoresRoute = createHonoRouter().get(
 	protectedRouteMiddleware,
 	async (c) => {
 		try {
-			// Récupérer seulement les stores auxquels l'utilisateur a accès
 			const storeMembers = await database.storeMember.findMany({
 				user: { id: c.get("user").id },
 			});

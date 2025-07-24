@@ -24,7 +24,6 @@ export const putStoreRoute = createHonoRouter().put(
 
 			const updateData: IUpdateStore = {};
 
-			// Ne mettre à jour que les champs fournis
 			if (validatedData.name !== undefined) {
 				updateData.name = validatedData.name;
 			}

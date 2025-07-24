@@ -61,7 +61,6 @@ export const postStoresRoute = createHonoRouter().post(
 		} catch (error) {
 			console.log("Error creating store:", error);
 			if (error instanceof Error) {
-				// Erreur de contrainte sur le slug du store
 				if (
 					(error.message.includes("unique") ||
 						error.message.includes("UNIQUE") ||
@@ -76,7 +75,6 @@ export const postStoresRoute = createHonoRouter().post(
 					);
 				}
 
-				// Erreur de clé étrangère (utilisateur n'existe pas)
 				if (
 					error.message.includes("FOREIGN KEY constraint failed") ||
 					error.message.includes("ForeignKeyConstraintViolationException")
@@ -84,7 +82,6 @@ export const postStoresRoute = createHonoRouter().post(
 					return c.json({ error: "User does not exist" }, 400);
 				}
 
-				// Erreur de contrainte sur storeMember (user déjà membre du store)
 				if (
 					(error.message.includes("unique") ||
 						error.message.includes("UNIQUE") ||

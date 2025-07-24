@@ -19,7 +19,6 @@ export const storeAccessMiddleware: MiddlewareHandler<
 		return c.json({ error: "Store ID is required" }, 400);
 	}
 
-	// Vérifier que l'utilisateur a accès à ce store
 	const storeMembers = await database.storeMember.findMany({
 		user: { id: c.get("user").id },
 		store: { id: storeId },
@@ -49,7 +48,6 @@ export const storeOwnerMiddleware: MiddlewareHandler<
 		return c.json({ error: "Store ID is required" }, 400);
 	}
 
-	// Vérifier que l'utilisateur a accès à ce store avec permission owner
 	const storeMembers = await database.storeMember.findMany({
 		user: { id: c.get("user").id },
 		store: { id: storeId },

@@ -11,7 +11,6 @@ export const deleteStoreRoute = createHonoRouter().delete(
 		try {
 			const id = c.req.param("id");
 
-			// Vérifier qu'il n'y a pas de transactions liées
 			const transactions = await database.transaction.findMany({
 				store: { id },
 			});
