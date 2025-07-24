@@ -149,6 +149,38 @@ body {
   width: 100%;
 }
 
+.checkout__exp-group {
+  display: flex;
+  position: relative;
+  width: 100%;
+}
+
+.checkout__exp-separator {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  font-size: 1rem;
+  color: var(--color-secondary);
+}
+
+.checkout__input--left {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: none;
+}
+
+.checkout__input--right {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left: none;
+}
+
+.checkout__input--left:focus {
+  z-index: 1;
+}
+
 /* Primary button */
 .checkout__button {
   display: inline-flex;

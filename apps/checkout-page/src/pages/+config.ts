@@ -1,4 +1,5 @@
 import vikeVue from "vike-vue/config";
+import vikeVuePinia from "vike-vue-pinia/config";
 import type { Config } from "vike/types";
 import Layout from "../layouts/LayoutDefault.vue";
 
@@ -13,5 +14,5 @@ export default {
   title: "My Vike App",
   description: "Demo showcasing Vike",
 
-  extends: vikeVue as typeof vikeVue,
+  extends: [vikeVue, vikeVuePinia],
 } satisfies Config;
