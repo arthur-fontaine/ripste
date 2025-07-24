@@ -8,7 +8,7 @@ import OAuthDemoPage from "../pages/OAuthDemoPage.vue";
 import CompanyFormPage from "../pages/CompanyFormPage.vue";
 import StoreFormPage from "../pages/StoreFormPage.vue";
 import { authGuard } from "../middlewares/authGuard.ts";
-import {companyRedirect} from "../middlewares/companyRedirect.js";
+import { companyRedirect } from "../middlewares/companyRedirect.js";
 
 const routes = [
 	{
@@ -53,7 +53,7 @@ const routes = [
 		path: "/store/create",
 		name: "CreateStore",
 		component: StoreFormPage,
-	}
+	},
 ];
 
 const router = createRouter({

@@ -80,7 +80,7 @@ function handleSubmit() {
 	} catch (err) {
 		error.value = "Failed to create company. Please try again.";
 		console.error(err);
-    router.push("/company/create");
+		router.push("/company/create");
 	}
 	router.push("/store/create");
 }

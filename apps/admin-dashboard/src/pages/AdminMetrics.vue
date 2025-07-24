@@ -240,78 +240,84 @@ const error = ref<string | null>(null);
 const metrics = ref<any>(null);
 
 const maxDailyTransactions = computed(() => {
-  if (!metrics.value?.transactionsByDay) return 0;
-  return Math.max(...metrics.value.transactionsByDay.map((day: any) => day.count));
+	if (!metrics.value?.transactionsByDay) return 0;
+	return Math.max(
+		...metrics.value.transactionsByDay.map((day: any) => day.count),
+	);
 });
 
 const maxDailyVolume = computed(() => {
-  if (!metrics.value?.transactionsByDay) return 0;
-  return Math.max(...metrics.value.transactionsByDay.map((day: any) => day.volume));
+	if (!metrics.value?.transactionsByDay) return 0;
+	return Math.max(
+		...metrics.value.transactionsByDay.map((day: any) => day.volume),
+	);
 });
 
 const totalTransactions = computed(() => {
-  if (!metrics.value?.transactionsByStatus) return 0;
-  const status = metrics.value.transactionsByStatus;
-  return status.successful + status.failed + status.pending;
+	if (!metrics.value?.transactionsByStatus) return 0;
+	const status = metrics.value.transactionsByStatus;
+	return status.successful + status.failed + status.pending;
 });
 
 const totalTypes = computed(() => {
-  if (!metrics.value?.transactionsByType) return 0;
-  const types = metrics.value.transactionsByType;
-  return types.payment + types.refund;
+	if (!metrics.value?.transactionsByType) return 0;
+	const types = metrics.value.transactionsByType;
+	return types.payment + types.refund;
 });
 
 const formatNumber = (num: number): string => {
-  return new Intl.NumberFormat('fr-FR').format(num);
+	return new Intl.NumberFormat("fr-FR").format(num);
 };
 
 const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'EUR'
-  }).format(amount);
+	return new Intl.NumberFormat("fr-FR", {
+		style: "currency",
+		currency: "EUR",
+	}).format(amount);
 };
 
 const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' });
+	const date = new Date(dateString);
+	return date.toLocaleDateString("fr-FR", { month: "short", day: "numeric" });
 };
 
 const getPercentage = (value: number, max: number): number => {
-  return max > 0 ? (value / max) * 100 : 0;
+	return max > 0 ? (value / max) * 100 : 0;
 };
 
 const getStatusPercentage = (status: string): number => {
-  if (!metrics.value?.transactionsByStatus) return 0;
-  const value = metrics.value.transactionsByStatus[status];
-  return totalTransactions.value > 0 ? (value / totalTransactions.value) * 100 : 0;
+	if (!metrics.value?.transactionsByStatus) return 0;
+	const value = metrics.value.transactionsByStatus[status];
+	return totalTransactions.value > 0
+		? (value / totalTransactions.value) * 100
+		: 0;
 };
 
 const getTypePercentage = (type: string): number => {
-  if (!metrics.value?.transactionsByType) return 0;
-  const value = metrics.value.transactionsByType[type];
-  return totalTypes.value > 0 ? (value / totalTypes.value) * 100 : 0;
+	if (!metrics.value?.transactionsByType) return 0;
+	const value = metrics.value.transactionsByType[type];
+	return totalTypes.value > 0 ? (value / totalTypes.value) * 100 : 0;
 };
 
 const fetchMetrics = async () => {
-  try {
-    loading.value = true;
-    error.value = null;
-    
-    const response = await apiClient.admin.metrics.transactions.$get();
-    metrics.value = await response.json();
-    
-    console.log('Metrics loaded:', metrics.value);
-    
-  } catch (err) {
-    error.value = err instanceof Error ? err.message : 'Une erreur est survenue';
-    console.error("Error fetching metrics:", err);
-  } finally {
-    loading.value = false;
-  }
+	try {
+		loading.value = true;
+		error.value = null;
+
+		const response = await apiClient.admin.metrics.transactions.$get();
+		metrics.value = await response.json();
+
+		console.log("Metrics loaded:", metrics.value);
+	} catch (err) {
+		error.value =
+			err instanceof Error ? err.message : "Une erreur est survenue";
+		console.error("Error fetching metrics:", err);
+	} finally {
+		loading.value = false;
+	}
 };
 
 onMounted(() => {
-  fetchMetrics();
+	fetchMetrics();
 });
 </script>

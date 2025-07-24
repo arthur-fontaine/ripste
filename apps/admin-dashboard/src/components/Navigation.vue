@@ -60,7 +60,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { authClient } from "../lib/auth";
-import {useRouter} from "vue-router";
+import { useRouter } from "vue-router";
 
 const session = authClient.useSession();
 const showUserMenu = ref(false);
@@ -70,6 +70,6 @@ const router = useRouter();
 const signOut = async () => {
 	showUserMenu.value = false;
 	await authClient.signOut();
-  await router.push("/login");
+	await router.push("/login");
 };
 </script>

@@ -39,7 +39,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import {apiClient} from "../lib/api.js";
+import { apiClient } from "../lib/api.js";
 
 const name = ref("");
 const slug = ref("");
@@ -60,19 +60,19 @@ function handleSubmit() {
 		error.value = "All fields are required.";
 		return;
 	}
-  try {
-    apiClient.stores.$post({
-      json: {
-        name: name.value,
-        slug: slug.value,
-        contactEmail: contactEmail.value,
-        contactPhone: contactPhone.value
-      }
-    });
-  } catch (err) {
-    error.value = "Failed to create store. Please try again.";
-    console.log(err);
-  }
+	try {
+		apiClient.stores.$post({
+			json: {
+				name: name.value,
+				slug: slug.value,
+				contactEmail: contactEmail.value,
+				contactPhone: contactPhone.value,
+			},
+		});
+	} catch (err) {
+		error.value = "Failed to create store. Please try again.";
+		console.log(err);
+	}
 	router.push("/");
 }
 </script>
