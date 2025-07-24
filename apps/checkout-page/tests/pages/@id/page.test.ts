@@ -21,7 +21,11 @@ describe("Checkout Page", async () => {
   it("should not throw an error for valid id", async () => {
     const { status } = await fetchHtml(`/${checkoutPage.uri}`);
 
+    await page.goto(`http://localhost:3000/${checkoutPage.uri}`);
+
     expect(status).toBe(200);
+    expect(page.innerHTML("body")).not.toContain("Error");
+    expect(page.innerHTML("body")).not.toContain("error");
   });
 
   it("should render checkout page with correct data", async () => {

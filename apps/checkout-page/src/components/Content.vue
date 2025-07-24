@@ -1,6 +1,6 @@
 <template>
   <div id="page-container">
-    <div id="page-content" class="p-5 pb-12 min-h-screen">
+    <div id="page-content" class="p-5 min-h-screen flex flex-col">
       <slot />
     </div>
   </div>

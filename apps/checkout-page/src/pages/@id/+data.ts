@@ -1,30 +1,57 @@
+import fs from "node:fs";
 import type { PageContextServer } from "vike/types";
 import { database } from "../../database.ts";
 import { render } from "vike/abort";
+import type { ICheckoutDisplayData, ICheckoutTheme } from "@ripste/db/mikro-orm";
 
 export type Data = {
   id: string;
   amount: number;
   currency: string;
+  displayData: ICheckoutDisplayData;
+  theme: ICheckoutTheme;
+  style: string;
 };
 
 export default async function data(pageContext: PageContextServer): Promise<Data> {
   const id = pageContext.routeParams["id"];
   if (!id) throw render(404, "Checkout page not found");
+
   const [checkoutPage] = await database.checkoutPage.findMany({ uri: id })
+  if (!checkoutPage) throw render(404, "Checkout page not found");
 
-  if (!checkoutPage) {
-    throw render(404, "Checkout page not found");
-  }
-
-  const transaction = await database.transaction.findOne(checkoutPage.transaction.id);
-  if (!transaction) {
-    throw render(404, "Transaction not found");
-  }
-
-  return {
+  const data: Data = {
     id: checkoutPage.id,
-    amount: transaction.amount,
-    currency: transaction.currency,
+    amount: checkoutPage.transaction.amount,
+    currency: checkoutPage.transaction.currency,
+    displayData: checkoutPage.displayData,
+    theme: checkoutPage.theme,
+    style: '',
   };
+  data.style = getStyle(data);
+
+  return data;
+}
+
+function getStyle(data: Data): string {
+  let css = '';
+  if (data.displayData.colors) {
+    const vars = Object.entries(data.displayData.colors)
+      .filter(([_, v]) => v)
+      .map(([k, v]) => `--${k}: ${v};`)
+      .join(' ');
+    if (vars) css += `:root { ${vars} } `;
+  }
+  for (const c of data.theme.customizations) {
+    if (c.content) css += c.content;
+  }
+
+  if (css.trim() === '') {
+    return fs.readFileSync(
+      new URL('./default.css', import.meta.url),
+      'utf-8'
+    );
+  }
+
+  return css;
 }
