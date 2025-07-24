@@ -7,9 +7,13 @@ export async function getRealConditionApiClient() {
 
 	const cookie = await getLoginCookie();
 
-	const { apiClient } = await getApiClient({ cookie });
+	const { apiClient, database } = await getApiClient({ cookie });
 
-	return { apiClient, data: { user, store, theme } };
+	return {
+		apiClient,
+		database,
+		data: { user, store, theme },
+	};
 }
 
 async function createUser() {
@@ -28,6 +32,7 @@ async function createUser() {
 			}),
 		}),
 	);
+
 	const [user] = await database.user.findMany({ email: "fndknfkds@gmail.com" });
 
 	if (!user) throw new Error("User not found");
@@ -40,11 +45,22 @@ async function createUser() {
 async function createStore(user: Awaited<ReturnType<typeof createUser>>) {
 	const { database } = await getApiClient();
 
+	const company = await database.company.insert({
+		legalName: "Test Company",
+		kbis: "12345678901234",
+		tradeName: null,
+		vatNumber: null,
+		address: null,
+		userId: user.id,
+	});
+
+	await database.user.update(user.id, { companyId: company.id });
+
 	const store = await database.store.insert({
 		name: "Test Store",
 		slug: "test-store",
 		contactEmail: "test@example.com",
-		companyId: null,
+		companyId: company.id,
 		contactPhone: null,
 	});
 

@@ -114,7 +114,7 @@ export class MikroOrmDatabase implements IDatabase {
 			},
 		});
 
-		await orm.schema.refreshDatabase();
+		await orm.schema.updateSchema();
 
 		em = orm.em.fork();
 

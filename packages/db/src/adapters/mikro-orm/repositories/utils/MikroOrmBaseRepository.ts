@@ -26,18 +26,26 @@ export function MikroOrmBaseRepository<
 		}
 
 		findOne: I["findOne"] = async (id) => {
-			const entity = await this.#em.findOne(model, {
-				id,
-				deletedAt: null,
-			});
+			const entity = await this.#em.findOne(
+				model,
+				{
+					id,
+					deletedAt: null,
+				},
+				{ populate: ["*"] },
+			);
 			return entity || null;
 		};
 
 		findMany: I["findMany"] = async (query) => {
-			const entities = await this.#em.find(model, {
-				...query,
-				deletedAt: null,
-			});
+			const entities = await this.#em.find(
+				model,
+				{
+					...query,
+					deletedAt: null,
+				},
+				{ populate: ["*"] },
+			);
 			return entities;
 		};
 
