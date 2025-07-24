@@ -11,13 +11,14 @@ export type Data = {
   displayData: ICheckoutDisplayData;
   theme: ICheckoutTheme;
   style: string;
+  uri: string;
 };
 
 export default async function data(pageContext: PageContextServer): Promise<Data> {
-  const id = pageContext.routeParams["id"];
-  if (!id) throw render(404, "Checkout page not found");
+  const uri = pageContext.routeParams["id"];
+  if (!uri) throw render(404, "Checkout page not found");
 
-  const [checkoutPage] = await database.checkoutPage.findMany({ uri: id })
+  const [checkoutPage] = await database.checkoutPage.findMany({ uri })
   if (!checkoutPage) throw render(404, "Checkout page not found");
 
   const data: Data = {
@@ -26,6 +27,7 @@ export default async function data(pageContext: PageContextServer): Promise<Data
     currency: checkoutPage.transaction.currency,
     displayData: checkoutPage.displayData,
     theme: checkoutPage.theme,
+    uri: checkoutPage.uri,
     style: '',
   };
   data.style = getStyle(data);

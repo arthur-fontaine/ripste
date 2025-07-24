@@ -18,6 +18,7 @@ async function createUser() {
 		passwordHash: "hashed_password",
 		permissionLevel: "user",
 		profileId: null,
+		companyId: null,
 	});
 
 	return user;

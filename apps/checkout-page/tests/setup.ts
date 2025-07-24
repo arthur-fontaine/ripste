@@ -22,6 +22,7 @@ beforeAll(async () => {
       resolve: {
         alias: {
           '../../database.ts': path.resolve(root, 'tests/test-utils/fakeDatabase.ts'),
+          '../../apiClient.ts': path.resolve(root, 'tests/test-utils/fakeApiClient.ts'),
         },
       },
     }

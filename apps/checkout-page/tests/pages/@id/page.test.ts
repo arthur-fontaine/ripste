@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import playwright from "playwright";
 
 const browser = await playwright.chromium.launch({
@@ -36,6 +36,30 @@ describe("Checkout Page", async () => {
 
     const screenshot = await page.screenshot({ path: 'tests/pages/@id/__snapshots__/checkout-page.png' });
     expect(screenshot).toMatchSnapshot("checkout-page.png");
+  });
+
+  it("should fill and submit the payment form", async () => {
+    console.log("Going to checkout page for filling form");
+    await page.goto(`http://localhost:3000/${checkoutPage.uri}`);
+
+    console.log("Filling the payment form");
+    await page.fill("#card-name", "John Doe");
+    await page.fill("#card-number", "4111 1111 1111 1111");
+    await page.fill("#exp-month", "12");
+    await page.fill("#exp-year", "2025");
+    await page.fill("#cvv", "123");
+    console.log("Input fields filled");
+
+    const logMock = vi.fn((message: string) => console.log(message));
+    page.on("console", (msg) => logMock(msg.text()));
+
+    console.log("Submitting the form");
+    await page.click("button[type='submit']");
+    console.log("Form submitted");
+
+    await page.waitForTimeout(100); // Wait for event to be processed
+
+    expect(logMock).toHaveBeenCalledWith("POST /payments/submit-card-infos {\"json\":{\"provider\":\"visa\",\"cardNumber\":\"4111 1111 1111 1111\",\"holderName\":\"John Doe\",\"month\":12,\"year\":2025,\"cvv\":\"123\"},\"param\":{\"uri\":\"random-id\"}}");
   });
 });
 

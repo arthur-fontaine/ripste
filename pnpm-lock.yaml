@@ -145,6 +145,9 @@ importers:
       '@ripste/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
+      '@rslib/core':
+        specifier: ^0.10.4
+        version: 0.10.4(@microsoft/api-extractor@7.52.8(@types/node@24.0.3))(typescript@5.8.3)
       '@types/node':
         specifier: ^24.0.3
         version: 24.0.3
@@ -160,6 +163,9 @@ importers:
       '@mikro-orm/postgresql':
         specifier: ^6.4.16
         version: 6.4.16(@mikro-orm/core@6.4.16)(better-sqlite3@12.1.1)(libsql@0.5.13)
+      '@ripste/api':
+        specifier: workspace:*
+        version: link:../api
       '@ripste/db':
         specifier: workspace:*
         version: link:../../packages/db

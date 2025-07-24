@@ -3,11 +3,21 @@
 	"type": "module",
 	"version": "1.0.0",
 	"main": "src/main.ts",
+	"files": [
+		"dist"
+	],
+	"exports": {
+		"./client": {
+			"types": "./dist/client.d.ts",
+			"default": "./dist/client.js"
+		}
+	},
 	"scripts": {
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"start": "node --experimental-strip-types src/main.ts",
-		"dev": "node --watch --experimental-strip-types src/main.ts"
+		"dev": "node --watch --experimental-strip-types src/main.ts",
+		"build": "rslib build"
 	},
 	"keywords": [],
 	"author": "",
@@ -40,6 +50,7 @@
 	"devDependencies": {
 		"@mikro-orm/sqlite": "^6.4.16",
 		"@ripste/tsconfig": "workspace:*",
+		"@rslib/core": "^0.10.4",
 		"@types/node": "^24.0.3",
 		"@types/pg": "^8.15.1",
 		"dotenv": "^17.2.0"

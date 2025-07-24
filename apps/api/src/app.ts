@@ -31,3 +31,5 @@ export const app = createHonoRouter()
 	.route("/stores", storesRouter)
 	.route("/payments", paymentsRouter)
 	.get("/metrics", printMetrics);
+
+export type App = typeof app;

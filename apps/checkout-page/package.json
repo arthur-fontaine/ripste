@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@mikro-orm/postgresql": "^6.4.16",
+    "@ripste/api": "workspace:*",
     "@ripste/db": "workspace:*",
     "@vitejs/plugin-vue": "^6.0.0",
     "@vue/compiler-sfc": "^3.5.17",
