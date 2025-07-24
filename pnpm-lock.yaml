@@ -157,9 +157,6 @@ importers:
       dotenv:
         specifier: ^17.2.0
         version: 17.2.0
-      zod:
-        specifier: ^4.0.5
-        version: 4.0.5
 
   apps/checkout-page:
     dependencies:
