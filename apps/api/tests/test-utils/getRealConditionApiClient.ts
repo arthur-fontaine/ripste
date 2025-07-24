@@ -7,14 +7,10 @@ export async function getRealConditionApiClient() {
 
 	const cookie = await getLoginCookie();
 
-	const { apiClient, setDatabase, getDatabase, database } = await getApiClient({
-		cookie,
-	});
+	const { apiClient, database } = await getApiClient({ cookie });
 
 	return {
 		apiClient,
-		setDatabase,
-		getDatabase,
 		database,
 		data: { user, store, theme },
 	};
@@ -48,11 +44,19 @@ async function createUser() {
 async function createStore(user: Awaited<ReturnType<typeof createUser>>) {
 	const { database } = await getApiClient();
 
+	const company = await database.company.insert({
+		legalName: "Test Company",
+		kbis: "12345678901234",
+		tradeName: null,
+		vatNumber: null,
+		address: null,
+	});
+
 	const store = await database.store.insert({
 		name: "Test Store",
 		slug: "test-store",
 		contactEmail: "test@example.com",
-		companyId: null,
+		companyId: company.id,
 		contactPhone: null,
 	});
 
