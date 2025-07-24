@@ -13,7 +13,7 @@ export const companyRedirect = async (
 		if (publicRoutes.includes(to.path)) {
 			//TODO: Check if user is logged in
 			const response = await apiClient.admin.metrics.transactions.$get();
-			if (!await response.json()) {
+			if (!(await response.json())) {
 				next("/company/create");
 			} else {
 				next();

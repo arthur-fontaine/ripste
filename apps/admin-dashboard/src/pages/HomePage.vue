@@ -234,8 +234,8 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from "vue";
 import { apiClient } from "../lib/api";
-import type {ITransactionMetrics} from "@ripste/api/src/routers/admin/domain/models/ITransactionMetrics.ts";
-import type {ITransactionDayMetric} from "@ripste/api/src/routers/admin/domain/models/ITransactionDayMetric.ts";
+import type { ITransactionMetrics } from "@ripste/api/src/routers/admin/domain/models/ITransactionMetrics.ts";
+import type { ITransactionDayMetric } from "@ripste/api/src/routers/admin/domain/models/ITransactionDayMetric.ts";
 
 const loading = ref(true);
 const error = ref<string | null>(null);
@@ -244,14 +244,18 @@ const metrics = ref<ITransactionMetrics>(null);
 const maxDailyTransactions = computed(() => {
 	if (!metrics.value?.transactionsByDay) return 0;
 	return Math.max(
-		...metrics.value.transactionsByDay.map((day: ITransactionDayMetric) => day.count),
+		...metrics.value.transactionsByDay.map(
+			(day: ITransactionDayMetric) => day.count,
+		),
 	);
 });
 
 const maxDailyVolume = computed(() => {
 	if (!metrics.value?.transactionsByDay) return 0;
 	return Math.max(
-		...metrics.value.transactionsByDay.map((day: ITransactionDayMetric) => day.volume),
+		...metrics.value.transactionsByDay.map(
+			(day: ITransactionDayMetric) => day.volume,
+		),
 	);
 });
 
