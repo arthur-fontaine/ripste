@@ -11,6 +11,7 @@ import type { IUser, IInsertUser } from "../../../domain/models/IUser.ts";
 import { MikroOrmUserProfileModel } from "./MikroOrmUserProfileModel.ts";
 import { MikroOrmStoreMemberModel } from "./MikroOrmStoreMemberModel.ts";
 import { MikroOrmRefundModel } from "./MikroOrmRefundModel.ts";
+import { MikroOrmCompanyModel } from "./MikroOrmCompanyModel.ts";
 
 @Entity()
 export class MikroOrmUserModel extends BaseModel implements IUser {
@@ -30,6 +31,25 @@ export class MikroOrmUserModel extends BaseModel implements IUser {
 
 	@Property({ type: t.string })
 	permissionLevel!: "admin" | "user";
+
+	@OneToOne(
+		() => MikroOrmCompanyModel,
+		(company) => company.user,
+		{ nullable: true },
+	)
+	company: MikroOrmCompanyModel | null = null;
+
+	get companyId(): string | null {
+		return this.company ? this.company.id : null;
+	}
+
+	set companyId(companyId: string | null) {
+		if (companyId !== null) {
+			this.company = this._em.getReference(MikroOrmCompanyModel, companyId);
+		} else {
+			this.company = null;
+		}
+	}
 
 	@OneToOne(() => MikroOrmUserProfileModel, { nullable: true })
 	profile!: MikroOrmUserProfileModel | null;
