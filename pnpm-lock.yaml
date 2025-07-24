@@ -157,6 +157,9 @@ importers:
       dotenv:
         specifier: ^17.2.0
         version: 17.2.0
+      tsdown:
+        specifier: ^0.12.9
+        version: 0.12.9(typescript@5.8.3)(vue-tsc@2.2.10(typescript@5.8.3))
 
   apps/checkout-page:
     dependencies:
@@ -1247,6 +1250,7 @@ packages:
   '@opentelemetry/instrumentation-redis-4@0.49.0':
     resolution: {integrity: sha512-i+Wsl7M2LXEDA2yXouNJ3fttSzzb5AhlehvSBVRIFuinY51XrrKSH66biO0eox+pYQMwAlPxJ778XcMQffN78A==}
     engines: {node: ^18.19.0 || >=20.6.0}
+    deprecated: Use "@opentelemetry/instrumentation-redis", which (as of v0.50.0) includes support for instrumenting redis v4.
     peerDependencies:
       '@opentelemetry/api': ^1.3.0
 

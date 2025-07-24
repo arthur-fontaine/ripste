@@ -3,7 +3,9 @@
 	"type": "module",
 	"version": "1.0.0",
 	"main": "src/main.ts",
-	"files": ["dist"],
+	"files": [
+		"dist"
+	],
 	"exports": {
 		"./client": {
 			"types": "./dist/client.d.ts",
@@ -15,7 +17,7 @@
 		"test:watch": "vitest",
 		"start": "node --experimental-strip-types src/main.ts",
 		"dev": "node --watch --experimental-strip-types src/main.ts",
-		"build": "rslib build"
+		"build": "tsdown src/client.ts --esm --dts"
 	},
 	"keywords": [],
 	"author": "",
@@ -51,6 +53,7 @@
 		"@rslib/core": "^0.10.4",
 		"@types/node": "^24.0.3",
 		"@types/pg": "^8.15.1",
-		"dotenv": "^17.2.0"
+		"dotenv": "^17.2.0",
+		"tsdown": "^0.12.9"
 	}
 }
