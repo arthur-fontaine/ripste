@@ -49,6 +49,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { apiClient } from '../lib/api'
 
 
 const legalName = ref('')

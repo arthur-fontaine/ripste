@@ -60,6 +60,6 @@ const router = createRouter({
 	routes,
 });
 
-router.beforeEach(authGuard);
+router.afterEach(authGuard)
 
 export default router;

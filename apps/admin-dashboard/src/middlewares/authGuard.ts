@@ -6,18 +6,28 @@ export const authGuard = async (
     _from: RouteLocationNormalized,
     next: NavigationGuardNext,
 ) => {
-    const session = authClient.useSession();
-    
-    const publicRoutes = ["/login", "/signup"];
-    
-    if (publicRoutes.includes(to.path)) {
-        if (session.value.data) {
-            next("/");
+    try {
+        const session = await authClient.getSession();
+
+        const publicRoutes = ["/login", "/signup"];
+
+        if (publicRoutes.includes(to.path)) {
+            if (session.data) {
+                next("/");
+            } else {
+                next();
+            }
         } else {
-            next();
+            if (!session.data) {
+                next("/login");
+            } else {
+                next();
+            }
         }
-    } else {
-        if (!session.value.data) {
+    } catch (error) {
+        console.error("Auth guard error:", error);
+
+        if (!["/login", "/signup"].includes(to.path)) {
             next("/login");
         } else {
             next();
