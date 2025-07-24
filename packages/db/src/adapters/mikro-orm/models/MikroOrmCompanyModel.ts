@@ -44,7 +44,7 @@ export class MikroOrmCompanyModel extends BaseModel implements ICompany {
 	user!: MikroOrmUserModel;
 
 	get userId(): string {
-		return this.user.id;
+		return this.user?.id;
 	}
 
 	set userId(userId: string) {
