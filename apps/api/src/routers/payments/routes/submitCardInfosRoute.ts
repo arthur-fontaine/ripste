@@ -19,10 +19,10 @@ export const submitCardInfosRoute = createHonoRouter().post(
 		v.config(getSchema(), { abortEarly: true }),
 		vValidatorThrower,
 	),
-	vValidator("param", v.object({ uri: v.string() }), vValidatorThrower),
+	vValidator("query", v.object({ uri: v.string() }), vValidatorThrower),
 	async (c) => {
-		const uri = c.req.valid("param").uri;
-		const { provider, cardNumber, cvv, month, year } = c.req.valid("json");
+		const uri = c.req.valid("query").uri;
+		const { provider, cardNumber, cvv, month, year, holderName } = c.req.valid("json");
 
 		const [checkoutPage] = await database.checkoutPage.findMany({ uri });
 		if (!checkoutPage) {
@@ -31,7 +31,15 @@ export const submitCardInfosRoute = createHonoRouter().post(
 
 		const transaction = checkoutPage.transaction;
 
-		await pspClient.stub.payments.$post({
+		const onSuccess = async () => {
+			await database.checkoutPage.update(checkoutPage.id, {
+				completedAt: new Date(),
+			});
+		};
+
+		const onError = async () => {};
+
+		const paymentRes = await pspClient.stub.payments.$post({
 			json: {
 				amount: transaction.amount,
 				currency: transaction.currency,
@@ -40,29 +48,36 @@ export const submitCardInfosRoute = createHonoRouter().post(
 					cardNumber,
 					expiryDate: `${month}/${year}`,
 					cvv: cvv.toString(),
+					holderName,
 				},
 			},
 		});
+		const paymentResult = await paymentRes.json();
 
 		let tryCount = 0;
 		const maxRetries = 20;
 		while (true) {
 			tryCount++;
 			if (tryCount > maxRetries) {
+				await onError();
 				return c.json({ error: "Payment processing timed out." }, 408);
 			}
 
 			await setTimeout(1000);
 
 			const statusRes = await pspClient.stub.payments[":id"].status.$get({
-				param: { id: transaction.id },
+				param: { id: paymentResult.id },
 			});
 			const status = await statusRes.json();
 
 			if (status.status === "waiting") continue;
 
-			if (status.status === "success") return c.json({ success: true });
+			if (status.status === "success") {
+				await onSuccess();
+				return c.json({ success: true });
+			}
 			if (status.status === "failure") {
+				await onError();
 				return c.json(
 					{
 						error: "Payment failed.",

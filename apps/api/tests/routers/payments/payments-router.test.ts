@@ -1,7 +1,18 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, afterAll } from "vitest";
+import { serve } from "@hono/node-server";
 import { getApiClient } from "../../test-utils/get-api-client.ts";
 import { readBody } from "../../test-utils/readBody.ts";
 import { getRealConditionApiClient } from "../../test-utils/getRealConditionApiClient.ts";
+import { app } from "../../../../psp-api/src/app.ts";
+
+const pspServer = serve({
+	fetch: app.fetch,
+	port: 3002,
+})
+
+afterAll(() => {
+	pspServer.close();
+});
 
 describe("Payments Router", async () => {
 	const { database } = await getApiClient();
@@ -427,7 +438,7 @@ describe("Payments Router", async () => {
 
 			expect(checkoutPage.completedAt).toBeNull();
 
-			await apiClient.payments["submit-card-infos"].$post({
+			const res = await apiClient.payments["submit-card-infos"].$post({
 				json: {
 					provider: "visa",
 					cardNumber: "4242424242424242",
@@ -436,15 +447,17 @@ describe("Payments Router", async () => {
 					year: 2100,
 					cvv: "123",
 				},
-				param: { uri: checkoutPage.uri },
+				query: { uri: checkoutPage.uri },
 			});
+
+			expect(res.status).toBe(200);
 
 			const newCheckoutPage = await database.checkoutPage.findOne(checkoutPage.id);
 			if (!newCheckoutPage) throw new Error("Checkout page not found after payment");
-			
+
 			expect(newCheckoutPage.completedAt).toBeDefined();
 			expect(newCheckoutPage.completedAt).not.toBeNull();
 			expect(newCheckoutPage.completedAt).toBeInstanceOf(Date);
-		});
+		}, 12000);
 	});
 });
