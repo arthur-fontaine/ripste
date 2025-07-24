@@ -77,6 +77,8 @@ body {
   justify-content: center;
   padding: 4rem 2rem;
   box-shadow: var(--shadow-soft);
+  height: 100%;
+  width: 100%;
 }
 
 .checkout__info {
@@ -219,4 +221,46 @@ body {
   color: var(--color-secondary);
   text-align: center;
   margin-top: 2rem;
+}
+
+.checkout__success {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background: var(--color-muted-bg);
+}
+
+.checkout__success-content {
+  background: var(--color-bg);
+  padding: 3rem 2rem;
+  box-shadow: var(--shadow-soft);
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkout__success-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0 0 1rem;
+  color: var(--color-primary);
+}
+
+.checkout__success-description {
+  font-size: 1rem;
+  color: var(--color-secondary);
+  margin-bottom: 1rem;
+}
+
+.checkout__success-instructions {
+  font-size: 0.95rem;
+  color: var(--color-secondary);
+  margin-top: 1.5rem;
 }

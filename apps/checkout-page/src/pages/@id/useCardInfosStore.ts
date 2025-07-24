@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { apiClient } from '../../apiClient.ts'
 import type { Data } from './+data';
 import { useData } from 'vike-vue/useData';
@@ -13,28 +13,47 @@ export const useCardInfosStore = defineStore('cardInfos', () => {
   const year = ref('')
   const cvv = ref('')
 
-  function pay() {
-    if (!holderName.value || !cardNumber.value || !month.value || !year.value || !cvv.value) {
-      throw new Error('All fields are required')
-    }
+  const payResult = reactive({
+    status: null as null | 'success' | 'error',
+    message: null as null | string,
+  })
 
-    const cardType = detectCardType(cardNumber.value)
-    apiClient.payments['submit-card-infos'].$post({
-      json: {
-        provider: cardType,
-        cardNumber: cardNumber.value,
-        holderName: holderName.value,
-        month: Number(month.value),
-        year: Number(year.value),
-        cvv: cvv.value
-      },
-      param: {
-        uri: data.uri,
+  async function pay() {
+    try {
+      if (!holderName.value || !cardNumber.value || !month.value || !year.value || !cvv.value) {
+        throw new Error('All fields are required')
       }
-    })
+
+      const cardType = detectCardType(cardNumber.value)
+
+      const response = await apiClient.payments['submit-card-infos'].$post({
+        json: {
+          provider: cardType,
+          cardNumber: cardNumber.value,
+          holderName: holderName.value,
+          month: Number(month.value),
+          year: Number(year.value),
+          cvv: cvv.value
+        },
+        param: {
+          uri: data.uri,
+        }
+      })
+      const result = await response.json()
+
+      if ('error' in result) throw new Error(result.error)
+      if (!result.success) throw new Error('Payment failed')
+
+      payResult.status = 'success'
+    } catch (error) {
+      payResult.status = 'error'
+      if (error instanceof Error) payResult.message = error.message
+      else payResult.message = 'An unknown error occurred'
+      console.error('Payment failed:', error)
+    }
   }
 
-  return { holderName, cardNumber, month, year, cvv, pay }
+  return { holderName, cardNumber, month, year, cvv, pay, payResult }
 })
 
 function detectCardType(number: string) {
