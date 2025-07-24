@@ -210,13 +210,14 @@ export const customDatabaseAdapter = (
 						const firstName = nameParts[0] || "";
 						const lastName = nameParts.slice(1).join(" ") || "";
 
-						await db.userProfile.insert({
+						const profile = await db.userProfile.insert({
 							firstName,
 							lastName,
 							fullName: name,
 							phone: null,
 							user: user.id,
 						} as any);
+						await db.user.update(user.id, { profileId: profile.id });
 					}
 
 					return user;
@@ -267,14 +268,16 @@ export const customDatabaseAdapter = (
 								lastName,
 								fullName: name,
 							} as any);
+							await db.user.update(user.id, { profileId: existingProfile.id });
 						} else {
-							await db.userProfile.insert({
+							const profile = await db.userProfile.insert({
 								firstName,
 								lastName,
 								fullName: name,
 								phone: null,
 								user: user.id,
 							} as any);
+							await db.user.update(user.id, { profileId: profile.id });
 						}
 					}
 
