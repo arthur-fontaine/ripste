@@ -44,14 +44,7 @@ export const putStoreRoute = createHonoRouter().put(
 			});
 		} catch (error) {
 			if (error instanceof Error) {
-				if (
-					error.message.includes("unique") ||
-					error.message.includes("UNIQUE") ||
-					error.message.includes("duplicate") ||
-					error.message.includes("slug") ||
-					error.message.includes("constraint") ||
-					error.message.includes("CONSTRAINT")
-				) {
+				if (error.name === "UniqueConstraintViolationException") {
 					return c.json(
 						{ error: "A store with this slug already exists" },
 						400,

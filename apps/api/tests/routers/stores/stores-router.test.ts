@@ -5,7 +5,7 @@ import { readBody } from "../../test-utils/readBody.ts";
 async function createUserWithCompany() {
 	const { app, database } = await getApiClient();
 
-	const uniqueEmail = `testuser-${Date.now()}-${Math.random().toString(36).substr(2, 9)}@example.com`;
+	const uniqueEmail = `testuser-${Date.now()}-${Math.random().toString(36).slice(2, 11)}@example.com`;
 
 	await app.fetch(
 		new Request("https://_/auth/sign-up/email", {
@@ -68,7 +68,7 @@ async function createUserWithCompany() {
 async function createUserWithoutCompany() {
 	const { app, database } = await getApiClient();
 
-	const uniqueEmail = `testuser-${Date.now()}-${Math.random().toString(36).substr(2, 9)}@example.com`;
+	const uniqueEmail = `testuser-${Date.now()}-${Math.random().toString(36).slice(2, 11)}@example.com`;
 
 	await app.fetch(
 		new Request("https://_/auth/sign-up/email", {
@@ -119,7 +119,7 @@ describe("Stores Router", async () => {
 		it("should create a store when user has a company", async () => {
 			const { apiClient, database, user } = await createUserWithCompany();
 
-			const storeSlug = `test-store-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+			const storeSlug = `test-store-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
 
 			const res = await apiClient.stores.$post({
 				json: {

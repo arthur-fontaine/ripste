@@ -53,22 +53,11 @@ export const postStoresRoute = createHonoRouter().post(
 			);
 		} catch (error) {
 			if (error instanceof Error) {
-				if (
-					error.message.includes("FOREIGN KEY constraint failed") ||
-					error.message.includes("ForeignKeyConstraintViolationException")
-				) {
+				if (error.name === "ForeignKeyConstraintViolationException") {
 					return c.json({ error: "User does not exist" }, 400);
 				}
 
-				if (
-					(error.message.includes("unique") ||
-						error.message.includes("UNIQUE") ||
-						error.message.includes("duplicate") ||
-						error.message.includes("constraint") ||
-						error.message.includes("CONSTRAINT")) &&
-					(error.message.includes("storeMember") ||
-						error.message.includes("store_member"))
-				) {
+				if (error.name === "UniqueConstraintViolationException") {
 					return c.json(
 						{ error: "User is already a member of this store" },
 						400,
