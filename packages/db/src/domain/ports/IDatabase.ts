@@ -17,6 +17,7 @@ import type { IUserRepository } from "./repositories/IUserRepository.ts";
 import type { ISessionRepository } from "./repositories/ISessionRepository.ts";
 import type { IAccountRepository } from "./repositories/IAccountRepository.ts";
 import type { IVerificationRepository } from "./repositories/IVerificationRepository.ts";
+import type { IJwksRepository } from "./repositories/IJwksRepository.ts";
 
 export interface IDatabase {
 	checkoutPage: ICheckoutPageRepository;
@@ -38,4 +39,5 @@ export interface IDatabase {
 	session: ISessionRepository;
 	account: IAccountRepository;
 	verification: IVerificationRepository;
+	jwks: IJwksRepository;
 }

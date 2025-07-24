@@ -45,6 +45,8 @@ import { MikroOrmSessionRepository } from "./repositories/MikroOrmSessionReposit
 import { MikroOrmAccountRepository } from "./repositories/MikroOrmAccountRepository.ts";
 import { MikroOrmVerificationRepository } from "./repositories/MikroOrmVerificationRepository.ts";
 import { loadModels } from "./index.ts";
+import { MikroOrmJwksRepository } from "./repositories/MikroOrmJwksRepository.ts";
+import type { IJwksRepository } from "../../domain/ports/repositories/IJwksRepository.ts";
 
 export class MikroOrmDatabase implements IDatabase {
 	constructor(em: EntityManager) {
@@ -69,6 +71,7 @@ export class MikroOrmDatabase implements IDatabase {
 		this.session = new MikroOrmSessionRepository(params);
 		this.account = new MikroOrmAccountRepository(params);
 		this.verification = new MikroOrmVerificationRepository(params);
+		this.jwks = new MikroOrmJwksRepository(params);
 	}
 
 	checkoutPage: ICheckoutPageRepository;
@@ -90,6 +93,7 @@ export class MikroOrmDatabase implements IDatabase {
 	session: ISessionRepository;
 	account: IAccountRepository;
 	verification: IVerificationRepository;
+	jwks: IJwksRepository;
 
 	static async create(
 		driver: NonNullable<MikroORMOptions["driver"]>,

@@ -15,6 +15,8 @@ import type {
 	IInsertOAuthAccessToken,
 	IOAuthConsent,
 	IInsertOAuthConsent,
+	IJwks,
+	IInsertJwks,
 } from "@ripste/db/mikro-orm";
 
 interface BetterAuthUser {
@@ -101,6 +103,11 @@ interface BetterAuthOAuthConsent {
 	updatedAt?: Date;
 }
 
+interface BetterAuthJwks {
+	publicKey: string;
+	privateKey: string;
+}
+
 type BetterAuthData =
 	| BetterAuthUser
 	| BetterAuthSession
@@ -108,7 +115,8 @@ type BetterAuthData =
 	| BetterAuthVerification
 	| BetterAuthOAuthApplication
 	| BetterAuthOAuthAccessToken
-	| BetterAuthOAuthConsent;
+	| BetterAuthOAuthConsent
+	| BetterAuthJwks;
 type DatabaseEntity =
 	| IUser
 	| ISession
@@ -116,7 +124,8 @@ type DatabaseEntity =
 	| IVerification
 	| IOAuthApplication
 	| IOAuthAccessToken
-	| IOAuthConsent;
+	| IOAuthConsent
+	| IJwks;
 type InsertData =
 	| IInsertUser
 	| IInsertSession
@@ -124,7 +133,8 @@ type InsertData =
 	| IInsertVerification
 	| IInsertOAuthApplication
 	| IInsertOAuthAccessToken
-	| IInsertOAuthConsent;
+	| IInsertOAuthConsent
+	| IInsertJwks;
 
 type WhereCondition = {
 	field: string;
@@ -155,6 +165,7 @@ export interface CustomDatabaseAdapterConfig {
 		oauthApplication?: Record<string, string>;
 		oauthAccessToken?: Record<string, string>;
 		oauthConsent?: Record<string, string>;
+		jwks?: Record<string, string>;
 	};
 	/**
 	 * Custom ID generation function
@@ -238,6 +249,8 @@ export const customDatabaseAdapter = (
 					);
 				case "oauthConsent":
 					return await db.oauthConsent.insert(data as IInsertOAuthConsent);
+				case "jwks":
+					return await db.jwks.insert(data as IInsertJwks);
 				default:
 					throw new Error(`Unknown model: ${model}`);
 			}
@@ -307,6 +320,8 @@ export const customDatabaseAdapter = (
 						id,
 						data as Partial<IInsertOAuthConsent>,
 					);
+				case "jwks":
+					return await db.jwks.update(id, data as Partial<IInsertJwks>);
 				default:
 					throw new Error(`Unknown model: ${model}`);
 			}
@@ -335,6 +350,8 @@ export const customDatabaseAdapter = (
 					return await db.oauthAccessToken.findOne(id);
 				case "oauthConsent":
 					return await db.oauthConsent.findOne(id);
+				case "jwks":
+					return await db.jwks.findOne(id);
 				default:
 					throw new Error(`Unknown model: ${model}`);
 			}
@@ -395,6 +412,8 @@ export const customDatabaseAdapter = (
 					return await db.oauthAccessToken.findMany(query);
 				case "oauthConsent":
 					return await db.oauthConsent.findMany(query);
+				case "jwks":
+					return await db.jwks.findMany(query);
 				default:
 					throw new Error(`Unknown model: ${model}`);
 			}
@@ -431,6 +450,9 @@ export const customDatabaseAdapter = (
 						break;
 					case "oauthConsent":
 						await db.oauthConsent.delete(id);
+						break;
+					case "jwks":
+						await db.jwks.delete(id);
 						break;
 					default:
 						throw new Error(`Unknown model: ${model}`);
@@ -570,6 +592,13 @@ export const customDatabaseAdapter = (
 						updatedAt: consentEntity.updatedAt,
 					} as BetterAuthOAuthConsent;
 				}
+				case "jwks": {
+					const jwksEntity = entity as IJwks;
+					return {
+						publicKey: jwksEntity.publicKey,
+						privateKey: jwksEntity.privateKey,
+					} as BetterAuthJwks;
+				}
 				default:
 					return entity as BetterAuthData;
 			}
@@ -687,6 +716,12 @@ export const customDatabaseAdapter = (
 						scopes: data["scopes"] as string,
 						consentGiven: data["consentGiven"] as boolean,
 					} as IInsertOAuthConsent;
+				}
+				case "jwks": {
+					return {
+						publicKey: data["publicKey"] as string,
+						privateKey: data["privateKey"] as string,
+					} as IInsertJwks;
 				}
 				default:
 					throw new Error(`Unknown model: ${model}`);
@@ -817,6 +852,17 @@ export const customDatabaseAdapter = (
 								});
 								if (apps.length > 0 && apps[0]) {
 									result = await updateEntity(model, apps[0].id, mappedUpdate);
+								}
+							}
+							break;
+						}
+						case "jwks": {
+							if (whereCondition.field === "publicKey") {
+								const jwks = await findManyEntities(model, {
+									publicKey: whereCondition.value as string,
+								});
+								if (jwks.length > 0 && jwks[0]) {
+									result = await updateEntity(model, jwks[0].id, mappedUpdate);
 								}
 							}
 							break;
@@ -1221,6 +1267,21 @@ export const customDatabaseAdapter = (
 						}
 						break;
 					}
+					case "jwks": {
+						const publicKeyCondition = where.find(
+							(w: WhereCondition) => w.field === "publicKey",
+						);
+						if (publicKeyCondition) {
+							const jwks = await findManyEntities(model, {
+								publicKey: publicKeyCondition.value as string,
+							});
+							for (const jwt of jwks) {
+								await deleteEntity(model, jwt.id, "id");
+							}
+							return;
+						}
+						break;
+					}
 				}
 
 				const query: Record<string, unknown> = {};
@@ -1327,6 +1388,18 @@ export const createCustomDatabaseAdapterWithMappings = (
 	}
 	if (betterAuthConfig?.verification?.fields) {
 		fieldMappings.verification = betterAuthConfig.verification.fields;
+	}
+	if (betterAuthConfig?.oauthApplication?.fields) {
+		fieldMappings.oauthApplication = betterAuthConfig.oauthApplication.fields;
+	}
+	if (betterAuthConfig?.oauthAccessToken?.fields) {
+		fieldMappings.oauthAccessToken = betterAuthConfig.oauthAccessToken.fields;
+	}
+	if (betterAuthConfig?.oauthConsent?.fields) {
+		fieldMappings.oauthConsent = betterAuthConfig.oauthConsent.fields;
+	}
+	if (betterAuthConfig?.jwks?.fields) {
+		fieldMappings.jwks = betterAuthConfig.jwks.fields;
 	}
 
 	let generateId: () => string;
