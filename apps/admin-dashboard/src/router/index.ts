@@ -5,6 +5,7 @@ import SignUpPage from "../pages/SignUpPage.vue";
 import ConsentPage from "../pages/ConsentPage.vue";
 import OAuthDemoPage from "../pages/OAuthDemoPage.vue";
 import CompanyFormPage from "../pages/CompanyFormPage.vue";
+import StoreFormPage from "../pages/StoreFormPage.vue";
 
 const routes = [
 	{
@@ -36,6 +37,11 @@ const routes = [
 		path: "/company/create",
 		name: "CreateCompany",
 		component: CompanyFormPage,
+	},
+	{
+		path: "store/create",
+		name: "CreateStore",
+		component: StoreFormPage,
 	}
 ];
 
