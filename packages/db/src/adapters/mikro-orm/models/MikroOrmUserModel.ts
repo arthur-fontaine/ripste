@@ -17,7 +17,7 @@ import { MikroOrmCompanyModel } from "./MikroOrmCompanyModel.ts";
 export class MikroOrmUserModel extends BaseModel implements IUser {
 	constructor(params: IInsertUser) {
 		super();
-		Object.assign(this, params);
+		this._em.assign(this, params as never);
 	}
 
 	@Property({ type: t.string })

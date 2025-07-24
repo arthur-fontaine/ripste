@@ -13,7 +13,7 @@ export class MikroOrmUserProfileModel
 {
 	constructor(params: IInsertUserProfile) {
 		super();
-		Object.assign(this, params);
+		this._em.assign(this, params as never);
 	}
 
 	@Property({ type: t.string })
