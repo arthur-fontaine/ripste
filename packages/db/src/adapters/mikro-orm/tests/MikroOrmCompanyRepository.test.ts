@@ -5,6 +5,24 @@ import {
 	type IUpdateCompany,
 } from "../../../domain/models/ICompany.ts";
 import { MikroOrmCompanyModel } from "../models/MikroOrmCompanyModel.ts";
+import { generateFakeInsertUser } from "../../../domain/models/IUser.ts";
+
+async function generateValidUser() {
+	const [userData] = generateFakeInsertUser();
+	if (!userData) throw new Error("Failed to generate user data");
+
+	const { profileId, companyId, ...userDataWithoutCalculated } = userData;
+
+	const userDataWithRequiredFields = {
+		...userDataWithoutCalculated,
+		profileId: null,
+		companyId: null,
+	};
+
+	const user = await db.user.insert(userDataWithRequiredFields);
+
+	return user;
+}
 
 async function generateCompanyId(
 	override: IUpdateCompany & {
@@ -12,9 +30,12 @@ async function generateCompanyId(
 		deletedAt?: Date | null;
 	} = { updatedAt: null, deletedAt: null },
 ) {
+	const user = await generateValidUser();
+
 	const [company] = generateFakeInsertCompany();
 	if (!company) throw new Error("Failed to generate company data");
-	Object.assign(company, override);
+
+	Object.assign(company, { ...override, userId: user.id });
 	const result = await db.company.insert(company);
 	return result.id;
 }
@@ -22,9 +43,14 @@ async function generateCompanyId(
 describe("MikroOrmCompanyRepository", () => {
 	describe("insert", () => {
 		it("should insert a new company", async () => {
+			const user = await generateValidUser();
 			const [company] = generateFakeInsertCompany();
 			if (!company) throw new Error("Failed to generate company data");
-			Object.assign(company, { updatedAt: null, deletedAt: null });
+			Object.assign(company, {
+				updatedAt: null,
+				deletedAt: null,
+				userId: user.id,
+			});
 
 			const result = await db.company.insert(company);
 			expect(result.id).toBeDefined();

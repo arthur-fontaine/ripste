@@ -2,6 +2,7 @@ import type { ISU } from "isutypes";
 import type { IBaseModel } from "./IBaseModel.ts";
 import { createFakeGenerator } from "interface-faker";
 import type { IStoreTable } from "./IStore.ts";
+import type { IUserTable } from "./IUser.ts";
 
 export interface ICompanyTable extends IBaseModel {
 	legalName: string;
@@ -9,6 +10,7 @@ export interface ICompanyTable extends IBaseModel {
 	kbis: string;
 	vatNumber: string | null;
 	address: string | null;
+	user: ISU.SingleReference<IUserTable, "userId", "id">;
 	stores: ISU.ManyReference<IStoreTable>;
 }
 

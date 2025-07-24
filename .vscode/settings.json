@@ -8,6 +8,7 @@
 		"api/payment",
 		"dinarjs",
 		"admin",
-		"psp"
+		"psp",
+		"api/better-auth"
 	]
 }
