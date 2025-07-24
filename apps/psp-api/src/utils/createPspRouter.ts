@@ -21,12 +21,16 @@ interface IPaymentInfos {
 
 interface ICardPaymentMethod {
 	type: "mastercard" | "visa" | "amex";
+	holderName: string;
 	cardNumber: string;
 	cvv: string;
 	expiryDate: string;
 }
 
-const PaymentInfosSchema = interfaceToZod<IPaymentInfos>()
+const PaymentInfosSchema = interfaceToZod<IPaymentInfos>(
+	"IPaymentInfos",
+	__filename,
+)
 	.check((ctx) => {
 		const expiryDateRegex = /^(0[1-9]|1[0-2])\/([0-9]{4})$/;
 		const expiryDate = ctx.value?.paymentMethod?.expiryDate;
@@ -81,15 +85,11 @@ const PaymentInfosSchema = interfaceToZod<IPaymentInfos>()
 
 export function createPspRouter(psp: IPspRouter) {
 	return new Hono()
-		.post(
-			"/submit-payment",
-			zValidator("json", PaymentInfosSchema),
-			async (c) => {
-				const paymentInfos = c.req.valid("json");
-				const result = await psp.submitPayment(paymentInfos);
-				return c.json({ id: result.id }, 201);
-			},
-		)
+		.post("/payments", zValidator("json", PaymentInfosSchema), async (c) => {
+			const paymentInfos = c.req.valid("json");
+			const result = await psp.submitPayment(paymentInfos);
+			return c.json({ id: result.id }, 201);
+		})
 		.get("/payments/:id/status", async (c) => {
 			const id = c.req.param("id");
 			const result = await psp.getPaymentStatus(id);

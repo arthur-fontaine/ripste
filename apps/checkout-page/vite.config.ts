@@ -1,9 +1,19 @@
+import md from "unplugin-vue-markdown/vite";
 import vue from "@vitejs/plugin-vue";
-import ssr from "vite-plugin-ssr/plugin";
-import type { UserConfig } from "vite";
+import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "vite";
+import vike from "vike/plugin";
 
-const config: UserConfig = {
-	plugins: [vue(), ssr()],
-};
-
-export default config;
+export default defineConfig({
+	plugins: [
+		vike(),
+		tailwindcss(),
+		vue({
+			include: [/\.vue$/, /\.md$/],
+		}),
+		md({}),
+	],
+	build: {
+		target: "es2022",
+	},
+});
