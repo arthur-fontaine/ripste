@@ -1,62 +1,61 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-import { useProductStore } from '@/stores/productStore'
-import { useCartStore } from '@/stores/cartStore.js'
+import { ref, computed, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { useProductStore } from "@/stores/productStore";
+import { useCartStore } from "@/stores/cartStore.js";
 
-import ProductBreadcrumb from '@/components/Product/ProductBreadcrumb.vue'
-import ProductGallery from '@/components/Product/ProductGallery.vue'
-import ProductInfo from '@/components/Product/ProductInfo.vue'
-import ProductTabs from '@/components/Product/ProductTabs.vue'
-import ProductPriceHistory from '@/components/Product/ProductPriceHistory.vue'
-import ProductSimilar from '@/components/Product/ProductSimilar.vue'
+import ProductBreadcrumb from "@/components/Product/ProductBreadcrumb.vue";
+import ProductGallery from "@/components/Product/ProductGallery.vue";
+import ProductInfo from "@/components/Product/ProductInfo.vue";
+import ProductTabs from "@/components/Product/ProductTabs.vue";
+import ProductPriceHistory from "@/components/Product/ProductPriceHistory.vue";
+import ProductSimilar from "@/components/Product/ProductSimilar.vue";
 
-const route = useRoute()
-const productStore = useProductStore()
-const cartStore = useCartStore()
-const isLoading = ref(true)
-const error = ref(null)
-const product = ref(null)
+const route = useRoute();
+const productStore = useProductStore();
+const cartStore = useCartStore();
+const isLoading = ref(true);
+const error = ref(null);
+const product = ref(null);
 
-const productId = computed(() => parseInt(route.params.id))
+const productId = computed(() => Number.parseInt(route.params.id));
 
 onMounted(async () => {
-  try {
-    isLoading.value = true
-    error.value = null
+	try {
+		isLoading.value = true;
+		error.value = null;
 
-    let foundProduct = productStore.getProductById(productId.value)
+		let foundProduct = productStore.getProductById(productId.value);
 
-    if (!foundProduct) {
-      foundProduct = await productStore.fetchProductById(productId.value)
-    }
+		if (!foundProduct) {
+			foundProduct = await productStore.fetchProductById(productId.value);
+		}
 
-    if (!foundProduct) {
-      error.value = "Produit introuvable"
-      return
-    }
+		if (!foundProduct) {
+			error.value = "Produit introuvable";
+			return;
+		}
 
-    product.value = foundProduct
+		product.value = foundProduct;
 
-    if (productStore.products.length === 0) {
-      await productStore.fetchProducts()
-    }
-
-  } catch (err) {
-    console.error('Erreur lors du chargement du produit:', err)
-    error.value = "Une erreur est survenue lors du chargement du produit."
-  } finally {
-    isLoading.value = false
-  }
-})
+		if (productStore.products.length === 0) {
+			await productStore.fetchProducts();
+		}
+	} catch (err) {
+		console.error("Erreur lors du chargement du produit:", err);
+		error.value = "Une erreur est survenue lors du chargement du produit.";
+	} finally {
+		isLoading.value = false;
+	}
+});
 
 function handleAddToCart(cartItem) {
-  cartStore.addItem(
-    cartItem.product,
-    cartItem.size,
-    cartItem.color,
-    cartItem.quantity
-  )
+	cartStore.addItem(
+		cartItem.product,
+		cartItem.size,
+		cartItem.color,
+		cartItem.quantity,
+	);
 }
 </script>
 

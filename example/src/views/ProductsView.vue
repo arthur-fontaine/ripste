@@ -1,195 +1,204 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useProductStore } from '@/stores/productStore'
-import ProductCard from '@/components/Product/ProductCard.vue'
-import ProductsFilter from '@/components/Products/ProductsFilter.vue'
-import ProductsSorting from '@/components/Products/ProductsSorting.vue'
-import ProductsPagination from '@/components/Products/ProductsPagination.vue'
-import ProductsHeader from '@/components/Products/ProductsHeader.vue'
-import ProductsFilterSummary from '@/components/Products/ProductsFilterSummary.vue'
+import { ref, computed, onMounted, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useProductStore } from "@/stores/productStore";
+import ProductCard from "@/components/Product/ProductCard.vue";
+import ProductsFilter from "@/components/Products/ProductsFilter.vue";
+import ProductsSorting from "@/components/Products/ProductsSorting.vue";
+import ProductsPagination from "@/components/Products/ProductsPagination.vue";
+import ProductsHeader from "@/components/Products/ProductsHeader.vue";
+import ProductsFilterSummary from "@/components/Products/ProductsFilterSummary.vue";
 
-const route = useRoute()
-const router = useRouter()
-const productStore = useProductStore()
+const route = useRoute();
+const router = useRouter();
+const productStore = useProductStore();
 
-const isLoading = ref(true)
-const mobileFiltersOpen = ref(false)
-const searchResults = ref([])
-const isSearchMode = ref(false)
-const searchQuery = ref('')
+const isLoading = ref(true);
+const mobileFiltersOpen = ref(false);
+const searchResults = ref([]);
+const isSearchMode = ref(false);
+const searchQuery = ref("");
 
 const activeFilters = ref({
-  category: null,
-  brand: null,
-  minPrice: null,
-  maxPrice: null,
-  inStock: null,
-  isNew: null,
-})
+	category: null,
+	brand: null,
+	minPrice: null,
+	maxPrice: null,
+	inStock: null,
+	isNew: null,
+});
 
-const sortOption = ref('default')
-const currentPage = ref(1)
-const itemsPerPage = ref(12)
+const sortOption = ref("default");
+const currentPage = ref(1);
+const itemsPerPage = ref(12);
 
 const categoryFromRoute = computed(() => {
-  return route.params.category
-    ? productStore.categories.find((c) => c.toLowerCase() === route.params.category.toLowerCase())
-    : null
-})
+	return route.params.category
+		? productStore.categories.find(
+				(c) => c.toLowerCase() === route.params.category.toLowerCase(),
+			)
+		: null;
+});
 
 const displayedProducts = computed(() => {
-  if (isSearchMode.value) {
-    return searchResults.value
-  }
-  return productStore.filterProducts(activeFilters.value)
-})
+	if (isSearchMode.value) {
+		return searchResults.value;
+	}
+	return productStore.filterProducts(activeFilters.value);
+});
 
 const allFilteredProducts = computed(() => {
-  let products = [...displayedProducts.value]
+	const products = [...displayedProducts.value];
 
-  if (sortOption.value === 'price-asc') {
-    return products.sort((a, b) => a.price - b.price)
-  } else if (sortOption.value === 'price-desc') {
-    return products.sort((a, b) => b.price - a.price)
-  } else if (sortOption.value === 'rating') {
-    return products.sort((a, b) => b.rating - a.rating)
-  } else if (sortOption.value === 'newest') {
-    return products.sort((a, b) => (b.isNew === a.isNew ? 0 : b.isNew ? 1 : -1))
-  }
+	if (sortOption.value === "price-asc") {
+		return products.sort((a, b) => a.price - b.price);
+	}
+	if (sortOption.value === "price-desc") {
+		return products.sort((a, b) => b.price - a.price);
+	}
+	if (sortOption.value === "rating") {
+		return products.sort((a, b) => b.rating - a.rating);
+	}
+	if (sortOption.value === "newest") {
+		return products.sort((a, b) =>
+			b.isNew === a.isNew ? 0 : b.isNew ? 1 : -1,
+		);
+	}
 
-  return products
-})
+	return products;
+});
 
 const paginatedProducts = computed(() => {
-  const startIndex = (currentPage.value - 1) * itemsPerPage.value
-  const endIndex = startIndex + itemsPerPage.value
-  return allFilteredProducts.value.slice(startIndex, endIndex)
-})
+	const startIndex = (currentPage.value - 1) * itemsPerPage.value;
+	const endIndex = startIndex + itemsPerPage.value;
+	return allFilteredProducts.value.slice(startIndex, endIndex);
+});
 
 const pageTitle = computed(() => {
-  if (isSearchMode.value && searchQuery.value) {
-    return `Résultats pour "${searchQuery.value}"`
-  }
-  return categoryFromRoute.value ? categoryFromRoute.value : 'Tous les produits'
-})
+	if (isSearchMode.value && searchQuery.value) {
+		return `Résultats pour "${searchQuery.value}"`;
+	}
+	return categoryFromRoute.value
+		? categoryFromRoute.value
+		: "Tous les produits";
+});
 
 async function performSearch(query) {
-  if (!query || !query.trim()) {
-    isSearchMode.value = false
-    searchResults.value = []
-    return
-  }
+	if (!query || !query.trim()) {
+		isSearchMode.value = false;
+		searchResults.value = [];
+		return;
+	}
 
-  try {
-    isLoading.value = true
-    const results = await productStore.searchProducts(query.trim())
-    searchResults.value = results
-    isSearchMode.value = true
-    currentPage.value = 1
-  } catch (error) {
-    console.error('Erreur lors de la recherche:', error)
-    searchResults.value = []
-    isSearchMode.value = false
-  } finally {
-    isLoading.value = false
-  }
+	try {
+		isLoading.value = true;
+		const results = await productStore.searchProducts(query.trim());
+		searchResults.value = results;
+		isSearchMode.value = true;
+		currentPage.value = 1;
+	} catch (error) {
+		console.error("Erreur lors de la recherche:", error);
+		searchResults.value = [];
+		isSearchMode.value = false;
+	} finally {
+		isLoading.value = false;
+	}
 }
 
 function updateFilters(filters) {
-  activeFilters.value = filters
-  isSearchMode.value = false
+	activeFilters.value = filters;
+	isSearchMode.value = false;
 
-  if (route.query.search) {
-    router.replace({ query: { ...route.query, search: undefined } })
-  }
+	if (route.query.search) {
+		router.replace({ query: { ...route.query, search: undefined } });
+	}
 }
 
 function resetAllFilters() {
-  updateFilters({
-    category: null,
-    brand: null,
-    minPrice: null,
-    maxPrice: null,
-    inStock: null,
-    isNew: null,
-  })
-  mobileFiltersOpen.value = false
+	updateFilters({
+		category: null,
+		brand: null,
+		minPrice: null,
+		maxPrice: null,
+		inStock: null,
+		isNew: null,
+	});
+	mobileFiltersOpen.value = false;
 
-  if (route.query.search) {
-    router.replace({ query: {} })
-  }
+	if (route.query.search) {
+		router.replace({ query: {} });
+	}
 }
 
 function updateSorting(option) {
-  sortOption.value = option
+	sortOption.value = option;
 }
 
 function changePage(page) {
-  currentPage.value = page
-  window.scrollTo({
-    top: document.querySelector('.products-grid')?.offsetTop - 20 || 0,
-    behavior: 'smooth',
-  })
+	currentPage.value = page;
+	window.scrollTo({
+		top: document.querySelector(".products-grid")?.offsetTop - 20 || 0,
+		behavior: "smooth",
+	});
 }
 
 watch(
-  () => route.query.search,
-  (newSearch) => {
-    if (newSearch && newSearch !== searchQuery.value) {
-      searchQuery.value = newSearch
-      performSearch(newSearch)
-    } else if (!newSearch && isSearchMode.value) {
-      isSearchMode.value = false
-      searchResults.value = []
-      searchQuery.value = ''
-    }
-  },
-  { immediate: true }
-)
+	() => route.query.search,
+	(newSearch) => {
+		if (newSearch && newSearch !== searchQuery.value) {
+			searchQuery.value = newSearch;
+			performSearch(newSearch);
+		} else if (!newSearch && isSearchMode.value) {
+			isSearchMode.value = false;
+			searchResults.value = [];
+			searchQuery.value = "";
+		}
+	},
+	{ immediate: true },
+);
 
 watch(
-  () => route.params.category,
-  (newCategory) => {
-    if (newCategory && categoryFromRoute.value) {
-      activeFilters.value.category = categoryFromRoute.value
-      currentPage.value = 1
-      isSearchMode.value = false
-    } else {
-      activeFilters.value.category = null
-    }
-  },
-  { immediate: true }
-)
+	() => route.params.category,
+	(newCategory) => {
+		if (newCategory && categoryFromRoute.value) {
+			activeFilters.value.category = categoryFromRoute.value;
+			currentPage.value = 1;
+			isSearchMode.value = false;
+		} else {
+			activeFilters.value.category = null;
+		}
+	},
+	{ immediate: true },
+);
 
 watch(
-  activeFilters,
-  () => {
-    currentPage.value = 1
-  },
-  { deep: true }
-)
+	activeFilters,
+	() => {
+		currentPage.value = 1;
+	},
+	{ deep: true },
+);
 
 watch(sortOption, () => {
-  currentPage.value = 1
-})
+	currentPage.value = 1;
+});
 
 onMounted(async () => {
-  if (productStore.products.length === 0) {
-    await productStore.fetchProducts()
-  }
+	if (productStore.products.length === 0) {
+		await productStore.fetchProducts();
+	}
 
-  if (categoryFromRoute.value) {
-    activeFilters.value.category = categoryFromRoute.value
-  }
+	if (categoryFromRoute.value) {
+		activeFilters.value.category = categoryFromRoute.value;
+	}
 
-  if (route.query.search) {
-    searchQuery.value = route.query.search
-    await performSearch(route.query.search)
-  }
+	if (route.query.search) {
+		searchQuery.value = route.query.search;
+		await performSearch(route.query.search);
+	}
 
-  isLoading.value = false
-})
+	isLoading.value = false;
+});
 </script>
 
 <template>

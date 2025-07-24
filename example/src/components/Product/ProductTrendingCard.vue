@@ -1,15 +1,15 @@
 
 <script setup>
 defineProps({
-  product: {
-    type: Object,
-    required: true,
-  },
-  formattedPrice: {
-    type: String,
-    required: true,
-  },
-})
+	product: {
+		type: Object,
+		required: true,
+	},
+	formattedPrice: {
+		type: String,
+		required: true,
+	},
+});
 </script>
 
 <template>

@@ -50,6 +50,8 @@ export const postTransactionsRoute = createHonoRouter().post(
 			eventData: { type: "transaction_created" },
 		});
 
+		const uri = randomUUID();
+
 		await database.checkoutPage.insert({
 			accessedAt: null,
 			completedAt: null,
@@ -59,14 +61,14 @@ export const postTransactionsRoute = createHonoRouter().post(
 			redirectSuccessUrl: null,
 			themeId: theme.id,
 			transactionId: transaction.id,
-			uri: randomUUID(),
+			uri,
 		});
 
 		c.header("Location", `/transactions/${transaction.id}`);
 
 		return c.json(
 			{
-				data: { id: transaction.id },
+				data: { id: transaction.id, uri },
 			},
 			201,
 		);

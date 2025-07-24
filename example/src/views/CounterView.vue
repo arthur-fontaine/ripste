@@ -1,18 +1,17 @@
 <script setup>
+import { ref } from "vue";
 
-import { ref } from 'vue'
-
-let counters = ref([])
+const counters = ref([]);
 function incrementCounter(counter) {
-  counter.value += 1
+	counter.value += 1;
 }
 
 function decrementCounter(counter) {
-  counter.value -= 1
+	counter.value -= 1;
 }
 
 function addCounter() {
-  counters.value.push(ref(0))
+	counters.value.push(ref(0));
 }
 </script>
 

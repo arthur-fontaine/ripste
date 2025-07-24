@@ -1,14 +1,14 @@
 <script setup>
-import { onMounted } from 'vue'
-import { useProductStore } from '@/stores/productStore'
+import { onMounted } from "vue";
+import { useProductStore } from "@/stores/productStore";
 
-const productStore = useProductStore()
+const productStore = useProductStore();
 
 onMounted(async () => {
-  if (productStore.homeCategories.length === 0) {
-    await productStore.fetchHomeCategories()
-  }
-})
+	if (productStore.homeCategories.length === 0) {
+		await productStore.fetchHomeCategories();
+	}
+});
 </script>
 
 <template>

@@ -1,90 +1,92 @@
 <script setup>
-import { ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
-import { useProductStore } from '@/stores/productStore'
-import CartIcon from '@/components/Cart/CartIcon.vue'
-import { useCartStore } from '@/stores/cartStore'
-import HeaderSearchResults from '@/components/Header/HeaderSearchResults.vue'
+import { ref, watch } from "vue";
+import { useRouter } from "vue-router";
+import { useProductStore } from "@/stores/productStore";
+import CartIcon from "@/components/Cart/CartIcon.vue";
+import { useCartStore } from "@/stores/cartStore";
+import HeaderSearchResults from "@/components/Header/HeaderSearchResults.vue";
 
-const router = useRouter()
-const productStore = useProductStore()
-const cartStore = useCartStore()
-
+const router = useRouter();
+const productStore = useProductStore();
+const cartStore = useCartStore();
 
 const menuItems = [
-  { title: 'Accueil', url: '/' },
-  { title: 'Produits', url: '/products' },
-]
+	{ title: "Accueil", url: "/" },
+	{ title: "Produits", url: "/products" },
+];
 
-const mobileMenuOpen = ref(false)
-const searchQuery = ref('')
-const searchResults = ref([])
-const showSearchResults = ref(false)
-const isSearching = ref(false)
+const mobileMenuOpen = ref(false);
+const searchQuery = ref("");
+const searchResults = ref([]);
+const showSearchResults = ref(false);
+const isSearching = ref(false);
 
 function toggleMobileMenu() {
-  mobileMenuOpen.value = !mobileMenuOpen.value
+	mobileMenuOpen.value = !mobileMenuOpen.value;
 }
 
-let searchTimeout = null
+let searchTimeout = null;
 watch(searchQuery, async (newQuery) => {
-  if (searchTimeout) {
-    clearTimeout(searchTimeout)
-  }
+	if (searchTimeout) {
+		clearTimeout(searchTimeout);
+	}
 
-  if (!newQuery.trim()) {
-    searchResults.value = []
-    showSearchResults.value = false
-    return
-  }
+	if (!newQuery.trim()) {
+		searchResults.value = [];
+		showSearchResults.value = false;
+		return;
+	}
 
-  searchTimeout = setTimeout(async () => {
-    try {
-      isSearching.value = true
-      const results = await productStore.searchProducts(newQuery.trim())
-      searchResults.value = results.slice(0, 5)
-      showSearchResults.value = true
-    } catch (error) {
-      console.error('Erreur lors de la recherche:', error)
-      searchResults.value = []
-    } finally {
-      isSearching.value = false
-    }
-  }, 300)
-})
+	searchTimeout = setTimeout(async () => {
+		try {
+			isSearching.value = true;
+			const results = await productStore.searchProducts(newQuery.trim());
+			searchResults.value = results.slice(0, 5);
+			showSearchResults.value = true;
+		} catch (error) {
+			console.error("Erreur lors de la recherche:", error);
+			searchResults.value = [];
+		} finally {
+			isSearching.value = false;
+		}
+	}, 300);
+});
 
 function search() {
-  if (searchQuery.value.trim()) {
-    router.push({
-      path: '/products',
-      query: { search: searchQuery.value.trim() }
-    })
-    hideSearchResults()
-  }
+	if (searchQuery.value.trim()) {
+		router.push({
+			path: "/products",
+			query: { search: searchQuery.value.trim() },
+		});
+		hideSearchResults();
+	}
 }
 
 function selectProduct(product) {
-  router.push(`/product/${product.id}`)
-  hideSearchResults()
-  searchQuery.value = ''
+	router.push(`/product/${product.id}`);
+	hideSearchResults();
+	searchQuery.value = "";
 }
 
 function hideSearchResults() {
-  showSearchResults.value = false
+	showSearchResults.value = false;
 }
 
 function formatPrice(price) {
-  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(price)
+	return new Intl.NumberFormat("fr-FR", {
+		style: "currency",
+		currency: "EUR",
+	}).format(price);
 }
 
 function handleClickOutside(event) {
-  if (!event.target.closest('.search-container')) {
-    hideSearchResults()
-  }
+	if (!event.target.closest(".search-container")) {
+		hideSearchResults();
+	}
 }
 
-if (typeof window !== 'undefined') {
-  window.addEventListener('click', handleClickOutside)
+if (typeof window !== "undefined") {
+	window.addEventListener("click", handleClickOutside);
 }
 </script>
 

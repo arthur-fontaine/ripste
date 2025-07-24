@@ -1,38 +1,44 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted } from "vue";
 
 const props = defineProps({
-  product: {
-    type: Object,
-    required: true
-  }
-})
+	product: {
+		type: Object,
+		required: true,
+	},
+});
 
-const priceHistory = ref([])
-const isLoading = ref(true)
+const priceHistory = ref([]);
+const isLoading = ref(true);
 
 onMounted(() => {
-  setTimeout(() => {
-    const now = new Date()
-    const data = []
-    
-    for (let i = 6; i >= 0; i--) {
-      const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
-      
-      const variance = (Math.random() * 0.2) - 0.1
-      const price = props.product.price * (1 + variance)
-      
-      data.push({
-        date: date.toLocaleDateString('fr-FR', { year: 'numeric', month: 'short' }),
-        price: Math.round(price * 100) / 100,
-        formattedPrice: new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(price)
-      })
-    }
-    
-    priceHistory.value = data
-    isLoading.value = false
-  }, 800)
-})
+	setTimeout(() => {
+		const now = new Date();
+		const data = [];
+
+		for (let i = 6; i >= 0; i--) {
+			const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+
+			const variance = Math.random() * 0.2 - 0.1;
+			const price = props.product.price * (1 + variance);
+
+			data.push({
+				date: date.toLocaleDateString("fr-FR", {
+					year: "numeric",
+					month: "short",
+				}),
+				price: Math.round(price * 100) / 100,
+				formattedPrice: new Intl.NumberFormat("fr-FR", {
+					style: "currency",
+					currency: "EUR",
+				}).format(price),
+			});
+		}
+
+		priceHistory.value = data;
+		isLoading.value = false;
+	}, 800);
+});
 </script>
 
 <template>

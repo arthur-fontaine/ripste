@@ -1,18 +1,21 @@
 <script setup>
-import { onMounted } from 'vue'
-import { useProductStore } from '@/stores/productStore'
-import ProductTrendingCard from '../Product/ProductTrendingCard.vue'
+import { onMounted } from "vue";
+import { useProductStore } from "@/stores/productStore";
+import ProductTrendingCard from "../Product/ProductTrendingCard.vue";
 
-const productStore = useProductStore()
+const productStore = useProductStore();
 
 onMounted(async () => {
-  if (productStore.products.length === 0) {
-    await productStore.fetchProducts()
-  }
-})
+	if (productStore.products.length === 0) {
+		await productStore.fetchProducts();
+	}
+});
 
 function formatPrice(price) {
-  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(price)
+	return new Intl.NumberFormat("fr-FR", {
+		style: "currency",
+		currency: "EUR",
+	}).format(price);
 }
 </script>
 

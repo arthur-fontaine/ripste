@@ -1,50 +1,57 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed } from "vue";
 
 const props = defineProps({
-  product: {
-    type: Object,
-    required: true
-  }
-})
+	product: {
+		type: Object,
+		required: true,
+	},
+});
 
-const emit = defineEmits(['add-to-cart'])
+const emit = defineEmits(["add-to-cart"]);
 
-const selectedSize = ref(props.product.sizes?.length > 0 ? props.product.sizes[0] : null)
-const selectedColor = ref(props.product.colors?.length > 0 ? props.product.colors[0] : null)
+const selectedSize = ref(
+	props.product.sizes?.length > 0 ? props.product.sizes[0] : null,
+);
+const selectedColor = ref(
+	props.product.colors?.length > 0 ? props.product.colors[0] : null,
+);
 
 const colorMap = {
-  'Navy Blue': '#0a192f',
-  'Burgundy': '#800020',
-  'Light Blue': '#add8e6'
-}
+	"Navy Blue": "#0a192f",
+	Burgundy: "#800020",
+	"Light Blue": "#add8e6",
+};
 
 const displayPrice = computed(() => {
-  if (props.product.discount && props.product.discount > 0) {
-    return props.product.price * (1 - props.product.discount / 100)
-  }
-  return props.product.price
-})
+	if (props.product.discount && props.product.discount > 0) {
+		return props.product.price * (1 - props.product.discount / 100);
+	}
+	return props.product.price;
+});
 
 function formatPrice(price) {
-  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(price)
+	return new Intl.NumberFormat("fr-FR", {
+		style: "currency",
+		currency: "EUR",
+	}).format(price);
 }
 
 function addToCart() {
-  emit('add-to-cart', {
-    product: props.product,
-    size: selectedSize.value,
-    color: selectedColor.value,
-    quantity: 1
-  })
+	emit("add-to-cart", {
+		product: props.product,
+		size: selectedSize.value,
+		color: selectedColor.value,
+		quantity: 1,
+	});
 }
 
 function getColorHex(colorName) {
-  if (colorMap[colorName]) {
-    return colorMap[colorName]
-  }
+	if (colorMap[colorName]) {
+		return colorMap[colorName];
+	}
 
-  return colorName.toLowerCase()
+	return colorName.toLowerCase();
 }
 </script>
 

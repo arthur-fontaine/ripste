@@ -1,37 +1,39 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { useProductStore } from '@/stores/productStore'
+import { ref, onMounted, onBeforeUnmount } from "vue";
+import { useProductStore } from "@/stores/productStore";
 
-const productStore = useProductStore()
-const currentSlide = ref(0)
-let slideInterval = null
+const productStore = useProductStore();
+const currentSlide = ref(0);
+let slideInterval = null;
 
 function nextSlide() {
-  currentSlide.value = (currentSlide.value + 1) % productStore.heroSlides.length
+	currentSlide.value =
+		(currentSlide.value + 1) % productStore.heroSlides.length;
 }
 
 function prevSlide() {
-  currentSlide.value =
-    (currentSlide.value - 1 + productStore.heroSlides.length) % productStore.heroSlides.length
+	currentSlide.value =
+		(currentSlide.value - 1 + productStore.heroSlides.length) %
+		productStore.heroSlides.length;
 }
 
 function setSlide(index) {
-  currentSlide.value = index
+	currentSlide.value = index;
 }
 
 onMounted(async () => {
-  if (productStore.heroSlides.length === 0) {
-    await productStore.fetchHeroSlides()
-  }
+	if (productStore.heroSlides.length === 0) {
+		await productStore.fetchHeroSlides();
+	}
 
-  slideInterval = setInterval(() => {
-    nextSlide()
-  }, 7000)
-})
+	slideInterval = setInterval(() => {
+		nextSlide();
+	}, 7000);
+});
 
 onBeforeUnmount(() => {
-  if (slideInterval) clearInterval(slideInterval)
-})
+	if (slideInterval) clearInterval(slideInterval);
+});
 </script>
 
 <template>

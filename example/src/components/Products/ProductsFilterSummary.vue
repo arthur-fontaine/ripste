@@ -1,51 +1,53 @@
 <script setup>
-import { computed } from 'vue'
+import { computed } from "vue";
 
 const props = defineProps({
-  filters: {
-    type: Object,
-    required: true
-  }
-})
+	filters: {
+		type: Object,
+		required: true,
+	},
+});
 
-const emit = defineEmits(['reset-filters'])
+const emit = defineEmits(["reset-filters"]);
 
 const activeFiltersCount = computed(() => {
-  return Object.values(props.filters).filter(val => val !== null).length
-})
+	return Object.values(props.filters).filter((val) => val !== null).length;
+});
 
 const filtersSummary = computed(() => {
-  const activeFilters = []
+	const activeFilters = [];
 
-  if (props.filters.category) {
-    activeFilters.push(`Catégorie: ${props.filters.category}`)
-  }
+	if (props.filters.category) {
+		activeFilters.push(`Catégorie: ${props.filters.category}`);
+	}
 
-  if (props.filters.brand) {
-    activeFilters.push(`Marque: ${props.filters.brand}`)
-  }
+	if (props.filters.brand) {
+		activeFilters.push(`Marque: ${props.filters.brand}`);
+	}
 
-  if (props.filters.minPrice !== null && props.filters.maxPrice !== null) {
-    activeFilters.push(`Prix: ${props.filters.minPrice}€ - ${props.filters.maxPrice}€`)
-  } else if (props.filters.minPrice !== null) {
-    activeFilters.push(`Prix: > ${props.filters.minPrice}€`)
-  } else if (props.filters.maxPrice !== null) {
-    activeFilters.push(`Prix: < ${props.filters.maxPrice}€`)
-  }
+	if (props.filters.minPrice !== null && props.filters.maxPrice !== null) {
+		activeFilters.push(
+			`Prix: ${props.filters.minPrice}€ - ${props.filters.maxPrice}€`,
+		);
+	} else if (props.filters.minPrice !== null) {
+		activeFilters.push(`Prix: > ${props.filters.minPrice}€`);
+	} else if (props.filters.maxPrice !== null) {
+		activeFilters.push(`Prix: < ${props.filters.maxPrice}€`);
+	}
 
-  if (props.filters.inStock === true) {
-    activeFilters.push('En stock')
-  }
+	if (props.filters.inStock === true) {
+		activeFilters.push("En stock");
+	}
 
-  if (props.filters.isNew === true) {
-    activeFilters.push('Nouveautés')
-  }
+	if (props.filters.isNew === true) {
+		activeFilters.push("Nouveautés");
+	}
 
-  return activeFilters
-})
+	return activeFilters;
+});
 
 function resetFilters() {
-  emit('reset-filters')
+	emit("reset-filters");
 }
 </script>
 

@@ -1,14 +1,14 @@
 <script setup>
-import { useRouter } from 'vue-router'
+import { useRouter } from "vue-router";
 
-const router = useRouter()
+const router = useRouter();
 
 function goBack() {
-  router.back()
+	router.back();
 }
 
 function goHome() {
-  router.push('/')
+	router.push("/");
 }
 </script>
 

@@ -1,47 +1,47 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch } from "vue";
 
 const props = defineProps({
-  selected: {
-    type: String,
-    default: 'default'
-  }
-})
+	selected: {
+		type: String,
+		default: "default",
+	},
+});
 
-const emit = defineEmits(['update-sorting'])
+const emit = defineEmits(["update-sorting"]);
 
 const sortingOptions = [
-  { value: 'default', label: 'Recommandés' },
-  { value: 'price-asc', label: 'Prix croissant' },
-  { value: 'price-desc', label: 'Prix décroissant' },
-  { value: 'rating', label: 'Meilleures notes' },
-  { value: 'newest', label: 'Nouveautés' }
-]
+	{ value: "default", label: "Recommandés" },
+	{ value: "price-asc", label: "Prix croissant" },
+	{ value: "price-desc", label: "Prix décroissant" },
+	{ value: "rating", label: "Meilleures notes" },
+	{ value: "newest", label: "Nouveautés" },
+];
 
-const selectedOption = ref(props.selected)
-const isOpen = ref(false)
+const selectedOption = ref(props.selected);
+const isOpen = ref(false);
 
 watch(selectedOption, (newOption) => {
-  emit('update-sorting', newOption)
-})
+	emit("update-sorting", newOption);
+});
 
 function toggleDropdown() {
-  isOpen.value = !isOpen.value
+	isOpen.value = !isOpen.value;
 }
 
 function selectOption(option) {
-  selectedOption.value = option
-  isOpen.value = false
+	selectedOption.value = option;
+	isOpen.value = false;
 }
 
 function handleClickOutside(event) {
-  if (isOpen.value && !event.target.closest('.sorting-dropdown')) {
-    isOpen.value = false
-  }
+	if (isOpen.value && !event.target.closest(".sorting-dropdown")) {
+		isOpen.value = false;
+	}
 }
 
-if (typeof window !== 'undefined') {
-  window.addEventListener('click', handleClickOutside)
+if (typeof window !== "undefined") {
+	window.addEventListener("click", handleClickOutside);
 }
 </script>
 

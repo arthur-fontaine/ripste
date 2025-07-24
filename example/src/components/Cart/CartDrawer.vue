@@ -1,42 +1,49 @@
 <script setup>
-import { onMounted, onUnmounted } from 'vue'
-import { useCartStore } from '@/stores/cartStore'
+import { onMounted, onUnmounted } from "vue";
+import { useCartStore } from "@/stores/cartStore";
 
-const cartStore = useCartStore()
+const cartStore = useCartStore();
 
 function formatPrice(price) {
-  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(price)
+	return new Intl.NumberFormat("fr-FR", {
+		style: "currency",
+		currency: "EUR",
+	}).format(price);
 }
 
 function displayPrice(product) {
-  if (product.discount && product.discount > 0) {
-    return product.price * (1 - product.discount / 100)
-  }
-  return product.price
+	if (product.discount && product.discount > 0) {
+		return product.price * (1 - product.discount / 100);
+	}
+	return product.price;
 }
 
 function handleClickOutside(event) {
-  const drawer = document.querySelector('.cart-drawer')
-  if (drawer && !drawer.contains(event.target) && !event.target.closest('.cart-button')) {
-    cartStore.closeCart()
-  }
+	const drawer = document.querySelector(".cart-drawer");
+	if (
+		drawer &&
+		!drawer.contains(event.target) &&
+		!event.target.closest(".cart-button")
+	) {
+		cartStore.closeCart();
+	}
 }
 
 function handleEscape(event) {
-  if (event.key === 'Escape' && cartStore.isOpen) {
-    cartStore.closeCart()
-  }
+	if (event.key === "Escape" && cartStore.isOpen) {
+		cartStore.closeCart();
+	}
 }
 
 onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
-  document.addEventListener('keydown', handleEscape)
-})
+	document.addEventListener("click", handleClickOutside);
+	document.addEventListener("keydown", handleEscape);
+});
 
 onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside)
-  document.removeEventListener('keydown', handleEscape)
-})
+	document.removeEventListener("click", handleClickOutside);
+	document.removeEventListener("keydown", handleEscape);
+});
 </script>
 
 <template>

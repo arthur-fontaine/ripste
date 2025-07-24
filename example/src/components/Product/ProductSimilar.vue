@@ -1,28 +1,32 @@
 <script setup>
-import { computed } from 'vue'
-import { useProductStore } from '@/stores/productStore'
+import { computed } from "vue";
+import { useProductStore } from "@/stores/productStore";
 
 const props = defineProps({
-  product: {
-    type: Object,
-    required: true
-  },
-  limit: {
-    type: Number,
-    default: 4
-  }
-})
+	product: {
+		type: Object,
+		required: true,
+	},
+	limit: {
+		type: Number,
+		default: 4,
+	},
+});
 
-const productStore = useProductStore()
+const productStore = useProductStore();
 
 const similarProducts = computed(() => {
-  return productStore.getProductsByCategory(props.product.category)
-    .filter(p => p.id !== props.product.id)
-    .slice(0, props.limit)
-})
+	return productStore
+		.getProductsByCategory(props.product.category)
+		.filter((p) => p.id !== props.product.id)
+		.slice(0, props.limit);
+});
 
 function formatPrice(price) {
-  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(price)
+	return new Intl.NumberFormat("fr-FR", {
+		style: "currency",
+		currency: "EUR",
+	}).format(price);
 }
 </script>
 

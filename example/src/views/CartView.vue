@@ -1,51 +1,91 @@
 <script setup>
-import { ref, computed } from 'vue'
-import { useCartStore } from '@/stores/cartStore'
-import { useRouter } from 'vue-router'
+import { ref, computed } from "vue";
+import { useCartStore } from "@/stores/cartStore";
+import { useRouter } from "vue-router";
 
-const cartStore = useCartStore()
-const router = useRouter()
+const cartStore = useCartStore();
+const router = useRouter();
 
 const shippingMethods = [
-  { id: 'standard', name: 'Livraison standard', price: 5.99, deliveryTime: '3-5 jours ouvrés' },
-  { id: 'express', name: 'Livraison express', price: 12.99, deliveryTime: '1-2 jours ouvrés' }
-]
+	{
+		id: "standard",
+		name: "Livraison standard",
+		price: 5.99,
+		deliveryTime: "3-5 jours ouvrés",
+	},
+	{
+		id: "express",
+		name: "Livraison express",
+		price: 12.99,
+		deliveryTime: "1-2 jours ouvrés",
+	},
+];
 
-const selectedShipping = ref(shippingMethods[0].id)
+const selectedShipping = ref(shippingMethods[0].id);
 
 const shipping = computed(() => {
-  return shippingMethods.find(method => method.id === selectedShipping.value)
-})
+	return shippingMethods.find((method) => method.id === selectedShipping.value);
+});
 
 const isFreeShipping = computed(() => {
-  return cartStore.total >= 80
-})
+	return cartStore.total >= 80;
+});
 
 const finalTotal = computed(() => {
-  return isFreeShipping.value ? cartStore.total : cartStore.total + shipping.value.price
-})
+	return isFreeShipping.value
+		? cartStore.total
+		: cartStore.total + shipping.value.price;
+});
 
 const formattedFinalTotal = computed(() => {
-  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(finalTotal.value)
-})
+	return new Intl.NumberFormat("fr-FR", {
+		style: "currency",
+		currency: "EUR",
+	}).format(finalTotal.value);
+});
 
 function formatPrice(price) {
-  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(price)
+	return new Intl.NumberFormat("fr-FR", {
+		style: "currency",
+		currency: "EUR",
+	}).format(price);
 }
 
 function displayPrice(product) {
-  if (product.discount && product.discount > 0) {
-    return product.price * (1 - product.discount / 100)
-  }
-  return product.price
+	if (product.discount && product.discount > 0) {
+		return product.price * (1 - product.discount / 100);
+	}
+	return product.price;
 }
 
 function continueToCheckout() {
-  alert('Redirection vers le système de paiement...')
+	fetch("http://localhost:4000/checkout-panier", {
+		method: "POST",
+		redirect: "follow",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({
+			items: cartStore.items.map((item) => ({
+				name: item.product.name,
+				productId: item.product.id,
+				quantity: item.quantity,
+				size: item.size,
+				color: item.color,
+				price: displayPrice(item.product),
+			})),
+			total: cartStore.total,
+		}),
+	})
+		.then((response) => response.json())
+		.catch((error) => {
+			console.error("Erreur:", error);
+			alert("Erreur lors de la création du paiement");
+		});
 }
 
 function continueShopping() {
-  router.push('/products')
+	router.push("/products");
 }
 </script>
 

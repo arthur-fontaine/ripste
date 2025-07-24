@@ -1,26 +1,26 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed } from "vue";
 
 const props = defineProps({
-  images: {
-    type: Array,
-    required: false,
-    default: () => []
-  },
-  mainImage: {
-    type: String,
-    required: true
-  }
-})
+	images: {
+		type: Array,
+		required: false,
+		default: () => [],
+	},
+	mainImage: {
+		type: String,
+		required: true,
+	},
+});
 
-const selectedImage = ref(props.mainImage)
+const selectedImage = ref(props.mainImage);
 
 const allImages = computed(() => {
-  return [props.mainImage, ...props.images].filter(Boolean)
-})
+	return [props.mainImage, ...props.images].filter(Boolean);
+});
 
 function selectImage(image) {
-  selectedImage.value = image
+	selectedImage.value = image;
 }
 </script>
 

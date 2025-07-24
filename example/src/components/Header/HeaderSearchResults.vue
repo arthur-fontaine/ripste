@@ -1,22 +1,22 @@
 <script setup>
 defineProps({
-  searchQuery: {
-    type: String,
-    required: true
-  },
-  isSearching: {
-    type: Boolean,
-    required: true
-  },
-  searchResults: {
-    type: Array,
-    required: true
-  },
-  formatPrice: {
-    type: Function,
-    required: true
-  }
-})
+	searchQuery: {
+		type: String,
+		required: true,
+	},
+	isSearching: {
+		type: Boolean,
+		required: true,
+	},
+	searchResults: {
+		type: Array,
+		required: true,
+	},
+	formatPrice: {
+		type: Function,
+		required: true,
+	},
+});
 </script>
 <template>
   <div

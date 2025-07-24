@@ -1,27 +1,30 @@
 <script setup>
-import { computed } from 'vue'
+import { computed } from "vue";
 
 const props = defineProps({
-  product: {
-    type: Object,
-    required: true,
-  },
-})
+	product: {
+		type: Object,
+		required: true,
+	},
+});
 
 const displayPrice = computed(() => {
-  if (props.product.discount && props.product.discount > 0) {
-    return props.product.price * (1 - props.product.discount / 100)
-  }
-  return props.product.price
-})
+	if (props.product.discount && props.product.discount > 0) {
+		return props.product.price * (1 - props.product.discount / 100);
+	}
+	return props.product.price;
+});
 
 function formatPrice(price) {
-  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(price)
+	return new Intl.NumberFormat("fr-FR", {
+		style: "currency",
+		currency: "EUR",
+	}).format(price);
 }
 
 const productUrl = computed(() => {
-  return `/product/${props.product.id}`
-})
+	return `/product/${props.product.id}`;
+});
 </script>
 
 <template>

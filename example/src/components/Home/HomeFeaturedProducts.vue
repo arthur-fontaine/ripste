@@ -1,15 +1,15 @@
 <script setup>
-import { onMounted } from 'vue'
-import { useProductStore } from '@/stores/productStore'
-import ProductCard from '@/components/Product/ProductCard.vue'
+import { onMounted } from "vue";
+import { useProductStore } from "@/stores/productStore";
+import ProductCard from "@/components/Product/ProductCard.vue";
 
-const productStore = useProductStore()
+const productStore = useProductStore();
 
 onMounted(async () => {
-  if (productStore.products.length === 0) {
-    await productStore.fetchProducts()
-  }
-})
+	if (productStore.products.length === 0) {
+		await productStore.fetchProducts();
+	}
+});
 </script>
 
 <template>

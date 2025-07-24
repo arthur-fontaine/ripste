@@ -1,15 +1,15 @@
 <!-- src/components/Product/ProductTabs.vue -->
 <script setup>
-import { ref } from 'vue'
+import { ref } from "vue";
 
 defineProps({
-  product: {
-    type: Object,
-    required: true
-  }
-})
+	product: {
+		type: Object,
+		required: true,
+	},
+});
 
-const activeTab = ref('description')
+const activeTab = ref("description");
 </script>
 
 <template>

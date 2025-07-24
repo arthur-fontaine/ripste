@@ -1,38 +1,38 @@
 <script setup>
-import { ref } from 'vue'
+import { ref } from "vue";
 
-const email = ref('')
-const isSubmitting = ref(false)
-const isSuccess = ref(false)
-const errorMessage = ref('')
+const email = ref("");
+const isSubmitting = ref(false);
+const isSuccess = ref(false);
+const errorMessage = ref("");
 
 function subscribe() {
-  isSubmitting.value = true
-  isSuccess.value = false
-  errorMessage.value = ''
+	isSubmitting.value = true;
+	isSuccess.value = false;
+	errorMessage.value = "";
 
-  if (!email.value) {
-    errorMessage.value = 'Veuillez entrer votre adresse email.'
-    isSubmitting.value = false
-    return
-  }
+	if (!email.value) {
+		errorMessage.value = "Veuillez entrer votre adresse email.";
+		isSubmitting.value = false;
+		return;
+	}
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!emailRegex.test(email.value)) {
-    errorMessage.value = 'Veuillez entrer une adresse email valide.'
-    isSubmitting.value = false
-    return
-  }
+	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+	if (!emailRegex.test(email.value)) {
+		errorMessage.value = "Veuillez entrer une adresse email valide.";
+		isSubmitting.value = false;
+		return;
+	}
 
-  setTimeout(() => {
-    isSubmitting.value = false
-    isSuccess.value = true
-    email.value = ''
+	setTimeout(() => {
+		isSubmitting.value = false;
+		isSuccess.value = true;
+		email.value = "";
 
-    setTimeout(() => {
-      isSuccess.value = false
-    }, 5000)
-  }, 1500)
+		setTimeout(() => {
+			isSuccess.value = false;
+		}, 5000);
+	}, 1500);
 }
 </script>
 

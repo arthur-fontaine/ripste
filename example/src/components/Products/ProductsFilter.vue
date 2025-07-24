@@ -1,61 +1,65 @@
 <script setup>
-import { ref, reactive, watch } from 'vue'
-import router from '@/router/index.js'
+import { ref, reactive, watch } from "vue";
+import router from "@/router/index.js";
 
 const props = defineProps({
-  activeFilters: {
-    type: Object,
-    required: true
-  },
-  categories: {
-    type: Array,
-    required: true
-  },
-  brands: {
-    type: Array,
-    required: true
-  }
-})
+	activeFilters: {
+		type: Object,
+		required: true,
+	},
+	categories: {
+		type: Array,
+		required: true,
+	},
+	brands: {
+		type: Array,
+		required: true,
+	},
+});
 
-const emit = defineEmits(['update-filters'])
+const emit = defineEmits(["update-filters"]);
 
 const filters = reactive({
-  category: props.activeFilters.category,
-  brand: props.activeFilters.brand,
-  minPrice: props.activeFilters.minPrice,
-  maxPrice: props.activeFilters.maxPrice,
-  inStock: props.activeFilters.inStock,
-  isNew: props.activeFilters.isNew
-})
+	category: props.activeFilters.category,
+	brand: props.activeFilters.brand,
+	minPrice: props.activeFilters.minPrice,
+	maxPrice: props.activeFilters.maxPrice,
+	inStock: props.activeFilters.inStock,
+	isNew: props.activeFilters.isNew,
+});
 
 const priceRanges = [
-  { id: 'all', label: 'Tous les prix', min: null, max: null },
-  { id: 'under-50', label: 'Moins de 50€', min: 0, max: 50 },
-  { id: '50-100', label: '50€ - 100€', min: 50, max: 100 },
-  { id: '100-150', label: '100€ - 150€', min: 100, max: 150 },
-  { id: 'over-150', label: 'Plus de 150€', min: 150, max: null }
-]
+	{ id: "all", label: "Tous les prix", min: null, max: null },
+	{ id: "under-50", label: "Moins de 50€", min: 0, max: 50 },
+	{ id: "50-100", label: "50€ - 100€", min: 50, max: 100 },
+	{ id: "100-150", label: "100€ - 150€", min: 100, max: 150 },
+	{ id: "over-150", label: "Plus de 150€", min: 150, max: null },
+];
 
-const selectedPriceRange = ref('all')
+const selectedPriceRange = ref("all");
 
-watch(filters, (newFilters) => {
-  emit('update-filters', { ...newFilters })
-}, { deep: true })
+watch(
+	filters,
+	(newFilters) => {
+		emit("update-filters", { ...newFilters });
+	},
+	{ deep: true },
+);
 
 watch(selectedPriceRange, (newRange) => {
-  const range = priceRanges.find(r => r.id === newRange)
-  filters.minPrice = range.min
-  filters.maxPrice = range.max
-})
+	const range = priceRanges.find((r) => r.id === newRange);
+	filters.minPrice = range.min;
+	filters.maxPrice = range.max;
+});
 
 function resetFilters() {
-  filters.category = null
-  filters.brand = null
-  filters.minPrice = null
-  filters.maxPrice = null
-  filters.inStock = null
-  filters.isNew = null
-  selectedPriceRange.value = 'all'
+	filters.category = null;
+	filters.brand = null;
+	filters.minPrice = null;
+	filters.maxPrice = null;
+	filters.inStock = null;
+	filters.isNew = null;
+	selectedPriceRange.value = "all";
 }
 </script>
 

@@ -1,10 +1,10 @@
 <script setup>
 defineProps({
-  product: {
-    type: Object,
-    required: true
-  }
-})
+	product: {
+		type: Object,
+		required: true,
+	},
+});
 </script>
 
 <template>
