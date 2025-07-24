@@ -36,12 +36,6 @@ export const createStoreSchema = v.object({
 		),
 		null,
 	),
-	companyId: v.pipe(
-		v.string(),
-		v.trim(),
-		v.minLength(1, "Company ID is required"),
-		v.uuid("Company ID must be a valid UUID"),
-	),
 });
 
 export const updateStoreSchema = v.object({

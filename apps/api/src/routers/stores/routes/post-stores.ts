@@ -4,6 +4,7 @@ import { vValidatorThrower } from "../../../utils/v-validator-thrower.ts";
 import { createHonoRouter } from "../../../utils/create-hono-router.ts";
 import { database } from "../../../database.ts";
 import { protectedRouteMiddleware } from "../../../middlewares/protectedRouteMiddleware.ts";
+import { companyOwnerFromUserMiddleware } from "../../../middlewares/companyAccessMiddleware.ts";
 import { createStoreSchema } from "../schemas.ts";
 import type { IInsertStore } from "@ripste/db/mikro-orm";
 
@@ -15,21 +16,18 @@ export const postStoresRoute = createHonoRouter().post(
 		vValidatorThrower,
 	),
 	protectedRouteMiddleware,
+	companyOwnerFromUserMiddleware,
 	async (c) => {
 		try {
 			const validatedData = c.req.valid("json");
-
-			const company = await database.company.findOne(validatedData.companyId);
-			if (!company) {
-				return c.json({ error: "Company not found" }, 404);
-			}
+			const company = c.get("company");
 
 			const storeData: IInsertStore = {
 				name: validatedData.name,
 				slug: validatedData.slug,
 				contactEmail: validatedData.contactEmail,
 				contactPhone: validatedData.contactPhone ?? null,
-				companyId: validatedData.companyId,
+				companyId: company.id,
 			};
 
 			const store = await database.store.insert(storeData);

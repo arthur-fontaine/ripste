@@ -7,7 +7,10 @@ export const getCompaniesRoute = createHonoRouter().get(
 	protectedRouteMiddleware,
 	async (c) => {
 		try {
-			const companies = await database.company.findMany();
+			const user = c.get("user");
+			const companies = await database.company.findMany({
+				user: { id: user.id },
+			});
 			return c.json(companies);
 		} catch (error) {
 			console.error("Error fetching companies:", error);

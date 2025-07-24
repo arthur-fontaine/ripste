@@ -1,19 +1,14 @@
 import { createHonoRouter } from "../../../utils/create-hono-router.ts";
-import { database } from "../../../database.ts";
 import { protectedRouteMiddleware } from "../../../middlewares/protectedRouteMiddleware.ts";
+import { companyAccessMiddleware } from "../../../middlewares/companyAccessMiddleware.ts";
 
 export const getCompanyByIdRoute = createHonoRouter().get(
 	"/:id",
 	protectedRouteMiddleware,
+	companyAccessMiddleware,
 	async (c) => {
 		try {
-			const id = c.req.param("id");
-			const company = await database.company.findOne(id);
-
-			if (!company) {
-				return c.json({ error: "Company not found" }, 404);
-			}
-
+			const company = c.get("company");
 			return c.json(company);
 		} catch (error) {
 			console.error("Error fetching company:", error);

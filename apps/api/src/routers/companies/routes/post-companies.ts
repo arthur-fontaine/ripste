@@ -25,6 +25,7 @@ export const postCompaniesRoute = createHonoRouter().post(
 				kbis: validatedData.kbis,
 				vatNumber: validatedData.vatNumber ?? null,
 				address: validatedData.address ?? null,
+				userId: c.get("user").id,
 			};
 
 			const company = await database.company.insert(companyData);

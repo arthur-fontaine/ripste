@@ -4,6 +4,7 @@ import { vValidatorThrower } from "../../../utils/v-validator-thrower.ts";
 import { createHonoRouter } from "../../../utils/create-hono-router.ts";
 import { database } from "../../../database.ts";
 import { protectedRouteMiddleware } from "../../../middlewares/protectedRouteMiddleware.ts";
+import { companyAccessMiddleware } from "../../../middlewares/companyAccessMiddleware.ts";
 import { updateCompanySchema } from "../schemas.ts";
 import type { IUpdateCompany } from "@ripste/db/mikro-orm";
 
@@ -15,17 +16,12 @@ export const putCompanyRoute = createHonoRouter().put(
 		vValidatorThrower,
 	),
 	protectedRouteMiddleware,
+	companyAccessMiddleware,
 	async (c) => {
 		try {
-			const id = c.req.param("id");
+			const company = c.get("company");
 			const validatedData = c.req.valid("json");
 
-			const existingCompany = await database.company.findOne(id);
-			if (!existingCompany) {
-				return c.json({ error: "Company not found" }, 404);
-			}
-
-			// Filtrer les propriétés undefined pour ne pas les inclure dans l'update
 			const updateData: IUpdateCompany = {};
 
 			if (validatedData.legalName !== undefined) {
@@ -41,7 +37,10 @@ export const putCompanyRoute = createHonoRouter().put(
 				updateData.address = validatedData.address || null;
 			}
 
-			const updatedCompany = await database.company.update(id, updateData);
+			const updatedCompany = await database.company.update(
+				company.id,
+				updateData,
+			);
 
 			if (!updatedCompany) {
 				return c.json({ error: "Company not found" }, 404);

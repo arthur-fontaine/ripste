@@ -1,20 +1,17 @@
 import { createHonoRouter } from "../../../utils/create-hono-router.ts";
 import { database } from "../../../database.ts";
 import { protectedRouteMiddleware } from "../../../middlewares/protectedRouteMiddleware.ts";
+import { companyAccessMiddleware } from "../../../middlewares/companyAccessMiddleware.ts";
 
 export const deleteCompanyRoute = createHonoRouter().delete(
 	"/:id",
 	protectedRouteMiddleware,
+	companyAccessMiddleware,
 	async (c) => {
 		try {
-			const id = c.req.param("id");
+			const company = c.get("company");
 
-			const existingCompany = await database.company.findOne(id);
-			if (!existingCompany) {
-				return c.json({ error: "Company not found" }, 404);
-			}
-
-			const deleted = await database.company.delete(id);
+			const deleted = await database.company.delete(company.id);
 
 			if (!deleted) {
 				return c.json({ error: "Company not found" }, 404);
