@@ -1,4 +1,11 @@
-import { Entity, Property, t, OneToMany, Collection } from "@mikro-orm/core";
+import {
+	Entity,
+	Property,
+	t,
+	OneToMany,
+	Collection,
+	OneToOne,
+} from "@mikro-orm/core";
 import { BaseModel } from "./utils/MikroOrmBaseModel.ts";
 import type { IUser, IInsertUser } from "../../../domain/models/IUser.ts";
 import { MikroOrmUserProfileModel } from "./MikroOrmUserProfileModel.ts";
@@ -9,7 +16,7 @@ import { MikroOrmRefundModel } from "./MikroOrmRefundModel.ts";
 export class MikroOrmUserModel extends BaseModel implements IUser {
 	constructor(params: IInsertUser) {
 		super();
-		Object.assign(this, params);
+		this._em.assign(this, params as never);
 	}
 
 	@Property({ type: t.string })
@@ -24,17 +31,19 @@ export class MikroOrmUserModel extends BaseModel implements IUser {
 	@Property({ type: t.string })
 	permissionLevel!: "admin" | "user";
 
-	@OneToMany(
-		() => MikroOrmUserProfileModel,
-		(profile) => profile.user,
-	)
-	_profile = new Collection<MikroOrmUserProfileModel>(this);
-	get profile(): MikroOrmUserProfileModel | null {
-		return this._profile.getItems()[0] ?? null;
-	}
+	@OneToOne(() => MikroOrmUserProfileModel, { nullable: true })
+	profile!: MikroOrmUserProfileModel | null;
 
 	get profileId(): string | null {
 		return this.profile ? this.profile.id : null;
+	}
+
+	set profileId(profileId: string | null) {
+		if (profileId === null) {
+			this.profile = null;
+			return;
+		}
+		this.profile = this._em.getReference(MikroOrmUserProfileModel, profileId);
 	}
 
 	@OneToMany(

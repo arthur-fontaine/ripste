@@ -1,4 +1,4 @@
-import { Entity, Property, t, ManyToOne } from "@mikro-orm/core";
+import { Entity, Property, t, OneToOne } from "@mikro-orm/core";
 import { BaseModel } from "./utils/MikroOrmBaseModel.ts";
 import type {
 	IUserProfile,
@@ -13,7 +13,7 @@ export class MikroOrmUserProfileModel
 {
 	constructor(params: IInsertUserProfile) {
 		super();
-		Object.assign(this, params);
+		this._em.assign(this, params as never);
 	}
 
 	@Property({ type: t.string })
@@ -28,7 +28,7 @@ export class MikroOrmUserProfileModel
 	@Property({ type: t.string })
 	fullName!: string;
 
-	@ManyToOne(() => MikroOrmUserModel)
+	@OneToOne(() => MikroOrmUserModel, { mappedBy: "profile" })
 	user!: MikroOrmUserModel;
 
 	get userId(): string {
