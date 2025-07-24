@@ -8,6 +8,7 @@ import OAuthDemoPage from "../pages/OAuthDemoPage.vue";
 import CompanyFormPage from "../pages/CompanyFormPage.vue";
 import StoreFormPage from "../pages/StoreFormPage.vue";
 import { authGuard } from "../middlewares/authGuard.ts";
+import {companyRedirect} from "../middlewares/companyRedirect.js";
 
 const routes = [
 	{
@@ -67,5 +68,6 @@ const router = createRouter({
 });
 
 router.beforeEach(authGuard);
+router.beforeEach(companyRedirect);
 
 export default router;
