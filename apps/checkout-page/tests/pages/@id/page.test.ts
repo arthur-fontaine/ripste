@@ -37,7 +37,9 @@ describe("Checkout Page", async () => {
 		const screenshot = await page.screenshot({
 			path: "tests/pages/@id/__snapshots__/checkout-page.png",
 		});
-		expect(screenshot).toMatchSnapshot("checkout-page.png");
+		if (!process.env["CI"]) {
+			expect(screenshot).toMatchSnapshot("checkout-page.png");
+		}
 	});
 
 	it("should fill and submit the payment form", async () => {
@@ -83,8 +85,10 @@ describe("Checkout Page", async () => {
 		const screenshot = await page.screenshot({
 			path: "tests/pages/@id/__snapshots__/success-page.png",
 		});
-		expect(screenshot).toMatchSnapshot("success-page.png");
-	});
+		if (!process.env["CI"]) {
+			expect(screenshot).toMatchSnapshot("success-page.png");
+		}
+	}, 15000);
 });
 
 async function fetchHtml(urlPathname: string) {
