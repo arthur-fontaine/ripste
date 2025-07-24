@@ -59,7 +59,7 @@ const error = ref('')
 function handleSubmit() {
   error.value = ''
   if (!legalName.value || !kbis.value) {
-    error.value = 'Les champs Nom légal et Kbis sont obligatoires.'
+    error.value = 'Legal name and Kbis are required.'
     return
   }
   // Traitement du formulaire ici (API, etc.)
