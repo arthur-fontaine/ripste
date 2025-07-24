@@ -4,6 +4,7 @@ import { createFakeGenerator } from "interface-faker";
 import type { IUserProfileTable } from "./IUserProfile.ts";
 import type { IStoreMemberTable } from "./IStoreMember.ts";
 import type { IRefundTable } from "./IRefund.ts";
+import type { ICompanyTable } from "./ICompany.ts";
 
 export interface IUserTable extends IBaseModel {
 	email: string;
@@ -11,6 +12,7 @@ export interface IUserTable extends IBaseModel {
 	emailVerified: boolean;
 	permissionLevel: "admin" | "user";
 	profile: ISU.SingleReference<IUserProfileTable | null, "profileId", "id">;
+	company: ISU.SingleReference<ICompanyTable | null, "companyId", "id">;
 	storeMembers: ISU.ManyReference<IStoreMemberTable>;
 	initiatedRefunds: ISU.ManyReference<IRefundTable>;
 }
