@@ -32,6 +32,7 @@ async function createUser() {
 			}),
 		}),
 	);
+
 	const [user] = await database.user.findMany({ email: "fndknfkds@gmail.com" });
 
 	if (!user) throw new Error("User not found");
@@ -50,7 +51,10 @@ async function createStore(user: Awaited<ReturnType<typeof createUser>>) {
 		tradeName: null,
 		vatNumber: null,
 		address: null,
+		userId: user.id,
 	});
+
+	await database.user.update(user.id, { companyId: company.id });
 
 	const store = await database.store.insert({
 		name: "Test Store",

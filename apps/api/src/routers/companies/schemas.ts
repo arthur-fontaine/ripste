@@ -15,7 +15,6 @@ export const createCompanySchema = v.object({
 	),
 	vatNumber: v.optional(v.nullable(v.string()), null),
 	address: v.optional(v.nullable(v.string()), null),
-	userId: v.string(),
 });
 
 export const updateCompanySchema = v.object({

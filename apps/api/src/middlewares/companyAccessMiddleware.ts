@@ -23,9 +23,8 @@ export const companyAccessMiddleware: MiddlewareHandler<
 	if (!company) {
 		return c.json({ error: "Company not found" }, 404);
 	}
-
 	if (company.userId !== c.get("user").id) {
-		return c.json({ error: "Company not found or access denied" }, 404);
+		return c.json({ error: "Company not found or access denied" }, 403);
 	}
 
 	c.set("company", company);

@@ -17,7 +17,16 @@ export const postCompaniesRoute = createHonoRouter().post(
 	protectedRouteMiddleware,
 	async (c) => {
 		try {
+			const userId = c.get("user").id;
 			const validatedData = c.req.valid("json");
+
+			const existingCompanies = await database.company.findMany({
+				user: { id: userId },
+			});
+
+			if (existingCompanies.length > 0) {
+				return c.json({ error: "User already has a company" }, 400);
+			}
 
 			const companyData: IInsertCompany = {
 				legalName: validatedData.legalName,
@@ -25,10 +34,12 @@ export const postCompaniesRoute = createHonoRouter().post(
 				kbis: validatedData.kbis,
 				vatNumber: validatedData.vatNumber ?? null,
 				address: validatedData.address ?? null,
-				userId: c.get("user").id,
+				userId,
 			};
 
 			const company = await database.company.insert(companyData);
+
+			await database.user.update(userId, { companyId: company.id });
 
 			return c.json(
 				{
@@ -38,14 +49,7 @@ export const postCompaniesRoute = createHonoRouter().post(
 			);
 		} catch (error) {
 			if (error instanceof Error) {
-				if (
-					error.message.includes("unique") ||
-					error.message.includes("UNIQUE") ||
-					error.message.includes("duplicate") ||
-					error.message.includes("kbis") ||
-					error.message.includes("constraint") ||
-					error.message.includes("CONSTRAINT")
-				) {
+				if (error.name === "UniqueConstraintViolationException") {
 					return c.json(
 						{ error: "A company with this KBIS already exists" },
 						400,
