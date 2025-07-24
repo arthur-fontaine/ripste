@@ -74,6 +74,8 @@ describe("Checkout Page", async () => {
 
 		await page.click("button[type='submit']");
 
+		console.log(await page.url());
+		setTimeout(async () => console.log(await page.url()), 2000);
 		await page.waitForURL(`http://localhost:3000/${checkoutPage.uri}/success`, {
 			timeout: 5000,
 		});
