@@ -21,6 +21,13 @@ export default async function data(pageContext: PageContextServer): Promise<Data
   const [checkoutPage] = await database.checkoutPage.findMany({ uri })
   if (!checkoutPage) throw render(404, "Checkout page not found");
 
+  const now = new Date();
+  const isExpired = checkoutPage.expiresAt && checkoutPage.expiresAt < now;
+  if (isExpired) throw render(404, "Checkout page not found");
+
+  const isCompleted = checkoutPage.completedAt !== null;
+  if (isCompleted) throw render(404, "Checkout page not found");
+
   const data: Data = {
     id: checkoutPage.id,
     amount: checkoutPage.transaction.amount,
