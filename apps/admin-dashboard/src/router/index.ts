@@ -39,7 +39,7 @@ const routes = [
 		component: CompanyFormPage,
 	},
 	{
-		path: "store/create",
+		path: "/store/create",
 		name: "CreateStore",
 		component: StoreFormPage,
 	}
