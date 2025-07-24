@@ -68,6 +68,22 @@ function handleSubmit() {
     return
   }
   // Traitement du formulaire ici (API, etc.)
+  try
+  {
+    const response = apiClient.companies.$post({
+      json : {
+        legalName: legalName.value,
+        tradeName: tradeName.value,
+        kbis: kbis.value,
+        vatNumber: vatNumber.value,
+        address: address.value
+      },
+    })
+    console.log(response)
+  } catch (err) {
+    error.value = 'Failed to create company. Please try again.'
+    console.error(err)
+  }
   router.push('/')
 }
 </script>
