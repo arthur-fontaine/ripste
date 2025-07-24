@@ -59,17 +59,17 @@ const session = authClient.useSession();
 const router = useRouter();
 
 onMounted(() => {
-  if (session && !session) {
-    router.replace("/company/create");
-  }
+	if (session && !session) {
+		router.replace("/company/create");
+	}
 });
 
 const signOut = async () => {
-  await authClient.signOut();
+	await authClient.signOut();
 };
 
 const formatDate = (date: Date) => {
-  return new Date(date).toLocaleString();
+	return new Date(date).toLocaleString();
 };
 </script>
 

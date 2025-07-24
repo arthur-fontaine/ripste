@@ -226,128 +226,133 @@ import { authClient } from "../lib/auth";
 const session = authClient.useSession();
 
 const profileForm = ref({
-  firstName: "",
-  lastName: "",
-  phone: "",
+	firstName: "",
+	lastName: "",
+	phone: "",
 });
 const profileLoading = ref(false);
 const profileError = ref("");
 const profileSuccess = ref("");
 
 const passwordForm = ref({
-  currentPassword: "",
-  newPassword: "",
-  confirmPassword: "",
+	currentPassword: "",
+	newPassword: "",
+	confirmPassword: "",
 });
 const passwordLoading = ref(false);
 const passwordError = ref("");
 const passwordSuccess = ref("");
 
 const computedFullName = computed(() => {
-  const first = profileForm.value.firstName.trim();
-  const last = profileForm.value.lastName.trim();
-  return first && last ? `${first} ${last}` : "";
+	const first = profileForm.value.firstName.trim();
+	const last = profileForm.value.lastName.trim();
+	return first && last ? `${first} ${last}` : "";
 });
 
 const isFormValid = computed(() => {
-  return profileForm.value.firstName.trim() && profileForm.value.lastName.trim();
+	return (
+		profileForm.value.firstName.trim() && profileForm.value.lastName.trim()
+	);
 });
 
 const passwordMismatch = computed(() => {
-  return passwordForm.value.newPassword && 
-         passwordForm.value.confirmPassword && 
-         passwordForm.value.newPassword !== passwordForm.value.confirmPassword;
+	return (
+		passwordForm.value.newPassword &&
+		passwordForm.value.confirmPassword &&
+		passwordForm.value.newPassword !== passwordForm.value.confirmPassword
+	);
 });
 
 const isPasswordFormValid = computed(() => {
-  return passwordForm.value.currentPassword && 
-         passwordForm.value.newPassword && 
-         passwordForm.value.confirmPassword &&
-         passwordForm.value.newPassword.length >= 8 &&
-         !passwordMismatch.value;
+	return (
+		passwordForm.value.currentPassword &&
+		passwordForm.value.newPassword &&
+		passwordForm.value.confirmPassword &&
+		passwordForm.value.newPassword.length >= 8 &&
+		!passwordMismatch.value
+	);
 });
 
 onMounted(() => {
-  if (session.value.data?.user) {
-    const user = session.value.data.user;
-    if (user.name) {
-      const nameParts = user.name.split(" ");
-      profileForm.value.firstName = nameParts[0] || "";
-      profileForm.value.lastName = nameParts.slice(1).join(" ") || "";
-    }
-  }
+	if (session.value.data?.user) {
+		const user = session.value.data.user;
+		if (user.name) {
+			const nameParts = user.name.split(" ");
+			profileForm.value.firstName = nameParts[0] || "";
+			profileForm.value.lastName = nameParts.slice(1).join(" ") || "";
+		}
+	}
 });
 
 const resetForm = () => {
-  if (session.value.data?.user) {
-    const user = session.value.data.user;
-    if (user.name) {
-      const nameParts = user.name.split(" ");
-      profileForm.value.firstName = nameParts[0] || "";
-      profileForm.value.lastName = nameParts.slice(1).join(" ") || "";
-    }
-  }
-  profileError.value = "";
-  profileSuccess.value = "";
+	if (session.value.data?.user) {
+		const user = session.value.data.user;
+		if (user.name) {
+			const nameParts = user.name.split(" ");
+			profileForm.value.firstName = nameParts[0] || "";
+			profileForm.value.lastName = nameParts.slice(1).join(" ") || "";
+		}
+	}
+	profileError.value = "";
+	profileSuccess.value = "";
 };
 
 const resetPasswordForm = () => {
-  passwordForm.value = {
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  };
-  passwordError.value = "";
-  passwordSuccess.value = "";
+	passwordForm.value = {
+		currentPassword: "",
+		newPassword: "",
+		confirmPassword: "",
+	};
+	passwordError.value = "";
+	passwordSuccess.value = "";
 };
 
 const updateProfile = async () => {
-  profileLoading.value = true;
-  profileError.value = "";
-  profileSuccess.value = "";
+	profileLoading.value = true;
+	profileError.value = "";
+	profileSuccess.value = "";
 
-  try {
-    const fullName = computedFullName.value;
-    
-    await authClient.updateUser({
-      name: fullName,
-    });
+	try {
+		const fullName = computedFullName.value;
 
-    profileSuccess.value = "Profile updated successfully!";
-    
-  } catch (err: unknown) {
-    console.error("Profile update failed:", err);
-    profileError.value = err instanceof Error ? err.message : "Failed to update profile";
-  } finally {
-    profileLoading.value = false;
-  }
+		await authClient.updateUser({
+			name: fullName,
+		});
+
+		profileSuccess.value = "Profile updated successfully!";
+	} catch (err: unknown) {
+		console.error("Profile update failed:", err);
+		profileError.value =
+			err instanceof Error ? err.message : "Failed to update profile";
+	} finally {
+		profileLoading.value = false;
+	}
 };
 
 const updatePassword = async () => {
-  passwordLoading.value = true;
-  passwordError.value = "";
-  passwordSuccess.value = "";
+	passwordLoading.value = true;
+	passwordError.value = "";
+	passwordSuccess.value = "";
 
-  try {
-    await authClient.changePassword({
-      currentPassword: passwordForm.value.currentPassword,
-      newPassword: passwordForm.value.newPassword,
-    });
+	try {
+		await authClient.changePassword({
+			currentPassword: passwordForm.value.currentPassword,
+			newPassword: passwordForm.value.newPassword,
+		});
 
-    passwordSuccess.value = "Password updated successfully!";
-    resetPasswordForm();
-    
-  } catch (err: unknown) {
-    console.error("Password update failed:", err);
-    passwordError.value = err instanceof Error ? err.message : "Failed to update password";
-  } finally {
-    passwordLoading.value = false;
-  }
+		passwordSuccess.value = "Password updated successfully!";
+		resetPasswordForm();
+	} catch (err: unknown) {
+		console.error("Password update failed:", err);
+		passwordError.value =
+			err instanceof Error ? err.message : "Failed to update password";
+	} finally {
+		passwordLoading.value = false;
+	}
 };
 
 setTimeout(() => {
-  if (profileSuccess.value) profileSuccess.value = "";
-  if (passwordSuccess.value) passwordSuccess.value = "";
+	if (profileSuccess.value) profileSuccess.value = "";
+	if (passwordSuccess.value) passwordSuccess.value = "";
 }, 5000);
-
 </script>

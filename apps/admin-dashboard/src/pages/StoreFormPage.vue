@@ -37,26 +37,29 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 
+const name = ref("");
+const slug = ref("");
+const contactEmail = ref("");
+const contactPhone = ref("");
+const error = ref("");
 
-const name = ref('')
-const slug = ref('')
-const contactEmail = ref('')
-const contactPhone = ref('')
-const error = ref('')
-
-const router = useRouter()
-
+const router = useRouter();
 
 function handleSubmit() {
-  error.value = ''
-  if (!name.value || !slug.value || !contactEmail.value || !contactPhone.value) {
-    error.value = 'All fields are required.'
-    return
-  }
-  // Traitement du formulaire ici (API, etc.)
-  router.push('/')
+	error.value = "";
+	if (
+		!name.value ||
+		!slug.value ||
+		!contactEmail.value ||
+		!contactPhone.value
+	) {
+		error.value = "All fields are required.";
+		return;
+	}
+	// Traitement du formulaire ici (API, etc.)
+	router.push("/");
 }
 </script>

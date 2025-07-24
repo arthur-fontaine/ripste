@@ -1,12 +1,13 @@
 <template>
   <nav class="bg-blue-600 text-white py-4 mb-8">
     <div class="max-w-6xl mx-auto flex justify-between items-center px-4">
-      <div class="flex items-center gap-3">
+      <router-link to="/" class="flex items-center gap-3">
         <img src="../assets/logo_admin.png" alt="RIPSTE Logo" class="h-12 w-auto" />
-      </div>
+      </router-link>
       <div class="flex gap-4 items-center">
         <template v-if="session.data">
           <router-link to="/" class="hover:bg-white/20 px-3 py-2 rounded transition-colors">Home</router-link>
+          <router-link to="/metrics" class="hover:bg-white/20 px-3 py-2 rounded transition-colors">Statistiques</router-link>
           
           <div class="relative" v-click-outside="() => showUserMenu = false">
             <button 
@@ -65,7 +66,7 @@ const session = authClient.useSession();
 const showUserMenu = ref(false);
 
 const signOut = async () => {
-  showUserMenu.value = false;
-  await authClient.signOut();
+	showUserMenu.value = false;
+	await authClient.signOut();
 };
 </script>

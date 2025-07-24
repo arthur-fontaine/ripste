@@ -47,44 +47,42 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { apiClient } from '../lib/api'
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { apiClient } from "../lib/api";
 
+const legalName = ref("");
+const tradeName = ref("");
+const kbis = ref("");
+const vatNumber = ref("");
+const address = ref("");
+const error = ref("");
 
-const legalName = ref('')
-const tradeName = ref('')
-const kbis = ref('')
-const vatNumber = ref('')
-const address = ref('')
-const error = ref('')
-
-const router = useRouter()
+const router = useRouter();
 
 function handleSubmit() {
-  error.value = ''
-  if (!legalName.value || !kbis.value) {
-    error.value = 'Legal name and Kbis are required.'
-    return
-  }
-  // Traitement du formulaire ici (API, etc.)
-  try
-  {
-    const response = apiClient.companies.$post({
-      json : {
-        legalName: legalName.value,
-        tradeName: tradeName.value,
-        kbis: kbis.value,
-        vatNumber: vatNumber.value,
-        address: address.value
-      },
-    })
-    console.log(response)
-  } catch (err) {
-    error.value = 'Failed to create company. Please try again.'
-    console.error(err)
-  }
-  router.push('/')
+	error.value = "";
+	if (!legalName.value || !kbis.value) {
+		error.value = "Legal name and Kbis are required.";
+		return;
+	}
+	// Traitement du formulaire ici (API, etc.)
+	try {
+		const response = apiClient.companies.$post({
+			json: {
+				legalName: legalName.value,
+				tradeName: tradeName.value,
+				kbis: kbis.value,
+				vatNumber: vatNumber.value,
+				address: address.value,
+			},
+		});
+		console.log(response);
+	} catch (err) {
+		error.value = "Failed to create company. Please try again.";
+		console.error(err);
+	}
+	router.push("/");
 }
 </script>
 

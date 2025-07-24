@@ -30,7 +30,7 @@ const routes = [
 		path: "/profile",
 		name: "Profile",
 		component: ProfilePage,
-		meta: { requiresAuth: true }
+		meta: { requiresAuth: true },
 	},
 	{
 		path: "/consent",
@@ -52,7 +52,13 @@ const routes = [
 		path: "/store/create",
 		name: "CreateStore",
 		component: StoreFormPage,
-	}
+	},
+	{
+		path: "/metrics",
+		name: "AdminMetrics",
+		component: () => import("../pages/AdminMetrics.vue"),
+		meta: { requiresAuth: true },
+	},
 ];
 
 const router = createRouter({
@@ -60,6 +66,6 @@ const router = createRouter({
 	routes,
 });
 
-router.afterEach(authGuard)
+router.beforeEach(authGuard);
 
 export default router;
