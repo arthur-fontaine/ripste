@@ -66,9 +66,9 @@ function handleSubmit() {
 		error.value = "Legal name and Kbis are required.";
 		return;
 	}
-	// Traitement du formulaire ici (API, etc.)
+
 	try {
-		const response = apiClient.companies.$post({
+		apiClient.companies.$post({
 			json: {
 				legalName: legalName.value,
 				tradeName: tradeName.value,
@@ -77,12 +77,12 @@ function handleSubmit() {
 				address: address.value,
 			},
 		});
-		console.log(response);
 	} catch (err) {
 		error.value = "Failed to create company. Please try again.";
 		console.error(err);
+    router.push("/company/create");
 	}
-	router.push("/");
+	router.push("/store/create");
 }
 </script>
 
