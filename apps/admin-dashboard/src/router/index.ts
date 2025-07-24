@@ -4,6 +4,7 @@ import LoginPage from "../pages/LoginPage.vue";
 import SignUpPage from "../pages/SignUpPage.vue";
 import ConsentPage from "../pages/ConsentPage.vue";
 import OAuthDemoPage from "../pages/OAuthDemoPage.vue";
+import CompanyFormPage from "../pages/CompanyFormPage.vue";
 
 const routes = [
 	{
@@ -31,6 +32,11 @@ const routes = [
 		name: "OAuthDemo",
 		component: OAuthDemoPage,
 	},
+	{
+		path: "/company/create",
+		name: "CreateCompany",
+		component: CompanyFormPage,
+	}
 ];
 
 const router = createRouter({
