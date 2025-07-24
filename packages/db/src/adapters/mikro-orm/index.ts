@@ -122,6 +122,12 @@ export type {
 	IUpdateVerification,
 } from "../../domain/models/IVerification.ts";
 
+export type {
+	IJwks,
+	IInsertJwks,
+	IUpdateJwks,
+} from "../../domain/models/IJwks.ts";
+
 export const loadModels = (loadEm: () => EntityManager) => {
 	const modelsContext = import.meta.webpackContext("./models", {
 		recursive: false,
