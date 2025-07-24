@@ -78,6 +78,7 @@ export const submitCardInfosRoute = createHonoRouter().post(
 function getSchema() {
 	return v.object({
 		provider: v.picklist(["mastercard", "visa", "amex"]),
+		holderName: v.string(),
 		cardNumber: v.string(),
 		cvv: v.pipe(
 			v.string(),

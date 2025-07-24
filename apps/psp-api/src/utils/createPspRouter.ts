@@ -21,6 +21,7 @@ interface IPaymentInfos {
 
 interface ICardPaymentMethod {
 	type: "mastercard" | "visa" | "amex";
+	holderName: string;
 	cardNumber: string;
 	cvv: string;
 	expiryDate: string;

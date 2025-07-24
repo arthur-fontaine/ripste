@@ -23,6 +23,7 @@ describe("Stub Router", () => {
 					...paymentMethod,
 					expiryDate: "12/2100",
 					cvv: "123",
+					holderName: "Test User",
 				},
 			},
 		});
