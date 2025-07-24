@@ -48,6 +48,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
 
 const legalName = ref('')
 const tradeName = ref('')
@@ -56,6 +58,8 @@ const vatNumber = ref('')
 const address = ref('')
 const error = ref('')
 
+const router = useRouter()
+
 function handleSubmit() {
   error.value = ''
   if (!legalName.value || !kbis.value) {
@@ -63,6 +67,7 @@ function handleSubmit() {
     return
   }
   // Traitement du formulaire ici (API, etc.)
+  router.push('/')
 }
 </script>
 

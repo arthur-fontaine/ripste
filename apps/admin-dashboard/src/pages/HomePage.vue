@@ -52,15 +52,24 @@
 
 <script setup lang="ts">
 import { authClient } from "../lib/auth";
+import { onMounted } from "vue";
+import { useRouter } from "vue-router";
 
 const session = authClient.useSession();
+const router = useRouter();
+
+onMounted(() => {
+  if (session && !session) {
+    router.replace("/company/create");
+  }
+});
 
 const signOut = async () => {
-	await authClient.signOut();
+  await authClient.signOut();
 };
 
 const formatDate = (date: Date) => {
-	return new Date(date).toLocaleString();
+  return new Date(date).toLocaleString();
 };
 </script>
 

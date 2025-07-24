@@ -38,12 +38,17 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
 
 const name = ref('')
 const slug = ref('')
 const contactEmail = ref('')
 const contactPhone = ref('')
 const error = ref('')
+
+const router = useRouter()
+
 
 function handleSubmit() {
   error.value = ''
@@ -52,5 +57,6 @@ function handleSubmit() {
     return
   }
   // Traitement du formulaire ici (API, etc.)
+  router.push('/')
 }
 </script>
