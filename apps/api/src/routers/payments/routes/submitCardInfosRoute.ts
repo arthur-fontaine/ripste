@@ -69,6 +69,12 @@ export const submitCardInfosRoute = createHonoRouter().post(
 			const statusRes = await pspClient.stub.payments[":id"].status.$get({
 				param: { id: paymentResult.id },
 			});
+
+			if (!statusRes.ok) {
+				console.error(`Error fetching payment status: ${statusRes.status} ${statusRes.statusText} ${await statusRes.text()}`);
+				continue; // Retry fetching status
+			}
+
 			const status = await statusRes.json();
 
 			if (status.status === "waiting") continue;

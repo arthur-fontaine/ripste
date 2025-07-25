@@ -30,7 +30,25 @@ app.post("/checkout-panier", async (c) => {
 			total: number;
 		};
 
-		const themesRes = await apiClient.stores.themes.$get();
+		const res = await fetch("http://localhost:3000/auth/sign-in/email", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				email: "t.maignan@outlook.fr",
+				password: "password",
+			}),
+		});
+
+		const token = res.headers.get("set-auth-token");
+
+		const themesRes = await apiClient.stores.themes.$get(undefined, {
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			},
+		});
 
 		const [theme] = await themesRes.json();
 
@@ -38,7 +56,8 @@ app.post("/checkout-panier", async (c) => {
 			return c.json({ error: "Aucun thème trouvé pour le store" }, 404);
 		}
 
-		const transactionResponse = await apiClient.payments.transactions.$post({
+		const transactionResponse = await apiClient.payments.transactions.$post(
+			{
 			json: {
 				amount: panier.total,
 				currency: "EUR",
@@ -67,7 +86,14 @@ app.post("/checkout-panier", async (c) => {
 					},
 				},
 			},
-		});
+			},
+			{
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				},
+			},
+		);
 
 		if (!transactionResponse.ok) {
 			const error = await transactionResponse.json();
@@ -79,7 +105,7 @@ app.post("/checkout-panier", async (c) => {
 		const checkoutUri = transactionData.data.uri;
 		const redirectUrl = `${CHECKOUT_URL}/${checkoutUri}`;
 
-		return c.redirect(redirectUrl, 303);
+		return c.json({ checkoutPageUrl: redirectUrl }, 200);
 	} catch (error) {
 		console.error("Erreur lors de la création du paiement:", error);
 		return c.json(

@@ -61,7 +61,6 @@ function displayPrice(product) {
 function continueToCheckout() {
 	fetch("http://localhost:4000/checkout-panier", {
 		method: "POST",
-		redirect: "follow",
 		headers: {
 			"Content-Type": "application/json",
 		},
@@ -78,6 +77,11 @@ function continueToCheckout() {
 		}),
 	})
 		.then((response) => response.json())
+    .then((data) => {
+      if (data.checkoutPageUrl) {
+        window.location.href = data.checkoutPageUrl;
+      }
+    })
 		.catch((error) => {
 			console.error("Erreur:", error);
 			alert("Erreur lors de la création du paiement");

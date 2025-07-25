@@ -41,7 +41,7 @@ export const useCardInfosStore = defineStore("cardInfos", () => {
 					year: Number(year.value),
 					cvv: cvv.value,
 				},
-				param: {
+				query: {
 					uri: data.uri,
 				},
 			});
