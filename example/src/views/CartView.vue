@@ -8,15 +8,15 @@ const router = useRouter();
 
 const shippingMethods = [
 	{
-		id: "standard",
-		name: "Livraison standard",
-		price: 5.99,
+		id: "gratuite",
+		name: "Livraison Gratuite",
+		price: 0,
 		deliveryTime: "3-5 jours ouvrés",
 	},
 	{
 		id: "express",
 		name: "Livraison express",
-		price: 12.99,
+		price: 10.0,
 		deliveryTime: "1-2 jours ouvrés",
 	},
 ];
@@ -59,7 +59,7 @@ function displayPrice(product) {
 }
 
 function continueToCheckout() {
-	fetch("http://localhost:4000/checkout-panier", {
+	fetch(`${import.meta.env.VITE_EXAMPLE_BACKEND_URL}/checkout-panier`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -77,11 +77,11 @@ function continueToCheckout() {
 		}),
 	})
 		.then((response) => response.json())
-    .then((data) => {
-      if (data.checkoutPageUrl) {
-        window.location.href = data.checkoutPageUrl;
-      }
-    })
+		.then((data) => {
+			if (data.checkoutPageUrl) {
+				window.location.href = data.checkoutPageUrl;
+			}
+		})
 		.catch((error) => {
 			console.error("Erreur:", error);
 			alert("Erreur lors de la création du paiement");

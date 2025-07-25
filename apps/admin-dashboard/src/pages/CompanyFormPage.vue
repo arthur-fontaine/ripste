@@ -77,14 +77,14 @@ async function handleSubmit() {
 				address: address.value,
 			},
 		});
-    if (!response.ok) {
-      const data = await response.json();
-      throw new Error(`Failed to create company: ${data.error}`);
-    }
-    router.push("/store/create");
+		if (!response.ok) {
+			const data = await response.json();
+			throw new Error(`Failed to create company: ${data.error}`);
+		}
+		router.push("/store/create");
 	} catch (err) {
-    let message = "Failed to create company. Please try again.";
-    if (err instanceof Error) message = err.message;
+		let message = "Failed to create company. Please try again.";
+		if (err instanceof Error) message = err.message;
 		error.value = message;
 		console.error(err);
 	}

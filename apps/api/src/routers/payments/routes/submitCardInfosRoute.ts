@@ -32,13 +32,25 @@ export const submitCardInfosRoute = createHonoRouter().post(
 
 		const transaction = checkoutPage.transaction;
 
+		await database.transaction.update(transaction.id, {
+			status: "processing",
+		});
+
 		const onSuccess = async () => {
 			await database.checkoutPage.update(checkoutPage.id, {
 				completedAt: new Date(),
 			});
+
+			await database.transaction.update(transaction.id, {
+				status: "completed",
+			});
 		};
 
-		const onError = async () => {};
+		const onError = async () => {
+			await database.transaction.update(transaction.id, {
+				status: "failed",
+			});
+		};
 
 		const paymentRes = await pspClient.stub.payments.$post({
 			json: {
@@ -47,7 +59,7 @@ export const submitCardInfosRoute = createHonoRouter().post(
 				paymentMethod: {
 					type: provider,
 					cardNumber,
-					expiryDate: `${month}/${year}`,
+					expiryDate: `${month.toString().padStart(2, "0")}/${year}`,
 					cvv: cvv.toString(),
 					holderName,
 				},
@@ -71,7 +83,9 @@ export const submitCardInfosRoute = createHonoRouter().post(
 			});
 
 			if (!statusRes.ok) {
-				console.error(`Error fetching payment status: ${statusRes.status} ${statusRes.statusText} ${await statusRes.text()}`);
+				console.error(
+					`Error fetching payment status: ${statusRes.status} ${statusRes.statusText} ${await statusRes.text()}`,
+				);
 				continue; // Retry fetching status
 			}
 

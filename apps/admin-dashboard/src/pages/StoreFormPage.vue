@@ -69,14 +69,14 @@ async function handleSubmit() {
 				contactPhone: contactPhone.value,
 			},
 		});
-    if (!response.ok) {
-      const data = await response.json();
-      throw new Error(`Failed to create store: ${data.error}`);
-    }
-    router.push("/");
+		if (!response.ok) {
+			const data = await response.json();
+			throw new Error(`Failed to create store: ${data.error}`);
+		}
+		router.push("/");
 	} catch (err) {
 		let message = "Failed to create store. Please try again.";
-    if (err instanceof Error) message = err.message;
+		if (err instanceof Error) message = err.message;
 		error.value = message;
 		console.log(err);
 	}

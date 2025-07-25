@@ -13,7 +13,10 @@ export const companyRedirect = async (
 		if (publicRoutes.includes(to.path)) {
 			const response = await apiClient.admin.metrics.transactions.$get();
 			const metrics = await response.json();
-			if ('error' in metrics && metrics.error === 'User has no associated company') {
+			if (
+				"error" in metrics &&
+				metrics.error === "User has no associated company"
+			) {
 				next("/company/create");
 			} else {
 				next();

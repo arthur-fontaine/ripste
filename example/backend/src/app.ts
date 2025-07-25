@@ -30,16 +30,19 @@ app.post("/checkout-panier", async (c) => {
 			total: number;
 		};
 
-		const res = await fetch("http://localhost:3000/auth/sign-in/email", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
+		const res = await fetch(
+			`${process.env["RIPSTE_API_URL"]}/auth/sign-in/email`,
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					email: process.env["RIPSTE_API_EMAIL"],
+					password: process.env["RIPSTE_API_PASSWORD"],
+				}),
 			},
-			body: JSON.stringify({
-				email: "t.maignan@outlook.fr",
-				password: "password",
-			}),
-		});
+		);
 
 		const token = res.headers.get("set-auth-token");
 
@@ -58,34 +61,34 @@ app.post("/checkout-panier", async (c) => {
 
 		const transactionResponse = await apiClient.payments.transactions.$post(
 			{
-			json: {
-				amount: panier.total,
-				currency: "EUR",
-				reference: `order-${Date.now()}`,
-				metadata: {
-					source: "ecommerce-demo",
-					items: JSON.stringify(panier.items),
-				},
-				checkoutPage: {
-					title: "Paiement E-commerce Demo",
-					themeId: theme.id,
-					description: "Finalisation de votre commande",
-					items: panier.items.map((item) => ({
-						name: item.name,
-						description: null,
-						quantity: item.quantity,
-						unitPrice: item.price,
-						imageUrl: null,
-					})),
-					settings: {
-						showItems: true,
-						showTotal: true,
-						showCurrency: true,
-						language: "fr",
-						showPoweredBy: true,
+				json: {
+					amount: panier.total,
+					currency: "EUR",
+					reference: `order-${Date.now()}`,
+					metadata: {
+						source: "ecommerce-demo",
+						items: JSON.stringify(panier.items),
+					},
+					checkoutPage: {
+						title: "Paiement E-commerce Demo",
+						themeId: theme.id,
+						description: "Finalisation de votre commande",
+						items: panier.items.map((item) => ({
+							name: item.name,
+							description: null,
+							quantity: item.quantity,
+							unitPrice: item.price,
+							imageUrl: null,
+						})),
+						settings: {
+							showItems: true,
+							showTotal: true,
+							showCurrency: true,
+							language: "fr",
+							showPoweredBy: true,
+						},
 					},
 				},
-			},
 			},
 			{
 				headers: {
