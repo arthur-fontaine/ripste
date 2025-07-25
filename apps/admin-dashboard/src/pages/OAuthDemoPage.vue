@@ -90,6 +90,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { authClient } from "../lib/auth";
+import { apiUrl } from "../lib/apiUrl";
 
 const session = authClient.useSession();
 
@@ -136,7 +137,7 @@ const startOAuthFlow = () => {
 		return;
 	}
 
-	const authUrl = new URL("http://localhost:3000/auth/oauth2/authorize");
+	const authUrl = new URL(`${apiUrl}/auth/oauth2/authorize`);
 	authUrl.searchParams.set("client_id", testClientId.value);
 	authUrl.searchParams.set("response_type", "code");
 	authUrl.searchParams.set("redirect_uri", redirectUri.value);

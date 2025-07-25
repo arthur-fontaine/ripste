@@ -3,6 +3,19 @@ networks:
   default:
     name: ripste-prod_default
 services:
+  admin:
+    build:
+      context: .
+      dockerfile: dockerfile
+      target: admin-dashboard
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      - POSTGRES_HOST=postgres
+      - REDIS_HOST=redis
+    networks:
+      default: null
   api:
     build:
       context: .
@@ -15,6 +28,45 @@ services:
       - POSTGRES_HOST=postgres
       - REDIS_HOST=redis
       - OTLP_URL=http://tempo:4317
+    networks:
+      default: null
+  checkout:
+    build:
+      context: .
+      dockerfile: dockerfile
+      target: checkout-page
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      - POSTGRES_HOST=postgres
+      - REDIS_HOST=redis
+    networks:
+      default: null
+  example:
+    build:
+      context: .
+      dockerfile: dockerfile
+      target: example
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      - POSTGRES_HOST=postgres
+      - REDIS_HOST=redis
+    networks:
+      default: null
+  example-backend:
+    build:
+      context: .
+      dockerfile: dockerfile
+      target: example-backend
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      - POSTGRES_HOST=postgres
+      - REDIS_HOST=redis
     networks:
       default: null
   grafana:
@@ -93,6 +145,19 @@ services:
         target: /prometheus
         type: volume
         volume: {}
+  psp:
+    build:
+      context: .
+      dockerfile: dockerfile
+      target: psp-api
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      - POSTGRES_HOST=postgres
+      - REDIS_HOST=redis
+    networks:
+      default: null
   redis:
     env_file:
       - path: .env

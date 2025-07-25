@@ -2,11 +2,14 @@ import "dotenv/config";
 import { serve } from "@hono/node-server";
 import { app } from "./app.ts";
 
-const PORT = Number(process.env["PORT"]) || 4000;
+const EXAMPLE_BACKEND_PORT =
+	Number(process.env["EXAMPLE_BACKEND_PORT"]) || 4000;
 
-console.log(`🚀 Serveur backend e-commerce démarré sur le port ${PORT}`);
+console.log(
+	`🚀 Serveur backend e-commerce démarré sur le port ${EXAMPLE_BACKEND_PORT}`,
+);
 console.log("📱 Frontend URL: http://localhost:5173");
-console.log(`🔗 API URL: http://localhost:${PORT}`);
+console.log(`🔗 API URL: http://localhost:${EXAMPLE_BACKEND_PORT}`);
 
 if (!process.env["CHECKOUT_URL"]) {
 	throw new Error("CHECKOUT_URL environment variable is not set");
@@ -24,7 +27,7 @@ if (!process.env["RIPSTE_API_EMAIL"] || !process.env["RIPSTE_API_PASSWORD"]) {
 
 const server = serve({
 	fetch: app.fetch,
-	port: PORT,
+	port: EXAMPLE_BACKEND_PORT,
 });
 
 process.on("SIGINT", () => {

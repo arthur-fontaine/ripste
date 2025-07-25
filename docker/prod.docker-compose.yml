@@ -14,6 +14,66 @@ services:
       - path: .env
         required: false
 
+  psp:
+    build:
+      context: .
+      dockerfile: dockerfile
+      target: psp-api
+    environment:
+      - POSTGRES_HOST=postgres
+      - REDIS_HOST=redis
+    env_file:
+      - path: .env
+        required: false
+
+  checkout:
+    build:
+      context: .
+      dockerfile: dockerfile
+      target: checkout-page
+    environment:
+      - POSTGRES_HOST=postgres
+      - REDIS_HOST=redis
+    env_file:
+      - path: .env
+        required: false
+
+  admin:
+    build:
+      context: .
+      dockerfile: dockerfile
+      target: admin-dashboard
+    environment:
+      - POSTGRES_HOST=postgres
+      - REDIS_HOST=redis
+    env_file:
+      - path: .env
+        required: false
+
+  example:
+    build:
+      context: .
+      dockerfile: dockerfile
+      target: example
+    environment:
+      - POSTGRES_HOST=postgres
+      - REDIS_HOST=redis
+    env_file:
+      - path: .env
+        required: false
+
+  example-backend:
+    build:
+      context: .
+      dockerfile: dockerfile
+      target: example-backend
+    environment:
+      - POSTGRES_HOST=postgres
+      - REDIS_HOST=redis
+    env_file:
+      - path: .env
+        required: false
+
   # Reference services from dependencies and metrics
   # Making services available in all other services
   # Making services available to reference in Coolify

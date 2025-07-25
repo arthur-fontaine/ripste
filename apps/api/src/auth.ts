@@ -28,7 +28,7 @@ export const auth = betterAuth({
 	},
 	trustedOrigins: (
 		process.env["ALLOWED_ORIGINS"] ||
-		"http://localhost:5173,http://localhost:3000"
+		"http://localhost:5173,http://localhost:3000,https://ripste.com,https://admin.ripste.com,https://checkout.ripste.com"
 	).split(","),
 	session: {
 		expiresIn: 60 * 60 * 24 * 7,

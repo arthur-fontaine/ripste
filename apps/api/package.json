@@ -3,7 +3,7 @@
 	"type": "module",
 	"version": "1.0.0",
 	"main": "src/main.ts",
-	"files": ["dist"],
+	"files": ["dist", "src"],
 	"exports": {
 		"./client": {
 			"types": "./dist/client.d.ts",
@@ -37,6 +37,7 @@
 		"@ripste/psp-api": "workspace:*",
 		"better-auth": "^1.3.1",
 		"currency-codes": "^2.2.0",
+		"dotenv": "^17.2.0",
 		"hono": "^4.8.5",
 		"pg": "^8.16.3",
 		"pino": "^9.7.0",
@@ -51,7 +52,6 @@
 		"@rslib/core": "^0.10.4",
 		"@types/node": "^24.0.15",
 		"@types/pg": "^8.15.4",
-		"dotenv": "^17.2.0",
 		"tsdown": "^0.12.9"
 	}
 }

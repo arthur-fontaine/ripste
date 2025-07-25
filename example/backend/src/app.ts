@@ -7,7 +7,7 @@ const app = new Hono();
 app.use(
 	"*",
 	cors({
-		origin: "http://localhost:5180",
+		origin: ["http://localhost:5180", "https://example.ripste.com"],
 		allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 		allowHeaders: ["Content-Type", "Authorization"],
 		credentials: true,

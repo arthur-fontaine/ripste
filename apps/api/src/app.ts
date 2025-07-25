@@ -17,7 +17,7 @@ export const app = createHonoRouter()
 		cors({
 			origin: (
 				process.env["ALLOWED_ORIGINS"] ||
-				"http://localhost:5173,http://localhost:3000,http://localhost:3003"
+				"http://localhost:5173,http://localhost:3000,http://localhost:3003,https://ripste.com,https://admin.ripste.com,https://checkout.ripste.com"
 			).split(","),
 			allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 			allowHeaders: ["Content-Type", "Authorization"],
