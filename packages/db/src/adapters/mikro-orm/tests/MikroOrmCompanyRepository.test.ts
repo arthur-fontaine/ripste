@@ -73,9 +73,11 @@ describe("MikroOrmCompanyRepository", () => {
 
 		it("should return null for a company with a deletedAt timestamp", async () => {
 			const companyId = await generateCompanyId({
-				deletedAt: new Date(),
+				deletedAt: null,
 			});
 			if (!companyId) throw new Error("Failed to generate company ID");
+			// @ts-expect-error
+			await db.company.update(companyId, { deletedAt: new Date() });
 			const result = await db.company.findOne(companyId);
 			expect(result).toBeNull();
 		});
@@ -104,10 +106,10 @@ describe("MikroOrmCompanyRepository", () => {
 		});
 
 		it("should return an empty array for companies with deletedAt timestamp", async () => {
-			const companyId = await generateCompanyId({
-				deletedAt: new Date(),
-			});
+			const companyId = await generateCompanyId({ deletedAt: null });
 			if (!companyId) throw new Error("Failed to generate company ID");
+			// @ts-expect-error
+			await db.company.update(companyId, { deletedAt: new Date() });
 			const result = await db.company.findMany({ id: { $in: [companyId] } });
 			expect(result).toBeDefined();
 			expect(result.length).toBe(0);

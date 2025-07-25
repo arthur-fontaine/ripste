@@ -9,8 +9,10 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@ripste/api": "workspace:*",
 		"@tailwindcss/vite": "^4.1.11",
 		"better-auth": "^1.2.10",
+		"chart.js": "^4.5.0",
 		"vue": "^3.5.13",
 		"vue-router": "^4.5.1"
 	},

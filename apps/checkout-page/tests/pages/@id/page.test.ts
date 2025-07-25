@@ -21,7 +21,7 @@ describe("Checkout Page", async () => {
 	it("should not throw an error for valid id", async () => {
 		const { status } = await fetchHtml(`/${checkoutPage.uri}`);
 
-		await page.goto(`http://localhost:3000/${checkoutPage.uri}`);
+		await page.goto(`http://localhost:3003/${checkoutPage.uri}`);
 
 		expect(status).toBe(200);
 		expect(page.innerHTML("body")).not.toContain("Error");
@@ -32,7 +32,7 @@ describe("Checkout Page", async () => {
 		const { status } = await fetchHtml(`/${checkoutPage.uri}`);
 		if (status !== 200) throw new Error(`Expected status 200, got ${status}`);
 
-		await page.goto(`http://localhost:3000/${checkoutPage.uri}`);
+		await page.goto(`http://localhost:3003/${checkoutPage.uri}`);
 
 		const screenshot = await page.screenshot({
 			path: "tests/pages/@id/__snapshots__/checkout-page.png",
@@ -43,7 +43,7 @@ describe("Checkout Page", async () => {
 	});
 
 	it("should fill and submit the payment form", async () => {
-		await page.goto(`http://localhost:3000/${checkoutPage.uri}`);
+		await page.goto(`http://localhost:3003/${checkoutPage.uri}`);
 
 		await page.fill("#card-name", "John Doe");
 		await page.fill("#card-number", "4111 1111 1111 1111");
@@ -64,7 +64,7 @@ describe("Checkout Page", async () => {
 	});
 
 	it("should redirect to success page on successful payment", async () => {
-		await page.goto(`http://localhost:3000/${checkoutPage.uri}`);
+		await page.goto(`http://localhost:3003/${checkoutPage.uri}`);
 
 		await page.fill("#card-name", "John Doe");
 		await page.fill("#card-number", "4111 1111 1111 1111");
@@ -74,14 +74,12 @@ describe("Checkout Page", async () => {
 
 		await page.click("button[type='submit']");
 
-		console.log(await page.url());
-		setTimeout(async () => console.log(await page.url()), 2000);
-		await page.waitForURL(`http://localhost:3000/${checkoutPage.uri}/success`, {
+		await page.waitForURL(`http://localhost:3003/${checkoutPage.uri}/success`, {
 			timeout: 5000,
 		});
 
 		expect(page.url()).toBe(
-			`http://localhost:3000/${checkoutPage.uri}/success`,
+			`http://localhost:3003/${checkoutPage.uri}/success`,
 		);
 
 		const screenshot = await page.screenshot({
@@ -94,7 +92,7 @@ describe("Checkout Page", async () => {
 });
 
 async function fetchHtml(urlPathname: string) {
-	const ret = await fetch(`http://localhost:3000${urlPathname}`);
+	const ret = await fetch(`http://localhost:3003${urlPathname}`);
 	const html = await ret.text();
 	return { html, status: ret.status, statusText: ret.statusText };
 }

@@ -52,7 +52,7 @@ export function MikroOrmBaseRepository<
 		insert: I["insert"] = async (entity) => {
 			const newEntity = this.#em.create(model, entity as never);
 			await this.#em.persistAndFlush(newEntity);
-			return newEntity;
+			return this.findOne(newEntity.id) as never;
 		};
 
 		update: I["update"] = async (id, entity) => {

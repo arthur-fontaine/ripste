@@ -30,10 +30,22 @@ export class MikroOrmRefundModel extends BaseModel implements IRefund {
 		return this.transaction.id;
 	}
 
+	set transactionId(value: string) {
+		this.transaction = this._em.getReference(MikroOrmTransactionModel, value);
+	}
+
 	@ManyToOne(() => MikroOrmUserModel, { nullable: true })
 	initiatedByUser!: MikroOrmUserModel | null;
 
 	get initiatedByUserId(): string | null {
 		return this.initiatedByUser ? this.initiatedByUser.id : null;
+	}
+
+	set initiatedByUserId(value: string | null) {
+		if (value) {
+			this.initiatedByUser = this._em.getReference(MikroOrmUserModel, value);
+		} else {
+			this.initiatedByUser = null;
+		}
 	}
 }

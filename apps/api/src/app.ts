@@ -7,6 +7,7 @@ import { companiesRouter } from "./routers/companies/companies-router.ts";
 import { storesRouter } from "./routers/stores/stores-router.ts";
 import { paymentsRouter } from "./routers/payments/payments-router.ts";
 import { createHonoRouter } from "./utils/create-hono-router.ts";
+import { adminRouter } from "./routers/admin/admin-router.ts";
 
 const { printMetrics, registerMetrics } = prometheus();
 
@@ -30,6 +31,7 @@ export const app = createHonoRouter()
 	.route("/companies", companiesRouter)
 	.route("/stores", storesRouter)
 	.route("/payments", paymentsRouter)
+	.route("/admin", adminRouter)
 	.get("/metrics", printMetrics);
 
 export type App = typeof app;

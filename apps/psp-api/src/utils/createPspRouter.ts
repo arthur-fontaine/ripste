@@ -29,7 +29,9 @@ interface ICardPaymentMethod {
 
 const PaymentInfosSchema = interfaceToZod<IPaymentInfos>(
 	"IPaymentInfos",
-	__filename,
+	typeof __filename === "string"
+		? __filename
+		: import.meta.url.replace(/^file:/, ""),
 )
 	.check((ctx) => {
 		const expiryDateRegex = /^(0[1-9]|1[0-2])\/([0-9]{4})$/;
