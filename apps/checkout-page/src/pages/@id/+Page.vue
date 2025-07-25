@@ -41,7 +41,12 @@
         </div>
       </div>
 
-      <button type="submit" class="checkout__button" @click.prevent="cardInfos.pay">
+      <div v-if="cardInfos.payResult.message" class="checkout__error">
+        {{ cardInfos.payResult.message }}
+      </div>
+
+      <button type="submit" class="checkout__button" @click.prevent="cardInfos.pay"
+        :disabled="cardInfos.payResult.status === 'processing'">
         {{ data.displayData.customTexts?.payButton || 'Pay' }}&nbsp;
         <span class="checkout__amount">{{ formattedAmount }}</span>
       </button>
@@ -58,14 +63,14 @@ const data = useData<Data>();
 const cardInfos = useCardInfosStore();
 
 const formattedAmount = new Intl.NumberFormat("en-US", {
-	style: "currency",
-	currency: data.currency,
+  style: "currency",
+  currency: data.currency,
 }).format(data.amount);
 
 cardInfos.$subscribe((_, state) => {
-	if (state.payResult.status === "success") {
-		window.location.href = `${window.location.pathname}/success`;
-	} else if (state.payResult.status === "error") {
-	}
+  if (state.payResult.status === "success") {
+    window.location.href = `${window.location.pathname}/success`;
+  } else if (state.payResult.status === "error") {
+  }
 });
 </script>
