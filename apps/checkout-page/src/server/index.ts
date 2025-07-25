@@ -7,7 +7,7 @@ function startServer() {
 	apply(app);
 	return serve(app, {
 		port: 3003,
-		hostname: "localhost",
+		hostname: "0.0.0.0",
 	});
 }
 
