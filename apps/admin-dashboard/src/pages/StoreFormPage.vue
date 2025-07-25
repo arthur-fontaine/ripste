@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-6xl mx-auto p-8">
     <div class="bg-white p-8 rounded-lg shadow-md border">
-      <h2 class="text-2xl text-gray-900 mb-4">Create a company</h2>
+      <h2 class="text-2xl text-gray-900 mb-4">Create a store</h2>
       <form @submit.prevent="handleSubmit" class="space-y-6">
         <div>
           <label class="block text-gray-700 font-semibold mb-2">
@@ -11,21 +11,21 @@
         </div>
         <div>
           <label class="block text-gray-700 font-semibold mb-2">
-            Trade name
+            Slug <span class="text-red-500">*</span>
           </label>
-          <input v-model="slug" type="text" class="w-full border rounded px-3 py-2" />
+          <input v-model="slug" type="text" class="w-full border rounded px-3 py-2" required />
         </div>
         <div>
           <label class="block text-gray-700 font-semibold mb-2">
             Contact email <span class="text-red-500">*</span>
           </label>
-          <input v-model="contactEmail" type="text" class="w-full border rounded px-3 py-2" required />
+          <input v-model="contactEmail" type="email" class="w-full border rounded px-3 py-2" required />
         </div>
         <div>
           <label class="block text-gray-700 font-semibold mb-2">
-            Contact phone
+            Contact phone <span class="text-red-500">*</span>
           </label>
-          <input v-model="contactPhone" type="text" class="w-full border rounded px-3 py-2" />
+          <input v-model="contactPhone" type="tel" class="w-full border rounded px-3 py-2" required />
         </div>
         <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 font-bold">
           Create
@@ -49,7 +49,7 @@ const error = ref("");
 
 const router = useRouter();
 
-function handleSubmit() {
+async function handleSubmit() {
 	error.value = "";
 	if (
 		!name.value ||
@@ -61,7 +61,7 @@ function handleSubmit() {
 		return;
 	}
 	try {
-		apiClient.stores.$post({
+		const response = await apiClient.stores.$post({
 			json: {
 				name: name.value,
 				slug: slug.value,
@@ -69,10 +69,16 @@ function handleSubmit() {
 				contactPhone: contactPhone.value,
 			},
 		});
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(`Failed to create store: ${data.error}`);
+    }
+    router.push("/");
 	} catch (err) {
-		error.value = "Failed to create store. Please try again.";
+		let message = "Failed to create store. Please try again.";
+    if (err instanceof Error) message = err.message;
+		error.value = message;
 		console.log(err);
 	}
-	router.push("/");
 }
 </script>
