@@ -59,7 +59,7 @@ describe("Checkout Page", async () => {
 		await page.waitForTimeout(100); // Wait for event to be processed
 
 		expect(logMock).toHaveBeenCalledWith(
-			'POST /payments/submit-card-infos {"json":{"provider":"visa","cardNumber":"4111 1111 1111 1111","holderName":"John Doe","month":12,"year":2025,"cvv":"123"},"param":{"uri":"random-id"}}',
+			'POST /payments/submit-card-infos {"json":{"provider":"visa","cardNumber":"4111 1111 1111 1111","holderName":"John Doe","month":12,"year":2025,"cvv":"123"},"query":{"uri":"random-id"}}',
 		);
 	});
 

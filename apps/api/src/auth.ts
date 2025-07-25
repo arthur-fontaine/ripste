@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import { createCustomDatabaseAdapterWithMappings } from "./better-auth-adapter.ts";
-import { jwt, oidcProvider, openAPI } from "better-auth/plugins";
+import { bearer, jwt, oidcProvider, openAPI } from "better-auth/plugins";
 import { database } from "./database.ts";
 import { emailService } from "./email.ts";
 
@@ -36,6 +36,7 @@ export const auth = betterAuth({
 	},
 	plugins: [
 		jwt(),
+		bearer(),
 		oidcProvider({
 			loginPage:
 				process.env["OIDC_LOGIN_PAGE"] || "http://localhost:5173/login",

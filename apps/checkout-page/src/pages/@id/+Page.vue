@@ -41,7 +41,12 @@
         </div>
       </div>
 
-      <button type="submit" class="checkout__button" @click.prevent="cardInfos.pay">
+      <div v-if="cardInfos.payResult.message" class="checkout__error">
+        {{ cardInfos.payResult.message }}
+      </div>
+
+      <button type="submit" class="checkout__button" @click.prevent="cardInfos.pay"
+        :disabled="cardInfos.payResult.status === 'processing'">
         {{ data.displayData.customTexts?.payButton || 'Pay' }}&nbsp;
         <span class="checkout__amount">{{ formattedAmount }}</span>
       </button>

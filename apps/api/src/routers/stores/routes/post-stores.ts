@@ -32,6 +32,12 @@ export const postStoresRoute = createHonoRouter().post(
 
 			const store = await database.store.insert(storeData);
 
+			await database.checkoutTheme.insert({
+				name: "Default Theme",
+				storeId: store.id,
+				version: 1,
+			});
+
 			const existingMember = await database.storeMember.findMany({
 				user: { id: c.get("user").id },
 				store: { id: store.id },

@@ -31,7 +31,10 @@ export default async function data(
 	if (isExpired) throw render(404, "Checkout page not found");
 
 	const isCompleted = checkoutPage.completedAt !== null;
-	if (isCompleted) throw render(404, "Checkout page not found");
+	const isRenderingSuccess = pageContext.urlPathname.endsWith("/success");
+	const isRenderingError = pageContext.urlPathname.endsWith("/error");
+	if (isCompleted && !isRenderingSuccess && !isRenderingError)
+		throw render(404, "Checkout page not found");
 
 	const data: Data = {
 		id: checkoutPage.id,

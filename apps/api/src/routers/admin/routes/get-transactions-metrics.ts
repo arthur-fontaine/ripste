@@ -143,7 +143,7 @@ export const getTransactionMetricsRoute = createHonoRouter().get(
 				totalVolume,
 				todayTransactions: todayTransactionCount,
 				todayVolume,
-				successRate,
+				successRate: roundToTwoDecimalPlaces(successRate),
 				averageTransactionValue,
 				transactionsByDay,
 				transactionsByStatus,
@@ -157,3 +157,7 @@ export const getTransactionMetricsRoute = createHonoRouter().get(
 		}
 	},
 );
+
+function roundToTwoDecimalPlaces(value: number): number {
+	return Math.round(value * 100) / 100;
+}

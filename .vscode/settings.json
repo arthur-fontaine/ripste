@@ -10,6 +10,7 @@
 		"admin",
 		"psp",
 		"api/better-auth",
-		"checkout-page"
+		"checkout-page",
+		"example"
 	]
 }

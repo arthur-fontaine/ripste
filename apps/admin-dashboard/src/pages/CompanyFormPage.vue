@@ -60,7 +60,7 @@ const error = ref("");
 
 const router = useRouter();
 
-function handleSubmit() {
+async function handleSubmit() {
 	error.value = "";
 	if (!legalName.value || !kbis.value) {
 		error.value = "Legal name and Kbis are required.";
@@ -68,7 +68,7 @@ function handleSubmit() {
 	}
 
 	try {
-		apiClient.companies.$post({
+		const response = await apiClient.companies.$post({
 			json: {
 				legalName: legalName.value,
 				tradeName: tradeName.value,
@@ -77,12 +77,17 @@ function handleSubmit() {
 				address: address.value,
 			},
 		});
+		if (!response.ok) {
+			const data = await response.json();
+			throw new Error(`Failed to create company: ${data.error}`);
+		}
+		router.push("/store/create");
 	} catch (err) {
-		error.value = "Failed to create company. Please try again.";
+		let message = "Failed to create company. Please try again.";
+		if (err instanceof Error) message = err.message;
+		error.value = message;
 		console.error(err);
-		router.push("/company/create");
 	}
-	router.push("/store/create");
 }
 </script>
 

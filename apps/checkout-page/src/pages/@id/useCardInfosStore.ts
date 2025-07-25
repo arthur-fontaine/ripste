@@ -14,12 +14,15 @@ export const useCardInfosStore = defineStore("cardInfos", () => {
 	const cvv = ref("");
 
 	const payResult = reactive({
-		status: null as null | "success" | "error",
+		status: null as null | "success" | "error" | "processing",
 		message: null as null | string,
 	});
 
 	async function pay() {
 		try {
+			payResult.status = "processing";
+			payResult.message = null;
+
 			if (
 				!holderName.value ||
 				!cardNumber.value ||
@@ -41,7 +44,7 @@ export const useCardInfosStore = defineStore("cardInfos", () => {
 					year: Number(year.value),
 					cvv: cvv.value,
 				},
-				param: {
+				query: {
 					uri: data.uri,
 				},
 			});
